@@ -138,7 +138,6 @@ button:hover {
 
 /* Score Section - Purple */
 #score-container {
-    background-color: #9c27b0 !important;
     padding: 1.5rem;
     border-radius: 8px;
     margin-bottom: 1.5rem;
@@ -149,7 +148,7 @@ button:hover {
 
 /* Strengths Section - Green */
 #strengths-container {
-    background-color: var(--feedback-strengths-bg) !important;
+    background-color: #007108) !important;
     padding: 1.5rem;
     border-radius: 8px;
     margin-bottom: 1.5rem;
@@ -160,7 +159,7 @@ button:hover {
 
 /* Improvements Section - Red */
 #improvements-container {
-    background-color: var(--feedback-improvements-bg) !important;
+    background-color: #9f0000 !important;
     padding: 1.5rem;
     border-radius: 8px;
     margin-bottom: 1.5rem;
@@ -171,7 +170,7 @@ button:hover {
 
 /* Model Answer Section - Blue */
 #model-container {
-    background-color: var(--feedback-model-bg) !important;
+    background-color: #410978 !important;
     padding: 1.5rem;
     border-radius: 8px;
     margin-bottom: 1.5rem;
