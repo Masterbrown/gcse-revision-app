@@ -93,19 +93,21 @@ async function handleSubmitAnswer() {
 
         const data = await response.json();
         
-        // Split the feedback into sections
-        const sections = data.message.split('\n\n');
+        // Split the feedback into sections and format each section
+        const feedbackTextContent = data.message.replace(/\r\n/g, '\n');  // Normalize line endings
+        const sections = feedbackTextContent.split('\n\n');
         let formattedFeedback = '';
         
         sections.forEach(section => {
+            const sectionContent = section.replace(/\n/g, '<br>');
             if (section.startsWith('Score:')) {
-                formattedFeedback += `<div class="feedback-score">${section}</div>`;
+                formattedFeedback += `<div class="feedback-score">${sectionContent}</div>`;
             } else if (section.startsWith('Strengths:')) {
-                formattedFeedback += `<div class="feedback-strengths">${section}</div>`;
+                formattedFeedback += `<div class="feedback-strengths">${sectionContent}</div>`;
             } else if (section.startsWith('Areas for Improvement:')) {
-                formattedFeedback += `<div class="feedback-improvements">${section}</div>`;
+                formattedFeedback += `<div class="feedback-improvements">${sectionContent}</div>`;
             } else if (section.startsWith('Model Answer:')) {
-                formattedFeedback += `<div class="feedback-model">${section}</div>`;
+                formattedFeedback += `<div class="feedback-model">${sectionContent}</div>`;
             }
         });
         

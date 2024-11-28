@@ -31,8 +31,8 @@ exports.handler = async function(event, context) {
     const { prompt, type } = JSON.parse(event.body);
     
     const systemPrompt = type === 'question' 
-      ? 'You are a GCSE Computer Science teacher. Generate a question following the AQA specification. Include mark allocation in square brackets at the end of the question.'
-      : 'You are a GCSE Computer Science teacher providing feedback on a student\'s answer.';
+      ? 'You are a GCSE Computer Science teacher. Generate a question following the AQA specification. The mark allocation MUST be written as "[X marks]" at the end of the question, where X is the number of marks.'
+      : 'You are a GCSE Computer Science teacher providing feedback on a student\'s answer. Your response MUST follow this EXACT format:\n\nScore:\n[score] out of [total] marks\n\nStrengths:\n[strengths]\n\nAreas for Improvement:\n[improvements]\n\nModel Answer:\n[model answer]';
 
     const completion = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
