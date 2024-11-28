@@ -11,7 +11,9 @@
     --blur-color: #1d4ed8;
     --primary-color: #3b82f6;
     --text-color: #e5e7eb;
-    --background-color: rgba(0, 0, 0, 0.7);
+    --feedback-strengths-bg: #4ade80;  /* Green background for strengths */
+    --feedback-improvements-bg: #f44336;  /* Red background for improvements */
+    --feedback-model-bg: #c084fc;  /* Light purple background for model answer */
     --padding-large: 20px;
     --padding-medium: 15px;
     --padding-small: 10px;
@@ -132,7 +134,6 @@ button:hover {
 #feedback-section {
     margin-top: 20px;
     width: 100%;
-    background: none !important;
 }
 
 /* Score Section - Purple */
@@ -148,7 +149,7 @@ button:hover {
 
 /* Strengths Section - Green */
 #strengths-container {
-    background-color: #4caf50 !important;
+    background-color: var(--feedback-strengths-bg) !important;
     padding: 1.5rem;
     border-radius: 8px;
     margin-bottom: 1.5rem;
@@ -159,7 +160,7 @@ button:hover {
 
 /* Improvements Section - Red */
 #improvements-container {
-    background-color: #f44336 !important;
+    background-color: var(--feedback-improvements-bg) !important;
     padding: 1.5rem;
     border-radius: 8px;
     margin-bottom: 1.5rem;
@@ -170,7 +171,7 @@ button:hover {
 
 /* Model Answer Section - Blue */
 #model-container {
-    background-color: #2196f3 !important;
+    background-color: var(--feedback-model-bg) !important;
     padding: 1.5rem;
     border-radius: 8px;
     margin-bottom: 1.5rem;
