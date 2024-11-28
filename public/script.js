@@ -53,7 +53,25 @@ async function generateQuestion() {
             },
             body: JSON.stringify({
                 type: 'question',
-                prompt: 'Generate a GCSE Computer Science question'
+                prompt: `Generate a GCSE Computer Science question following the AQA exam board style (Specification 8525).
+
+Requirements:
+1. Use appropriate AQA command words (State, Describe, Explain, Compare, Evaluate)
+2. Include mark allocation in square brackets [X marks]
+3. For questions worth 4+ marks, break into parts (a), (b), etc.
+4. Use technical vocabulary from the AQA specification
+5. Match AQA's assessment objectives (AO1: Knowledge, AO2: Application, AO3: Analysis)
+6. Focus on one of these AQA specification topics:
+   - 3.1 Fundamentals of algorithms
+   - 3.2 Programming
+   - 3.3 Fundamentals of data representation
+   - 3.4 Computer systems
+   - 3.5 Fundamentals of computer networks
+   - 3.6 Cyber security
+   - 3.7 Relational databases and SQL
+   - 3.8 Ethical, legal and environmental impacts
+
+Generate a question now:`
             })
         });
 
@@ -91,7 +109,39 @@ async function handleSubmitAnswer() {
             },
             body: JSON.stringify({
                 type: 'feedback',
-                prompt: `Question: ${currentQuestion}\n\nStudent's Answer: ${answerInput.value}`
+                prompt: `You are an AQA GCSE Computer Science examiner marking the following question and answer. 
+                
+Question: ${currentQuestion}
+
+Student's Answer: ${answerInput.value}
+
+Provide feedback in this exact format:
+
+Score:
+[Show marks awarded]/[total marks] with brief explanation
+
+Strengths:
+• Point-by-point list of what the student did well
+• Include technical terms they used correctly
+• Highlight good understanding shown
+
+Areas for Improvement:
+• Specific points that could be added for more marks
+• Technical terms that should be included
+• Concepts that need clarification
+
+Model Answer:
+• A complete answer that would achieve full marks
+• Include all technical terms and concepts required
+• Structure it according to the mark scheme format
+
+Use AQA's marking principles:
+• Award marks for valid alternatives
+• Use technical vocabulary from the specification
+• Follow the point-based marking system
+• For 6+ mark questions, use level-based marking (L1: 1-2, L2: 3-4, L3: 5-6)
+
+Provide the feedback now:`
             })
         });
 
