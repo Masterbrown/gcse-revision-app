@@ -221,37 +221,51 @@ button:active {
 /* Feedback Containers */
 #feedback-section {
     margin-top: 20px;
-}
-
-#score-container, #strengths-container, #improvements-container, #model-container {
-    padding: 20px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    color: white !important;  /* Force white text */
+    width: 100%;
+    background: none !important; /* Force no background */
 }
 
 #score-container {
-    background-color: #9c27b0 !important;  /* Force purple background */
+    background-color: #9c27b0 !important;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: white !important;
 }
 
 #strengths-container {
-    background-color: #4caf50 !important;  /* Force green background */
+    background-color: #4caf50 !important;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: white !important;
 }
 
 #improvements-container {
-    background-color: #f44336 !important;  /* Force red background */
+    background-color: #f44336 !important;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: white !important;
 }
 
 #model-container {
-    background-color: #2196f3 !important;  /* Force blue background */
+    background-color: #2196f3 !important;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: white !important;
 }
 
 .feedback-title {
     font-weight: bold;
     font-size: 1.2em;
-    margin-bottom: 10px;
-    color: white !important;  /* Force white text for titles */
+    margin-bottom: 1rem;
+    color: white !important;
 }
 
 /* Scrollbar Styling */
