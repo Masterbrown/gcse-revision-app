@@ -251,21 +251,23 @@ Please provide detailed feedback following these guidelines:
 3. If they didn't get full marks, explain what they missed or could improve
 4. Finally, provide a model answer that would achieve full marks
 
-Format your response EXACTLY as follows:
+Format your response EXACTLY as follows (DO NOT include section headers in the content):
 MARKS START
 X/Y marks
 MARKS END
 
 STRENGTHS START
-(list ONLY the points the student got correct and what they did well)
+• Point they got correct
+• Another good point they made
 STRENGTHS END
 
 IMPROVEMENTS START
-(ONLY if they didn't get full marks, list what they missed or could have done better)
+• Point they missed
+• What they could have included
 IMPROVEMENTS END
 
 MODEL ANSWER START
-(provide a clear, complete answer that would achieve full marks)
+Write your complete answer here that would achieve full marks. Do not include any other sections or headers in this part.
 MODEL ANSWER END`;
 
     try {
@@ -287,11 +289,11 @@ MODEL ANSWER END`;
         const data = await response.json();
         const content = data.content || data.message || '';
 
-        // Extract sections using regex
-        const marksMatch = content.match(/MARKS START\n([\s\S]*?)\nMARKS END/);
-        const strengthsMatch = content.match(/STRENGTHS START\n([\s\S]*?)\nSTRENGTHS END/);
-        const improvementsMatch = content.match(/IMPROVEMENTS START\n([\s\S]*?)\nIMPROVEMENTS END/);
-        const modelAnswerMatch = content.match(/MODEL ANSWER START\n([\s\S]*?)\nMODEL ANSWER END/);
+        // Extract sections using regex with non-greedy matching
+        const marksMatch = content.match(/MARKS START\r?\n([\s\S]*?)\r?\nMARKS END/);
+        const strengthsMatch = content.match(/STRENGTHS START\r?\n([\s\S]*?)\r?\nSTRENGTHS END/);
+        const improvementsMatch = content.match(/IMPROVEMENTS START\r?\n([\s\S]*?)\r?\nIMPROVEMENTS END/);
+        const modelAnswerMatch = content.match(/MODEL ANSWER START\r?\n([\s\S]*?)\r?\nMODEL ANSWER END/);
 
         let feedbackHTML = '';
 
@@ -323,7 +325,7 @@ MODEL ANSWER END`;
             }
         }
 
-        // Always show model answer
+        // Always show model answer, but only the actual answer text
         if (modelAnswerMatch) {
             const modelAnswer = modelAnswerMatch[1].trim();
             feedbackHTML += `<div class="model-answer-section">
