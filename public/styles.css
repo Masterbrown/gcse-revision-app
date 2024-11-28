@@ -126,8 +126,9 @@ button:hover {
     font-size: 1.1rem;
 }
 
+/* Utility Classes */
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 /* Feedback Styles */

@@ -6,6 +6,7 @@ let currentUnit = '';
 
 // DOM Elements
 const welcomeScreen = document.getElementById('welcome-screen');
+const questionContainer = document.getElementById('question-container');
 const loadingElement = document.getElementById('loading');
 const currentQuestionElement = document.getElementById('current-question');
 const questionText = document.getElementById('question-text');
@@ -28,6 +29,7 @@ unitButtons.forEach(button => {
     button.addEventListener('click', () => {
         currentUnit = button.dataset.unit;
         welcomeScreen.classList.add('hidden');
+        questionContainer.classList.remove('hidden');
         currentQuestionElement.classList.remove('hidden');
         generateQuestion();
     });
@@ -35,6 +37,7 @@ unitButtons.forEach(button => {
 
 function showWelcomeScreen() {
     welcomeScreen.classList.remove('hidden');
+    questionContainer.classList.add('hidden');
     currentQuestionElement.classList.add('hidden');
     feedbackContainer.classList.add('hidden');
 }
