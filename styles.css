@@ -223,46 +223,35 @@ button:active {
     margin-top: 20px;
 }
 
-#score-container {
-    background-color: #9c27b0;
-    color: white;
+#score-container, #strengths-container, #improvements-container, #model-container {
     padding: 20px;
     margin-bottom: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    color: white !important;  /* Force white text */
+}
+
+#score-container {
+    background-color: #9c27b0 !important;  /* Force purple background */
 }
 
 #strengths-container {
-    background-color: #4caf50;
-    color: white;
-    padding: 20px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: #4caf50 !important;  /* Force green background */
 }
 
 #improvements-container {
-    background-color: #f44336;
-    color: white;
-    padding: 20px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: #f44336 !important;  /* Force red background */
 }
 
 #model-container {
-    background-color: #2196f3;
-    color: white;
-    padding: 20px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: #2196f3 !important;  /* Force blue background */
 }
 
 .feedback-title {
     font-weight: bold;
     font-size: 1.2em;
     margin-bottom: 10px;
+    color: white !important;  /* Force white text for titles */
 }
 
 /* Scrollbar Styling */
@@ -333,13 +322,6 @@ button:active {
     height: 100vw;
     top: -50vw;
     right: -50vw;
-}
-
-.blur-2 {
-    width: 100vw;
-    height: 100vw;
-    bottom: -50vw;
-    left: -50vw;
 }
 
 /* Blur Effects */

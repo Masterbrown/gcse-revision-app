@@ -9,8 +9,7 @@ const currentQuestionElement = document.getElementById('current-question');
 const questionText = document.getElementById('question-text');
 const answerInput = document.getElementById('answer-input');
 const submitButton = document.getElementById('submit-answer');
-const feedbackContainer = document.getElementById('feedback-container');
-const feedbackText = document.getElementById('feedback-text');
+const feedbackSection = document.getElementById('feedback-section');
 const nextQuestionButton = document.getElementById('next-question');
 
 // Event Listeners
@@ -150,7 +149,7 @@ async function handleSubmitAnswer() {
 function showLoading() {
     loadingElement.classList.remove('hidden');
     currentQuestionElement.classList.add('hidden');
-    feedbackContainer.classList.add('hidden');
+    feedbackSection.style.display = 'none';
 }
 
 function hideLoading() {
@@ -160,9 +159,10 @@ function hideLoading() {
 function showQuestion() {
     hideLoading();
     currentQuestionElement.classList.remove('hidden');
-    feedbackContainer.classList.add('hidden');
+    feedbackSection.style.display = 'none';
 }
 
 function showFeedback() {
-    feedbackContainer.classList.remove('hidden');
+    currentQuestionElement.classList.add('hidden');
+    feedbackSection.style.display = 'block';
 }
