@@ -104,6 +104,8 @@ async function handleSubmitAnswer() {
         feedbackText.innerHTML = '';
 
         // Create containers for each feedback section
+        const scoreContainer = document.createElement('div');
+        scoreContainer.id = 'score-container';
         const strengthsContainer = document.createElement('div');
         strengthsContainer.id = 'strengths-container';
         const improvementsContainer = document.createElement('div');
@@ -114,17 +116,22 @@ async function handleSubmitAnswer() {
         // Parse the feedback sections
         const sections = data.message.split('\n\n');
         sections.forEach(section => {
-            if (section.toLowerCase().includes('strengths')) {
-                strengthsContainer.innerHTML = `<h3>Strengths</h3>${marked.parse(section.split('Strengths:')[1])}`;
+            if (section.toLowerCase().includes('score')) {
+                scoreContainer.innerHTML = `<h3>Score</h3>${marked.parse(section.split('Score:')[1])}`;
+                feedbackText.appendChild(scoreContainer);
+            } else if (section.toLowerCase().includes('strength')) {
+                strengthsContainer.innerHTML = `<h3>Strengths</h3>${marked.parse(section.split(/strengths:?/i)[1])}`;
                 feedbackText.appendChild(strengthsContainer);
-            } else if (section.toLowerCase().includes('improvements')) {
-                improvementsContainer.innerHTML = `<h3>Areas for Improvement</h3>${marked.parse(section.split('Improvements:')[1])}`;
+            } else if (section.toLowerCase().includes('improvement') || section.toLowerCase().includes('areas to improve')) {
+                improvementsContainer.innerHTML = `<h3>Areas for Improvement</h3>${marked.parse(section.split(/improvements:?|areas to improve:?/i)[1])}`;
                 feedbackText.appendChild(improvementsContainer);
             } else if (section.toLowerCase().includes('model answer')) {
-                modelContainer.innerHTML = `<h3>Model Answer</h3>${marked.parse(section.split('Model Answer:')[1])}`;
+                modelContainer.innerHTML = `<h3>Model Answer</h3>${marked.parse(section.split(/model answer:?/i)[1])}`;
                 feedbackText.appendChild(modelContainer);
             }
         });
+
+        console.log('Feedback sections:', sections); // Debug log to see the sections
 
         hideLoading();
         showFeedback();
