@@ -141,36 +141,54 @@ function getExampleQuestions(unit) {
     return examples;
 }
 
+const unitKeywords = {
+    '3.1': ['algorithm', 'computational', 'thinking', 'pseudocode', 'flowchart', 'search', 'sort', 'bubble', 'merge', 'insertion'],
+    '3.2': ['python', 'programming', 'function', 'variable', 'loop', 'array', 'list', 'if', 'else', 'while', 'for'],
+    '3.3': ['binary', 'denary', 'hexadecimal', 'conversion', 'bits', 'bytes', 'ascii', 'unicode', 'bitmap', 'resolution', 'sample'],
+    '3.4': ['cpu', 'memory', 'ram', 'rom', 'cache', 'register', 'boolean', 'logic', 'and', 'or', 'not', 'hardware'],
+    '3.5': ['network', 'topology', 'protocol', 'tcp/ip', 'ethernet', 'wifi', 'router', 'switch', 'packet', 'ip'],
+    '3.6': ['cyber', 'security', 'threat', 'malware', 'virus', 'phishing', 'ddos', 'encryption', 'firewall'],
+    '3.7': ['database', 'sql', 'table', 'query', 'primary key', 'foreign key', 'relationship', 'entity'],
+    '3.8': ['ethical', 'legal', 'environmental', 'privacy', 'digital', 'impact', 'society']
+};
+
 async function generateQuestion() {
     showLoading();
     const examples = getExampleQuestions(currentUnit);
     const topicDescription = getTopicDescription(currentUnit);
+    const keywords = unitKeywords[currentUnit];
     console.log('Generating question for unit:', currentUnit);
     
     let prompt = `You are an expert Computer Science teacher creating exam questions for GCSE students.
-Create a new question in the style of AQA GCSE Computer Science exams for unit ${currentUnit}.
-
-This unit covers the following topics:
+You MUST create a question SPECIFICALLY for unit ${currentUnit} that tests the following topics ONLY:
 ${topicDescription}
 
-Your question MUST be specifically about one of these topics and at GCSE difficulty level.`;
+IMPORTANT RULES:
+1. The question MUST be about one of these topics ONLY
+2. DO NOT create questions about topics from other units
+3. Use at least one of these key terms: ${keywords.join(', ')}
+4. The question difficulty MUST be at GCSE level (14-16 year olds)
+5. Make the question practical and relevant to real-world applications`;
 
     if (currentUnit === '3.2') {
         prompt += `\n\nFor Python programming questions:
 1. Always wrap Python code blocks with \`\`\`python and \`\`\` markers
 2. Ensure proper indentation in the code
 3. Include clear comments where helpful
-4. Format the code exactly as it would appear in a Python editor`;
+4. Format the code exactly as it would appear in a Python editor
+5. Focus on: ${keywords.join(', ')}`;
     } else if (currentUnit === '3.3') {
         prompt += `\n\nFor number conversion questions:
 1. Include clear working out steps in the mark scheme
 2. Use appropriate notation (e.g., binary numbers prefixed with '0b')
-3. Show the conversion process step by step`;
+3. Show the conversion process step by step
+4. Focus on: ${keywords.join(', ')}`;
     } else if (currentUnit === '3.4') {
         prompt += `\n\nFor Boolean logic and hardware questions:
 1. Use proper Boolean algebra notation
 2. Include truth tables where relevant
-3. Use correct technical terminology for hardware components`;
+3. Use correct technical terminology for hardware components
+4. Focus on: ${keywords.join(', ')}`;
     }
 
     prompt += `\n\nHere are example questions and mark schemes from this unit to guide your style:
@@ -181,8 +199,11 @@ Based on these examples, create a new question that:
 1. Matches the difficulty level and style of the examples
 2. Includes a clear mark scheme that follows AQA's positive marking approach
 3. Has similar mark allocations to the examples
-4. Specifically tests knowledge of ${currentUnit} unit topics
+4. MUST test knowledge of ${currentUnit} unit topics ONLY
 5. Uses appropriate technical terminology for this unit
+6. Includes at least one of these key terms: ${keywords.join(', ')}
+
+DO NOT create a question about topics from other units.
 
 Format your response EXACTLY as follows (including the separators):
 QUESTION START
@@ -201,7 +222,8 @@ MARK SCHEME END`;
             },
             body: JSON.stringify({ 
                 prompt,
-                type: 'question'
+                type: 'question',
+                max_tokens: 500
             }),
         });
 
@@ -223,8 +245,21 @@ MARK SCHEME END`;
             throw new Error('Invalid response format');
         }
 
-        currentQuestion = questionMatch[1].trim();
-        currentMarkScheme = markSchemeMatch[1].trim();
+        const questionText = questionMatch[1].trim();
+        const markScheme = markSchemeMatch[1].trim();
+
+        // Validate that the question contains at least one keyword from the unit
+        const hasKeyword = keywords.some(keyword => 
+            questionText.toLowerCase().includes(keyword.toLowerCase()) || 
+            markScheme.toLowerCase().includes(keyword.toLowerCase())
+        );
+
+        if (!hasKeyword) {
+            throw new Error('Generated question does not contain relevant unit keywords');
+        }
+
+        currentQuestion = questionText;
+        currentMarkScheme = markScheme;
         console.log('Successfully extracted question and mark scheme');
         
         if (questionText) {
