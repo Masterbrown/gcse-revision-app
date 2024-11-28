@@ -234,7 +234,7 @@ async function handleSubmitAnswer() {
     showLoading();
     const userAnswer = answerInput.value;
     
-    const prompt = `You are an expert Computer Science teacher marking a GCSE student's answer.
+    const prompt = `You are an expert Computer Science teacher marking a GCSE student's binary to denary conversion answer.
 
 The question was:
 ${currentQuestion}
@@ -245,11 +245,13 @@ ${currentMarkScheme}
 The student's answer:
 ${userAnswer}
 
-Please provide detailed feedback following these guidelines:
-1. First, state the marks awarded based on the mark scheme
-2. Then, highlight what the student did well (points that earned marks)
-3. If they didn't get full marks, explain what they missed or could improve
-4. Finally, provide a model answer that would achieve full marks
+Before providing feedback, carefully:
+1. Check if the answer is a valid binary number (only contains 1s and 0s) if converting from binary
+2. Verify the calculation:
+   - For binary to denary: Calculate the sum of each binary digit multiplied by its corresponding power of 2
+   - For denary to binary: Check if the binary number correctly represents the denary value
+3. Award full marks if the final answer is mathematically correct
+4. For incorrect answers, identify where the calculation went wrong
 
 Format your response EXACTLY as follows (DO NOT include section headers in the content):
 MARKS START
@@ -257,17 +259,17 @@ X/Y marks
 MARKS END
 
 STRENGTHS START
-• Point they got correct
-• Another good point they made
+• List correct aspects of their calculation
+• Mention if they used the right method even if final answer is wrong
 STRENGTHS END
 
 IMPROVEMENTS START
-• Point they missed
-• What they could have included
+• Point out specific calculation errors
+• Suggest the correct method if they used the wrong approach
 IMPROVEMENTS END
 
 MODEL ANSWER START
-Write your complete answer here that would achieve full marks. Do not include any other sections or headers in this part.
+Show a clear step-by-step conversion process. For binary to denary, show the powers of 2 calculation. For denary to binary, show the division by 2 method.
 MODEL ANSWER END`;
 
     try {
