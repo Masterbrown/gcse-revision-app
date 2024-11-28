@@ -95,18 +95,18 @@ async function handleSubmitAnswer() {
         if (!response.ok) {
             const errorData = await response.json();
             if (errorData.error && errorData.error.includes('rate limit')) {
-                const feedbackElement = document.getElementById('feedback-text');
-                feedbackElement.innerHTML = `
-                    <div class="feedback-box error">
-                        <div class="title">Service Temporarily Busy</div>
-                        <div>
-                            The service is currently experiencing high demand. Please wait about an hour before trying again.
-                            <br><br>
-                            This helps ensure everyone can use the revision app fairly.
-                        </div>
+                document.getElementById('score-container').innerHTML = `
+                    <div class="feedback-title">Service Temporarily Busy</div>
+                    <div>
+                        The service is currently experiencing high demand. Please wait about an hour before trying again.
+                        <br><br>
+                        This helps ensure everyone can use the revision app fairly.
                     </div>
                 `;
-                showFeedback();
+                document.getElementById('strengths-container').style.display = 'none';
+                document.getElementById('improvements-container').style.display = 'none';
+                document.getElementById('model-container').style.display = 'none';
+                document.getElementById('feedback-section').style.display = 'block';
                 return;
             }
             throw new Error('Failed to get feedback');
@@ -116,49 +116,29 @@ async function handleSubmitAnswer() {
         
         // Split the feedback into sections
         const feedbackTextContent = data.message;
-        const feedbackElement = document.getElementById('feedback-text');
         
-        // Clear previous feedback
-        feedbackElement.innerHTML = '';
-
-        // Function to create a feedback box
-        const createFeedbackBox = (content, type, title) => {
-            const box = document.createElement('div');
-            box.className = `feedback-box ${type}`;
-            
-            const titleDiv = document.createElement('div');
-            titleDiv.className = 'title';
-            titleDiv.textContent = title;
-            box.appendChild(titleDiv);
-            
-            const contentDiv = document.createElement('div');
-            contentDiv.innerHTML = content.replace(/\n/g, '<br>');
-            box.appendChild(contentDiv);
-            
-            return box;
-        };
-
         // Extract content sections
         const [scorePart, rest1] = feedbackTextContent.split('Strengths:');
         const [strengthsPart, rest2] = rest1.split('Areas for Improvement:');
         const [improvementsPart, rest3] = rest2.split('Model Answer:');
         const modelPart = rest3.split('\n\nRemember')[0];
 
-        // Create and append each section
-        feedbackElement.appendChild(
-            createFeedbackBox(scorePart, 'score', 'Score')
-        );
-        feedbackElement.appendChild(
-            createFeedbackBox(strengthsPart, 'strengths', 'Strengths')
-        );
-        feedbackElement.appendChild(
-            createFeedbackBox(improvementsPart, 'improvements', 'Areas for Improvement')
-        );
-        feedbackElement.appendChild(
-            createFeedbackBox(modelPart, 'model', 'Model Answer')
-        );
+        // Function to create content with title
+        const createContent = (content, title) => {
+            return `
+                <div class="feedback-title">${title}</div>
+                <div>${content.trim().replace(/\n/g, '<br>')}</div>
+            `;
+        };
 
-        showFeedback();
+        // Update each container
+        document.getElementById('score-container').innerHTML = createContent(scorePart, 'Score');
+        document.getElementById('strengths-container').innerHTML = createContent(strengthsPart, 'Strengths');
+        document.getElementById('improvements-container').innerHTML = createContent(improvementsPart, 'Areas for Improvement');
+        document.getElementById('model-container').innerHTML = createContent(modelPart, 'Model Answer');
+
+        // Show feedback section
+        document.getElementById('feedback-section').style.display = 'block';
     } catch (error) {
         console.error('Error:', error);
         document.getElementById('feedback-text').textContent = 'Error generating feedback. Please try again.';
