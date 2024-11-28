@@ -43,28 +43,45 @@ const questionContainer = document.getElementById('question-container');
 const loadingElement = document.getElementById('loading');
 const currentQuestionElement = document.getElementById('current-question');
 const questionText = document.getElementById('question-text');
-const markSchemeText = document.getElementById('mark-scheme-text');
 const answerInput = document.getElementById('answer-input');
 const submitButton = document.getElementById('submit-answer');
-const feedbackContainer = document.getElementById('feedback-container');
-const feedbackText = document.getElementById('feedback-text');
+const feedbackSection = document.getElementById('feedback-section');
 const nextQuestionButton = document.getElementById('next-question');
 const backToUnitsButton = document.getElementById('back-to-units');
-const unitButtons = document.querySelectorAll('.unit-button');
-const feedbackSection = document.getElementById('feedback-section');
-const questionSection = document.getElementById('current-question');
+
+function showLoading() {
+    if (loadingElement) loadingElement.classList.remove('hidden');
+    if (currentQuestionElement) currentQuestionElement.classList.add('hidden');
+}
+
+function hideLoading() {
+    if (loadingElement) loadingElement.classList.add('hidden');
+    if (currentQuestionElement) currentQuestionElement.classList.remove('hidden');
+}
+
+function showQuestion() {
+    if (currentQuestionElement) currentQuestionElement.classList.remove('hidden');
+    if (feedbackSection) feedbackSection.style.display = 'none';
+}
+
+function showFeedback() {
+    if (currentQuestionElement) currentQuestionElement.classList.add('hidden');
+    if (feedbackSection) feedbackSection.style.display = 'block';
+}
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
+    // Add unit button listeners
     const unitButtons = document.querySelectorAll('.unit-button');
     unitButtons.forEach(button => {
         button.addEventListener('click', () => {
             currentUnit = button.id;
             console.log('Selected unit:', currentUnit);
-            welcomeScreen.classList.add('hidden');
-            questionContainer.classList.remove('hidden');
-            currentQuestionElement.classList.remove('hidden');
-            generateQuestion();
+            if (welcomeScreen) welcomeScreen.classList.add('hidden');
+            if (questionContainer) {
+                questionContainer.classList.remove('hidden');
+                generateQuestion();
+            }
         });
     });
 
@@ -72,61 +89,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (backToUnitsButton) {
         backToUnitsButton.addEventListener('click', () => {
             console.log('Back to units clicked');
-            welcomeScreen.classList.remove('hidden');
-            questionContainer.classList.add('hidden');
-            currentQuestionElement.classList.add('hidden');
-            feedbackSection.style.display = 'none';
-            questionText.textContent = '';
-            answerInput.value = '';
+            if (welcomeScreen) welcomeScreen.classList.remove('hidden');
+            if (questionContainer) questionContainer.classList.add('hidden');
+            if (currentQuestionElement) currentQuestionElement.classList.add('hidden');
+            if (feedbackSection) feedbackSection.style.display = 'none';
+            if (questionText) questionText.textContent = '';
+            if (answerInput) answerInput.value = '';
         });
     }
 
     // Add other event listeners
-    submitButton.addEventListener('click', handleSubmitAnswer);
-    nextQuestionButton.addEventListener('click', getNextQuestion);
+    if (submitButton) submitButton.addEventListener('click', handleSubmitAnswer);
+    if (nextQuestionButton) nextQuestionButton.addEventListener('click', getNextQuestion);
 });
-
-// Add click event listeners to unit buttons
-unitButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        currentUnit = button.id; // Update the unit identifier to match the button ID
-        welcomeScreen.classList.add('hidden');
-        questionContainer.classList.remove('hidden');
-        currentQuestionElement.classList.remove('hidden');
-        generateQuestion();
-    });
-});
-
-function showWelcomeScreen() {
-    welcomeScreen.classList.remove('hidden');
-    questionContainer.classList.add('hidden');
-    currentQuestionElement.classList.add('hidden');
-    feedbackContainer.classList.add('hidden');
-}
 
 async function initializeApp() {
     isInitialized = true;
-    showWelcomeScreen();
-}
-
-function showLoading() {
-    loadingElement.classList.remove('hidden');
-    currentQuestionElement.classList.add('hidden');
-}
-
-function hideLoading() {
-    loadingElement.classList.add('hidden');
-    currentQuestionElement.classList.remove('hidden');
-}
-
-function showQuestion() {
-    questionSection.style.display = 'block';
-    feedbackSection.style.display = 'none';
-}
-
-function showFeedback() {
-    questionSection.style.display = 'none';
-    feedbackSection.style.display = 'block';
+    if (welcomeScreen) welcomeScreen.classList.remove('hidden');
+    if (questionContainer) questionContainer.classList.add('hidden');
+    if (currentQuestionElement) currentQuestionElement.classList.add('hidden');
+    if (feedbackSection) feedbackSection.style.display = 'none';
 }
 
 function getExampleQuestions(unit) {
@@ -207,79 +189,25 @@ MARK SCHEME END`;
         currentMarkScheme = markSchemeMatch[1].trim();
         console.log('Successfully extracted question and mark scheme');
         
-        displayQuestion(currentQuestion);
-        hideLoading();
-        showQuestion();
+        if (questionText) {
+            displayQuestion(currentQuestion);
+            hideLoading();
+            showQuestion();
+        } else {
+            throw new Error('Question text element not found');
+        }
     } catch (error) {
         console.error('Error generating question:', error);
-        questionText.textContent = `Error generating question: ${error.message}. Please try again.`;
+        if (questionText) {
+            questionText.textContent = `Error generating question: ${error.message}. Please try again.`;
+        }
         hideLoading();
     }
 }
 
-function getTopicDescription(unit) {
-    const topics = {
-        '3.1': `Fundamentals of algorithms:
-- Computational thinking
-- Algorithms
-- Programming fundamentals
-- Types of programming language
-- Searching algorithms
-- Sorting algorithms`,
-        '3.2': `Programming:
-- Data types
-- Programming concepts
-- Arithmetic operations
-- Arrays
-- File handling
-- SQL
-- Validation`,
-        '3.3': `Data representation:
-- Number bases
-- Converting between number bases
-- Units of information
-- Binary arithmetic
-- Character encoding
-- Image representation
-- Sound representation
-- Compression`,
-        '3.4': `Computer systems:
-- Hardware and software
-- Boolean logic
-- Software classification
-- Systems architecture
-- Memory
-- Secondary storage
-- System security`,
-        '3.5': `Computer networks:
-- Networks and topologies
-- Wired and wireless networks
-- Protocols and layers
-- Network security
-- Cyber security`,
-        '3.6': `Cyber security:
-- Cyber security threats
-- Social engineering
-- Malware
-- Detection and prevention
-- Network forensics`,
-        '3.7': `Databases:
-- Relational databases
-- SQL
-- Database design
-- Normalisation
-- Entity relationship diagrams`,
-        '3.8': `Impacts of technology:
-- Ethical issues
-- Legal issues
-- Environmental issues
-- Privacy issues
-- Cultural issues`
-    };
-    return topics[unit] || 'General Computer Science topics';
-}
-
 function displayQuestion(question) {
+    if (!questionText) return;
+    
     if (currentUnit === '3.2') {  // If Python unit is selected
         // Look for Python code indicators
         const hasPythonCode = question.includes('```python') || 
@@ -344,11 +272,6 @@ function displayQuestion(question) {
         // For other units, display normally
         questionText.textContent = question;
     }
-
-    // Show question section and hide others
-    questionSection.style.display = 'block';
-    feedbackSection.style.display = 'none';
-    answerInput.value = '';
 }
 
 async function handleSubmitAnswer() {
@@ -462,12 +385,12 @@ MODEL ANSWER END`;
             </div>`;
         }
 
-        feedbackText.innerHTML = feedbackHTML;
+        if (feedbackSection) feedbackSection.innerHTML = feedbackHTML;
         hideLoading();
         showFeedback();
     } catch (error) {
         console.error('Error:', error);
-        feedbackText.textContent = 'Error generating feedback. Please try again.';
+        if (feedbackSection) feedbackSection.textContent = 'Error generating feedback. Please try again.';
         hideLoading();
     }
 }
@@ -475,4 +398,66 @@ MODEL ANSWER END`;
 function getNextQuestion() {
     showQuestion();
     generateQuestion();
+}
+
+function getTopicDescription(unit) {
+    const topics = {
+        '3.1': `Fundamentals of algorithms:
+- Computational thinking
+- Algorithms
+- Programming fundamentals
+- Types of programming language
+- Searching algorithms
+- Sorting algorithms`,
+        '3.2': `Programming:
+- Data types
+- Programming concepts
+- Arithmetic operations
+- Arrays
+- File handling
+- SQL
+- Validation`,
+        '3.3': `Data representation:
+- Number bases
+- Converting between number bases
+- Units of information
+- Binary arithmetic
+- Character encoding
+- Image representation
+- Sound representation
+- Compression`,
+        '3.4': `Computer systems:
+- Hardware and software
+- Boolean logic
+- Software classification
+- Systems architecture
+- Memory
+- Secondary storage
+- System security`,
+        '3.5': `Computer networks:
+- Networks and topologies
+- Wired and wireless networks
+- Protocols and layers
+- Network security
+- Cyber security`,
+        '3.6': `Cyber security:
+- Cyber security threats
+- Social engineering
+- Malware
+- Detection and prevention
+- Network forensics`,
+        '3.7': `Databases:
+- Relational databases
+- SQL
+- Database design
+- Normalisation
+- Entity relationship diagrams`,
+        '3.8': `Impacts of technology:
+- Ethical issues
+- Legal issues
+- Environmental issues
+- Privacy issues
+- Cultural issues`
+    };
+    return topics[unit] || 'General Computer Science topics';
 }
