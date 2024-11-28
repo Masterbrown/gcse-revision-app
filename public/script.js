@@ -75,7 +75,11 @@ function showQuestion() {
 }
 
 function showFeedback() {
-    feedbackContainer.classList.remove('hidden');
+    questionText.style.display = 'none';
+    answerInput.style.display = 'none';
+    submitButton.style.display = 'none';
+    feedbackContainer.style.display = 'block';
+    nextQuestionButton.style.display = 'block';
 }
 
 function getExampleQuestions(unit) {
@@ -225,14 +229,9 @@ function getTopicDescription(unit) {
 }
 
 async function handleSubmitAnswer() {
-    if (!answerInput.value.trim()) {
-        alert('Please enter an answer before submitting.');
-        return;
-    }
-
-    showLoading();
-    try {
-        const prompt = `You are an expert Computer Science teacher marking a GCSE student's answer.
+    const userAnswer = answerInput.value;
+    
+    const prompt = `You are an expert Computer Science teacher marking a GCSE student's answer.
 
 The question was:
 ${currentQuestion}
@@ -241,23 +240,34 @@ The official mark scheme is:
 ${currentMarkScheme}
 
 The student's answer:
-${answerInput.value}
+${userAnswer}
 
 Please mark this answer following AQA's positive marking approach:
 1. Award marks for valid points that match the mark scheme
 2. Be specific about which points from the mark scheme were met
-3. Provide constructive feedback on how to improve
+3. Only provide improvement suggestions if the student didn't get full marks
 
-Format your response as:
-Marks awarded: X out of Y
-Feedback: (your detailed feedback here)`;
+Format your response as follows:
+MARKS START
+X/Y marks
+MARKS END
+FEEDBACK START
+(explanation of marks awarded)
+FEEDBACK END
+IMPROVEMENTS START
+(only include this section if student didn't get full marks - suggest specific improvements to reach full marks)
+IMPROVEMENTS END`;
 
+    try {
         const response = await fetch(API_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ prompt }),
+            body: JSON.stringify({
+                prompt,
+                type: 'feedback'
+            }),
         });
 
         if (!response.ok) {
@@ -265,61 +275,53 @@ Feedback: (your detailed feedback here)`;
         }
 
         const data = await response.json();
-        const content = data.message;
+        const content = data.content || data.message || '';
 
-        // Clear previous feedback
-        feedbackText.innerHTML = '';
+        // Extract sections using regex
+        const marksMatch = content.match(/MARKS START\n([\s\S]*?)\nMARKS END/);
+        const feedbackMatch = content.match(/FEEDBACK START\n([\s\S]*?)\nFEEDBACK END/);
+        const improvementsMatch = content.match(/IMPROVEMENTS START\n([\s\S]*?)\nIMPROVEMENTS END/);
 
-        // Create containers for each feedback section
-        const scoreContainer = document.createElement('div');
-        scoreContainer.id = 'score-container';
-        const strengthsContainer = document.createElement('div');
-        strengthsContainer.id = 'strengths-container';
-        const improvementsContainer = document.createElement('div');
-        improvementsContainer.id = 'improvements-container';
-        const modelContainer = document.createElement('div');
-        modelContainer.id = 'model-container';
+        let feedbackHTML = '';
 
-        // Parse the feedback sections
-        const sections = content.split('\n\n');
-        console.log('Split sections:', sections); // Debug log for sections
+        if (marksMatch) {
+            const marks = marksMatch[1].trim();
+            feedbackHTML += `<div class="marks"><strong>${marks}</strong></div>`;
+        }
 
-        sections.forEach(section => {
-            console.log('Processing section:', section); // Debug log for current section
-            
-            if (section.toLowerCase().includes('score')) {
-                console.log('Found score section');
-                scoreContainer.innerHTML = `<h3>Score</h3>${marked.parse(section.split('Score:')[1] || section)}`;
-                feedbackText.appendChild(scoreContainer);
-            } 
-            if (section.toLowerCase().includes('strength')) {
-                console.log('Found strengths section');
-                strengthsContainer.innerHTML = `<h3>Strengths</h3>${marked.parse(section.split(/strengths:?/i)[1] || section)}`;
-                feedbackText.appendChild(strengthsContainer);
-            } 
-            if (section.toLowerCase().includes('improve')) {
-                console.log('Found improvements section');
-                improvementsContainer.innerHTML = `<h3>Areas for Improvement</h3>${marked.parse(section.split(/improvements:?|areas to improve:?|areas for improvement:?/i)[1] || section)}`;
-                feedbackText.appendChild(improvementsContainer);
-            } 
-            if (section.toLowerCase().includes('model')) {
-                console.log('Found model answer section');
-                modelContainer.innerHTML = `<h3>Model Answer</h3>${marked.parse(section.split(/model answer:?/i)[1] || section)}`;
-                feedbackText.appendChild(modelContainer);
-            }
-        });
+        if (feedbackMatch) {
+            const feedback = feedbackMatch[1].trim();
+            feedbackHTML += `<div class="feedback-section">
+                <h3>Feedback:</h3>
+                <p>${feedback}</p>
+            </div>`;
+        }
 
-        hideLoading();
+        // Only show improvements if they exist and the student didn't get full marks
+        if (improvementsMatch && !marksMatch[1].includes('/')) {
+            const improvements = improvementsMatch[1].trim();
+            feedbackHTML += `<div class="improvements-section">
+                <h3>Areas for Improvement:</h3>
+                <p>${improvements}</p>
+            </div>`;
+        }
+
+        feedbackText.innerHTML = feedbackHTML;
         showFeedback();
     } catch (error) {
         console.error('Error:', error);
         feedbackText.textContent = 'Error generating feedback. Please try again.';
-    } finally {
-        hideLoading();
     }
 }
 
-async function getNextQuestion() {
-    showLoading();
-    await generateQuestion();
+function getNextQuestion() {
+    // Reset UI state
+    questionText.style.display = 'block';
+    answerInput.style.display = 'block';
+    submitButton.style.display = 'block';
+    feedbackContainer.style.display = 'none';
+    nextQuestionButton.style.display = 'none';
+    
+    // Generate new question
+    generateQuestion();
 }
