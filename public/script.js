@@ -1,5 +1,5 @@
 // Constants
-const API_ENDPOINT = '/api/chat';  // Update API endpoint
+const API_ENDPOINT = '/.netlify/functions/chat';  // Restore original endpoint
 let isInitialized = false;
 let currentQuestion = '';
 let currentMarkScheme = '';
@@ -67,6 +67,23 @@ document.addEventListener('DOMContentLoaded', () => {
             generateQuestion();
         });
     });
+
+    // Add back to units button listener
+    if (backToUnitsButton) {
+        backToUnitsButton.addEventListener('click', () => {
+            console.log('Back to units clicked');
+            welcomeScreen.classList.remove('hidden');
+            questionContainer.classList.add('hidden');
+            currentQuestionElement.classList.add('hidden');
+            feedbackSection.style.display = 'none';
+            questionText.textContent = '';
+            answerInput.value = '';
+        });
+    }
+
+    // Add other event listeners
+    submitButton.addEventListener('click', handleSubmitAnswer);
+    nextQuestionButton.addEventListener('click', getNextQuestion);
 });
 
 // Add click event listeners to unit buttons
