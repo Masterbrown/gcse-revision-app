@@ -60,26 +60,23 @@ async function initializeApp() {
 }
 
 function showLoading() {
-    loadingElement.style.display = 'block';
-    questionText.textContent = 'Generating question...';
+    loadingElement.classList.remove('hidden');
+    currentQuestionElement.classList.add('hidden');
+    feedbackContainer.classList.add('hidden');
 }
 
 function hideLoading() {
-    loadingElement.style.display = 'none';
+    loadingElement.classList.add('hidden');
 }
 
 function showQuestion() {
-    hideLoading();
     currentQuestionElement.classList.remove('hidden');
     feedbackContainer.classList.add('hidden');
 }
 
 function showFeedback() {
-    questionText.style.display = 'none';
-    answerInput.style.display = 'none';
-    submitButton.style.display = 'none';
-    feedbackContainer.style.display = 'block';
-    nextQuestionButton.style.display = 'block';
+    currentQuestionElement.classList.add('hidden');
+    feedbackContainer.classList.remove('hidden');
 }
 
 function getExampleQuestions(unit) {
@@ -157,11 +154,11 @@ MARK SCHEME END`;
         questionText.textContent = currentQuestion;
         answerInput.value = '';
         feedbackText.textContent = '';
+        hideLoading();
         showQuestion();
     } catch (error) {
         console.error('Error generating question:', error);
         questionText.textContent = 'Error generating question. Please try again.';
-    } finally {
         hideLoading();
     }
 }
@@ -229,6 +226,12 @@ function getTopicDescription(unit) {
 }
 
 async function handleSubmitAnswer() {
+    if (!answerInput.value.trim()) {
+        alert('Please enter an answer before submitting.');
+        return;
+    }
+
+    showLoading();
     const userAnswer = answerInput.value;
     
     const prompt = `You are an expert Computer Science teacher marking a GCSE student's answer.
@@ -298,30 +301,29 @@ IMPROVEMENTS END`;
         }
 
         // Only show improvements if they exist and the student didn't get full marks
-        if (improvementsMatch && !marksMatch[1].includes('/')) {
-            const improvements = improvementsMatch[1].trim();
-            feedbackHTML += `<div class="improvements-section">
-                <h3>Areas for Improvement:</h3>
-                <p>${improvements}</p>
-            </div>`;
+        if (improvementsMatch && marksMatch) {
+            const marks = marksMatch[1].trim();
+            const [scored, total] = marks.split('/').map(n => parseInt(n));
+            if (scored < total) {
+                const improvements = improvementsMatch[1].trim();
+                feedbackHTML += `<div class="improvements-section">
+                    <h3>Areas for Improvement:</h3>
+                    <p>${improvements}</p>
+                </div>`;
+            }
         }
 
         feedbackText.innerHTML = feedbackHTML;
+        hideLoading();
         showFeedback();
     } catch (error) {
         console.error('Error:', error);
         feedbackText.textContent = 'Error generating feedback. Please try again.';
+        hideLoading();
     }
 }
 
 function getNextQuestion() {
-    // Reset UI state
-    questionText.style.display = 'block';
-    answerInput.style.display = 'block';
-    submitButton.style.display = 'block';
-    feedbackContainer.style.display = 'none';
-    nextQuestionButton.style.display = 'none';
-    
-    // Generate new question
+    showQuestion();
     generateQuestion();
 }
