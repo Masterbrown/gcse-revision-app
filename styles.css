@@ -218,88 +218,46 @@ button:active {
     transform: translateY(0);
 }
 
-.feedback {
-    background: var(--background-color);
-    border-radius: var(--border-radius);
-    padding: var(--padding-medium);
-    margin-top: var(--padding-medium);
-    backdrop-filter: blur(10px);
-}
-
-/* Reset background for feedback container */
+/* Feedback Container */
 #feedback-container {
-    background: none !important;
-    backdrop-filter: none !important;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid rgba(37, 99, 235, 0.1);
 }
 
 #feedback-text {
-    background: none !important;
-    backdrop-filter: none !important;
-    box-shadow: none !important;
+    background: none;
 }
 
-/* Style each feedback section */
-#feedback-text > div {
-    padding: 20px !important;
-    margin: 15px 0 !important;
-    border-radius: 10px !important;
-    background: none !important;
-    backdrop-filter: none !important;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
-    border: none !important;
-    color: white !important;
+.feedback-box {
+    margin: 15px 0;
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
 }
 
-/* Score section - Purple */
-#feedback-text > div.feedback-score {
-    background-color: #9c27b0 !important;
-    font-weight: bold !important;
-    font-size: 1.1em !important;
-}
-
-/* Strengths section - Green */
-#feedback-text > div.feedback-strengths {
-    background-color: #4caf50 !important;
-}
-
-/* Improvements section - Red */
-#feedback-text > div.feedback-improvements {
-    background-color: #f44336 !important;
-}
-
-/* Model Answer section - Blue */
-#feedback-text > div.feedback-model {
-    background-color: #2196f3 !important;
-    margin-top: 25px !important;
-}
-
-/* Override any inherited styles */
-#feedback-text > div * {
-    color: white !important;
-    background: none !important;
-}
-
-#feedback-text .feedback-score {
+.feedback-box.score {
     background-color: #9c27b0;
-    color: white;
     font-weight: bold;
-    font-size: 1.1em;
 }
 
-#feedback-text .feedback-strengths {
+.feedback-box.strengths {
     background-color: #4caf50;
-    color: white;
 }
 
-#feedback-text .feedback-improvements {
+.feedback-box.improvements {
     background-color: #f44336;
-    color: white;
 }
 
-#feedback-text .feedback-model {
+.feedback-box.model {
     background-color: #2196f3;
-    color: white;
     margin-top: 25px;
+}
+
+.feedback-box .title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 1.1em;
 }
 
 .hidden {
