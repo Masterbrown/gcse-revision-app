@@ -245,23 +245,27 @@ ${currentMarkScheme}
 The student's answer:
 ${userAnswer}
 
-Please mark this answer following AQA's positive marking approach:
-1. Award marks for valid points that match the mark scheme
-2. Be specific about which points from the mark scheme were met
-3. Only provide improvement suggestions if the student didn't get full marks
+Please provide detailed feedback following these guidelines:
+1. First, state the marks awarded based on the mark scheme
+2. Then, highlight what the student did well (points that earned marks)
+3. If they didn't get full marks, explain what they missed or could improve
+4. Finally, provide a model answer that would achieve full marks
 
-Format your response as follows:
+Format your response EXACTLY as follows:
 MARKS START
 X/Y marks
 MARKS END
-FEEDBACK START
-(explanation of marks awarded)
-FEEDBACK END
+
+STRENGTHS START
+(list ONLY the points the student got correct and what they did well)
+STRENGTHS END
+
 IMPROVEMENTS START
-(only include this section if student didn't get full marks - suggest specific improvements to reach full marks)
+(ONLY if they didn't get full marks, list what they missed or could have done better)
 IMPROVEMENTS END
+
 MODEL ANSWER START
-(provide a model answer that would achieve full marks)
+(provide a clear, complete answer that would achieve full marks)
 MODEL ANSWER END`;
 
     try {
@@ -285,26 +289,28 @@ MODEL ANSWER END`;
 
         // Extract sections using regex
         const marksMatch = content.match(/MARKS START\n([\s\S]*?)\nMARKS END/);
-        const feedbackMatch = content.match(/FEEDBACK START\n([\s\S]*?)\nFEEDBACK END/);
+        const strengthsMatch = content.match(/STRENGTHS START\n([\s\S]*?)\nSTRENGTHS END/);
         const improvementsMatch = content.match(/IMPROVEMENTS START\n([\s\S]*?)\nIMPROVEMENTS END/);
         const modelAnswerMatch = content.match(/MODEL ANSWER START\n([\s\S]*?)\nMODEL ANSWER END/);
 
         let feedbackHTML = '';
 
+        // Always show marks
         if (marksMatch) {
             const marks = marksMatch[1].trim();
             feedbackHTML += `<div class="marks"><strong>${marks}</strong></div>`;
         }
 
-        if (feedbackMatch) {
-            const feedback = feedbackMatch[1].trim();
+        // Always show strengths (what they did well)
+        if (strengthsMatch) {
+            const strengths = strengthsMatch[1].trim();
             feedbackHTML += `<div class="feedback-section">
-                <h3>Feedback:</h3>
-                <p>${feedback}</p>
+                <h3>What You Did Well:</h3>
+                <p>${strengths}</p>
             </div>`;
         }
 
-        // Only show improvements if they exist and the student didn't get full marks
+        // Only show improvements if they didn't get full marks
         if (improvementsMatch && marksMatch) {
             const marks = marksMatch[1].trim();
             const [scored, total] = marks.split('/').map(n => parseInt(n));
