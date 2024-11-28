@@ -154,12 +154,13 @@ const unitKeywords = {
 
 async function generateQuestion() {
     showLoading();
-    const examples = getExampleQuestions(currentUnit);
-    const topicDescription = getTopicDescription(currentUnit);
-    const keywords = unitKeywords[currentUnit];
-    console.log('Generating question for unit:', currentUnit);
-    
-    let prompt = `You are an expert Computer Science teacher creating exam questions for GCSE students.
+    try {
+        const examples = getExampleQuestions(currentUnit);
+        const topicDescription = getTopicDescription(currentUnit);
+        const keywords = unitKeywords[currentUnit];
+        console.log('Generating question for unit:', currentUnit);
+        
+        let prompt = `You are an expert Computer Science teacher creating exam questions for GCSE students.
 You MUST create a question SPECIFICALLY for unit ${currentUnit} that tests the following topics ONLY:
 ${topicDescription}
 
@@ -170,28 +171,28 @@ IMPORTANT RULES:
 4. The question difficulty MUST be at GCSE level (14-16 year olds)
 5. Make the question practical and relevant to real-world applications`;
 
-    if (currentUnit === '3.2') {
-        prompt += `\n\nFor Python programming questions:
+        if (currentUnit === '3.2') {
+            prompt += `\n\nFor Python programming questions:
 1. Always wrap Python code blocks with \`\`\`python and \`\`\` markers
 2. Ensure proper indentation in the code
 3. Include clear comments where helpful
 4. Format the code exactly as it would appear in a Python editor
 5. Focus on: ${keywords.join(', ')}`;
-    } else if (currentUnit === '3.3') {
-        prompt += `\n\nFor number conversion questions:
+        } else if (currentUnit === '3.3') {
+            prompt += `\n\nFor number conversion questions:
 1. Include clear working out steps in the mark scheme
 2. Use appropriate notation (e.g., binary numbers prefixed with '0b')
 3. Show the conversion process step by step
 4. Focus on: ${keywords.join(', ')}`;
-    } else if (currentUnit === '3.4') {
-        prompt += `\n\nFor Boolean logic and hardware questions:
+        } else if (currentUnit === '3.4') {
+            prompt += `\n\nFor Boolean logic and hardware questions:
 1. Use proper Boolean algebra notation
 2. Include truth tables where relevant
 3. Use correct technical terminology for hardware components
 4. Focus on: ${keywords.join(', ')}`;
-    }
+        }
 
-    prompt += `\n\nHere are example questions and mark schemes from this unit to guide your style:
+        prompt += `\n\nHere are example questions and mark schemes from this unit to guide your style:
 
 ${examples}
 
@@ -213,7 +214,6 @@ MARK SCHEME START
 (list marking points, with mark allocations)
 MARK SCHEME END`;
 
-    try {
         console.log('Sending request to generate question...');
         const response = await fetch(API_ENDPOINT, {
             method: 'POST',
@@ -228,11 +228,17 @@ MARK SCHEME END`;
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            console.error('API response not OK:', response.status, response.statusText);
+            throw new Error(`Failed to generate question (HTTP ${response.status})`);
         }
 
         const data = await response.json();
         console.log('Received response:', data);
+
+        if (!data || (!data.content && !data.message)) {
+            console.error('Invalid API response:', data);
+            throw new Error('Invalid API response format');
+        }
 
         // Handle both possible response formats
         const content = data.content || data.message || '';
@@ -242,7 +248,8 @@ MARK SCHEME END`;
         const markSchemeMatch = content.match(/MARK SCHEME START\n([\s\S]*?)\nMARK SCHEME END/);
 
         if (!questionMatch || !markSchemeMatch) {
-            throw new Error('Invalid response format');
+            console.error('Invalid question format in response:', content);
+            throw new Error('The generated question format was invalid. Please try again.');
         }
 
         const questionText = questionMatch[1].trim();
@@ -255,25 +262,22 @@ MARK SCHEME END`;
         );
 
         if (!hasKeyword) {
-            throw new Error('Generated question does not contain relevant unit keywords');
+            console.error('Question missing keywords:', questionText);
+            throw new Error('The generated question was not relevant to the selected unit. Please try again.');
         }
 
         currentQuestion = questionText;
         currentMarkScheme = markScheme;
         console.log('Successfully extracted question and mark scheme');
         
-        if (questionText) {
-            displayQuestion(currentQuestion);
-            hideLoading();
-            showQuestion();
-        } else {
-            throw new Error('Question text element not found');
-        }
+        displayQuestion(currentQuestion);
+        showQuestion();
     } catch (error) {
-        console.error('Error generating question:', error);
+        console.error('Error in generateQuestion:', error);
         if (questionText) {
-            questionText.textContent = `Error generating question: ${error.message}. Please try again.`;
+            questionText.textContent = `Error: ${error.message}. Please try selecting the unit again.`;
         }
+    } finally {
         hideLoading();
     }
 }
