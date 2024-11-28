@@ -206,6 +206,72 @@ button:hover {
     background: var(--accent-primary);
 }
 
+/* Welcome Screen Styles */
+#welcome-screen {
+    text-align: center;
+    padding: 2rem;
+}
+
+#welcome-screen h2 {
+    color: var(--text-primary);
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.unit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.unit-button {
+    background: rgba(37, 99, 235, 0.1);
+    border: 2px solid var(--accent-primary);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.unit-button:hover {
+    background: rgba(37, 99, 235, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.unit-button h3 {
+    color: var(--text-primary);
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+}
+
+.unit-button p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.back-button:hover {
+    color: var(--accent-primary);
+}
+
 /* Media Queries */
 @media (min-width: 768px) {
     .title {
@@ -239,6 +305,16 @@ button:hover {
     button {
         width: 100%;
         margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .unit-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .unit-button {
+        padding: 1rem;
     }
 }
 

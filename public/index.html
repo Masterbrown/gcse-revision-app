@@ -19,9 +19,48 @@
         </header>
         
         <main>
-            <div id="question-container">
+            <div id="welcome-screen">
+                <h2>Select a Unit to Practice</h2>
+                <div class="unit-grid">
+                    <button class="unit-button" data-unit="3.1">
+                        <h3>3.1 Fundamentals of Algorithms</h3>
+                        <p>Computational thinking, algorithms, searching and sorting</p>
+                    </button>
+                    <button class="unit-button" data-unit="3.2">
+                        <h3>3.2 Programming</h3>
+                        <p>Data types, arithmetic, selection, iteration, arrays</p>
+                    </button>
+                    <button class="unit-button" data-unit="3.3">
+                        <h3>3.3 Data Representation</h3>
+                        <p>Numbers, text, images, compression</p>
+                    </button>
+                    <button class="unit-button" data-unit="3.4">
+                        <h3>3.4 Computer Systems</h3>
+                        <p>Hardware, software, Boolean logic, software classification</p>
+                    </button>
+                    <button class="unit-button" data-unit="3.5">
+                        <h3>3.5 Computer Networks</h3>
+                        <p>Networks, topologies, protocols, security</p>
+                    </button>
+                    <button class="unit-button" data-unit="3.6">
+                        <h3>3.6 Cyber Security</h3>
+                        <p>Threats, prevention methods, encryption</p>
+                    </button>
+                    <button class="unit-button" data-unit="3.7">
+                        <h3>3.7 Databases</h3>
+                        <p>Relational databases and SQL</p>
+                    </button>
+                    <button class="unit-button" data-unit="3.8">
+                        <h3>3.8 Impact of Technology</h3>
+                        <p>Ethical, legal and environmental impacts</p>
+                    </button>
+                </div>
+            </div>
+
+            <div id="question-container" class="hidden">
                 <div id="loading" class="hidden">Loading...</div>
                 <div id="current-question" class="hidden">
+                    <button id="back-to-units" class="back-button">← Back to Units</button>
                     <h2>Question:</h2>
                     <p id="question-text"></p>
                     <textarea id="answer-input" placeholder="Type your answer here..."></textarea>

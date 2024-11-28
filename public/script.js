@@ -2,8 +2,10 @@
 const API_ENDPOINT = '/.netlify/functions/chat';
 let isInitialized = false;
 let currentQuestion = '';
+let currentUnit = '';
 
 // DOM Elements
+const welcomeScreen = document.getElementById('welcome-screen');
 const loadingElement = document.getElementById('loading');
 const currentQuestionElement = document.getElementById('current-question');
 const questionText = document.getElementById('question-text');
@@ -12,15 +14,34 @@ const submitButton = document.getElementById('submit-answer');
 const feedbackContainer = document.getElementById('feedback-container');
 const feedbackText = document.getElementById('feedback-text');
 const nextQuestionButton = document.getElementById('next-question');
+const backToUnitsButton = document.getElementById('back-to-units');
+const unitButtons = document.querySelectorAll('.unit-button');
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', initializeApp);
 submitButton.addEventListener('click', handleSubmitAnswer);
 nextQuestionButton.addEventListener('click', getNextQuestion);
+backToUnitsButton.addEventListener('click', showWelcomeScreen);
+
+// Add click event listeners to unit buttons
+unitButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        currentUnit = button.dataset.unit;
+        welcomeScreen.classList.add('hidden');
+        currentQuestionElement.classList.remove('hidden');
+        generateQuestion();
+    });
+});
+
+function showWelcomeScreen() {
+    welcomeScreen.classList.remove('hidden');
+    currentQuestionElement.classList.add('hidden');
+    feedbackContainer.classList.add('hidden');
+}
 
 async function initializeApp() {
     isInitialized = true;
-    await generateQuestion();
+    showWelcomeScreen();
 }
 
 function showLoading() {
@@ -61,15 +82,9 @@ Requirements:
 3. For questions worth 4+ marks, break into parts (a), (b), etc.
 4. Use technical vocabulary from the AQA specification
 5. Match AQA's assessment objectives (AO1: Knowledge, AO2: Application, AO3: Analysis)
-6. Focus on one of these AQA specification topics:
-   - 3.1 Fundamentals of algorithms
-   - 3.2 Programming
-   - 3.3 Fundamentals of data representation
-   - 3.4 Computer systems
-   - 3.5 Fundamentals of computer networks
-   - 3.6 Cyber security
-   - 3.7 Relational databases and SQL
-   - 3.8 Ethical, legal and environmental impacts
+6. The question must be specifically about topic ${currentUnit} from the specification:
+
+${getTopicDescription(currentUnit)}
 
 Generate a question now:`
             })
@@ -92,6 +107,68 @@ Generate a question now:`
         questionText.textContent = 'Error generating question. Please try again.';
         hideLoading();
     }
+}
+
+function getTopicDescription(unit) {
+    const topics = {
+        '3.1': `Fundamentals of algorithms:
+- Computational thinking
+- Algorithms
+- Programming fundamentals
+- Types of programming language
+- Searching algorithms
+- Sorting algorithms`,
+        '3.2': `Programming:
+- Data types
+- Programming concepts
+- Arithmetic operations
+- Arrays
+- File handling
+- SQL
+- Validation`,
+        '3.3': `Data representation:
+- Number bases
+- Converting between number bases
+- Units of information
+- Binary arithmetic
+- Character encoding
+- Image representation
+- Sound representation
+- Compression`,
+        '3.4': `Computer systems:
+- Hardware and software
+- Boolean logic
+- Software classification
+- Systems architecture
+- Memory
+- Secondary storage
+- System security`,
+        '3.5': `Computer networks:
+- Networks and topologies
+- Wired and wireless networks
+- Protocols and layers
+- Network security
+- Cyber security`,
+        '3.6': `Cyber security:
+- Cyber security threats
+- Social engineering
+- Malware
+- Detection and prevention
+- Network forensics`,
+        '3.7': `Databases:
+- Relational databases
+- SQL
+- Database design
+- Normalisation
+- Entity relationship diagrams`,
+        '3.8': `Impacts of technology:
+- Ethical issues
+- Legal issues
+- Environmental issues
+- Privacy issues
+- Cultural issues`
+    };
+    return topics[unit] || 'General Computer Science topics';
 }
 
 async function handleSubmitAnswer() {
