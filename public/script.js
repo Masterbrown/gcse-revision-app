@@ -5,23 +5,20 @@ let currentQuestion = '';
 let currentMarkScheme = '';
 let currentUnit = '';
 let questionExamples = {};
+let extractedQuestions = {};
 
-// Load question examples when the page loads
-fetch('/question_examples.json')
-    .then(response => response.json())
-    .then(data => {
-        questionExamples = data;
-        console.log('Loaded question examples for units:', Object.keys(questionExamples));
-    })
-    .catch(error => {
-        console.error('Error loading question examples:', error);
-        // Use default examples if loading fails
-        questionExamples = {
-            '3.1': `Example Question: What is an algorithm? [2 marks]
+// Load both question examples and extracted questions when the page loads
+Promise.all([
+    fetch('/question_examples.json')
+        .then(response => response.json())
+        .catch(error => {
+            console.error('Error loading question examples:', error);
+            return {
+                '3.1': `Example Question: What is an algorithm? [2 marks]
 Mark Scheme: 
 • A step-by-step procedure to solve a problem (1)
 • Must be unambiguous/precise/detailed (1)`,
-            '3.2': `Example Question: Write a Python function that adds two numbers. [3 marks]
+                '3.2': `Example Question: Write a Python function that adds two numbers. [3 marks]
 \`\`\`python
 def add_numbers(a, b):
     return a + b
@@ -30,12 +27,25 @@ Mark Scheme:
 • Correct function definition with parameters (1)
 • Return statement used (1)
 • Correct addition of parameters (1)`,
-            '3.3': `Example Question: Convert the denary number 53 to binary. [2 marks]
+                '3.3': `Example Question: Convert the denary number 53 to binary. [2 marks]
 Mark Scheme:
 • Correct working shown (1)
 • Answer: 110101 (1)`
-        };
-    });
+            };
+        }),
+    fetch('/extracted_questions.json')
+        .then(response => response.json())
+        .catch(error => {
+            console.error('Error loading extracted questions:', error);
+            return {};
+        })
+])
+.then(([examples, extracted]) => {
+    questionExamples = examples;
+    extractedQuestions = extracted;
+    console.log('Loaded question examples for units:', Object.keys(questionExamples));
+    console.log('Loaded extracted questions for units:', Object.keys(extractedQuestions));
+});
 
 // DOM Elements
 const welcomeScreen = document.getElementById('welcome-screen');
@@ -112,13 +122,23 @@ async function initializeApp() {
 }
 
 function getExampleQuestions(unit) {
-    // Return unit-specific examples if available, otherwise return default examples
-    return questionExamples[unit] || questionExamples['3.1'] || 
-        `Example Question 1: "What is an algorithm?"
-This shows how to format a knowledge-based question.
-
-Example Question 2: "Explain how a binary search algorithm works."
-This shows how to format a practical application question.`;
+    let examples = questionExamples[unit] || '';
+    
+    // Add extracted questions from PDFs if available
+    const extractedUnitQuestions = extractedQuestions[unit] || [];
+    if (extractedUnitQuestions.length > 0) {
+        // Add up to 3 random extracted questions
+        const selectedQuestions = extractedUnitQuestions
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 3);
+            
+        examples += '\n\nExtracted example questions:\n' + 
+            selectedQuestions.map(q => 
+                `${q.question}\n${q.markScheme}`
+            ).join('\n\n');
+    }
+    
+    return examples;
 }
 
 async function generateQuestion() {
