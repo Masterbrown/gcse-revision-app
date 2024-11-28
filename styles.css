@@ -233,6 +233,8 @@ button:active {
 }
 
 #feedback-text {
+    width: 100%;
+    margin-top: 20px;
     background-color: rgba(17, 24, 39, 0.9);
     padding: 1.5rem;
     border-radius: var(--border-radius);
@@ -278,28 +280,29 @@ button:active {
     border-radius: 10px;
     white-space: pre-wrap;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
 }
 
 .feedback-score {
-    background-color: #9c27b0;
-    color: white;
+    background-color: #9c27b0 !important;
+    color: white !important;
     font-weight: bold;
     font-size: 1.1em;
 }
 
 .feedback-strengths {
-    background-color: #4caf50;
-    color: white;
+    background-color: #4caf50 !important;
+    color: white !important;
 }
 
 .feedback-improvements {
-    background-color: #f44336;
-    color: white;
+    background-color: #f44336 !important;
+    color: white !important;
 }
 
 .feedback-model {
-    background-color: #2196f3;
-    color: white;
+    background-color: #2196f3 !important;
+    color: white !important;
     margin-top: 25px;
 }
 

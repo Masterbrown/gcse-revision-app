@@ -130,11 +130,11 @@ async function handleSubmitAnswer() {
             formattedFeedback += `<div class="feedback-model">Model Answer:${modelSection.replace(/\n/g, '<br>')}</div>`;
         }
         
-        feedbackText.innerHTML = formattedFeedback;
+        document.getElementById('feedback-text').innerHTML = formattedFeedback;
         showFeedback();
     } catch (error) {
         console.error('Error:', error);
-        feedbackText.textContent = 'Error generating feedback. Please try again.';
+        document.getElementById('feedback-text').textContent = 'Error generating feedback. Please try again.';
     } finally {
         hideLoading();
     }
