@@ -45,7 +45,24 @@ Mark Scheme:
     extractedQuestions = extracted;
     console.log('Loaded question examples for units:', Object.keys(questionExamples));
     console.log('Loaded extracted questions for units:', Object.keys(extractedQuestions));
+})
+.catch(error => {
+    console.error('Error initializing question data:', error);
+    questionExamples = {};
+    extractedQuestions = {};
 });
+
+// Unit-specific keywords
+const unitKeywords = {
+    '3.1': ['algorithm', 'computational', 'thinking', 'pseudocode', 'flowchart', 'search', 'sort', 'bubble', 'merge', 'insertion'],
+    '3.2': ['python', 'programming', 'function', 'variable', 'loop', 'array', 'list', 'if', 'else', 'while', 'for'],
+    '3.3': ['binary', 'denary', 'hexadecimal', 'conversion', 'bits', 'bytes', 'ascii', 'unicode', 'bitmap', 'resolution', 'sample'],
+    '3.4': ['cpu', 'memory', 'ram', 'rom', 'cache', 'register', 'boolean', 'logic', 'and', 'or', 'not', 'hardware'],
+    '3.5': ['network', 'topology', 'protocol', 'tcp/ip', 'ethernet', 'wifi', 'router', 'switch', 'packet', 'ip'],
+    '3.6': ['cyber', 'security', 'threat', 'malware', 'virus', 'phishing', 'ddos', 'encryption', 'firewall'],
+    '3.7': ['database', 'sql', 'table', 'query', 'primary key', 'foreign key', 'relationship', 'entity'],
+    '3.8': ['ethical', 'legal', 'environmental', 'privacy', 'digital', 'impact', 'society']
+};
 
 // DOM Elements
 const welcomeScreen = document.getElementById('welcome-screen');
@@ -87,6 +104,15 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('click', () => {
             currentUnit = button.id;
             console.log('Selected unit:', currentUnit);
+            
+            if (!unitKeywords[currentUnit]) {
+                console.error('Invalid unit selected:', currentUnit);
+                if (questionText) {
+                    questionText.textContent = 'Error: Invalid unit selected. Please try again.';
+                }
+                return;
+            }
+
             if (welcomeScreen) welcomeScreen.classList.add('hidden');
             if (questionContainer) {
                 questionContainer.classList.remove('hidden');
@@ -141,23 +167,21 @@ function getExampleQuestions(unit) {
     return examples;
 }
 
-const unitKeywords = {
-    '3.1': ['algorithm', 'computational', 'thinking', 'pseudocode', 'flowchart', 'search', 'sort', 'bubble', 'merge', 'insertion'],
-    '3.2': ['python', 'programming', 'function', 'variable', 'loop', 'array', 'list', 'if', 'else', 'while', 'for'],
-    '3.3': ['binary', 'denary', 'hexadecimal', 'conversion', 'bits', 'bytes', 'ascii', 'unicode', 'bitmap', 'resolution', 'sample'],
-    '3.4': ['cpu', 'memory', 'ram', 'rom', 'cache', 'register', 'boolean', 'logic', 'and', 'or', 'not', 'hardware'],
-    '3.5': ['network', 'topology', 'protocol', 'tcp/ip', 'ethernet', 'wifi', 'router', 'switch', 'packet', 'ip'],
-    '3.6': ['cyber', 'security', 'threat', 'malware', 'virus', 'phishing', 'ddos', 'encryption', 'firewall'],
-    '3.7': ['database', 'sql', 'table', 'query', 'primary key', 'foreign key', 'relationship', 'entity'],
-    '3.8': ['ethical', 'legal', 'environmental', 'privacy', 'digital', 'impact', 'society']
-};
-
 async function generateQuestion() {
     showLoading();
     try {
+        if (!currentUnit || !unitKeywords[currentUnit]) {
+            throw new Error('Invalid unit selected. Please select a valid unit.');
+        }
+
         const examples = getExampleQuestions(currentUnit);
         const topicDescription = getTopicDescription(currentUnit);
-        const keywords = unitKeywords[currentUnit];
+        const keywords = unitKeywords[currentUnit] || [];
+        
+        if (keywords.length === 0) {
+            throw new Error('No keywords found for the selected unit. Please try another unit.');
+        }
+
         console.log('Generating question for unit:', currentUnit);
         
         let prompt = `You are an expert Computer Science teacher creating exam questions for GCSE students.
