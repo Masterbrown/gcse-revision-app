@@ -268,6 +268,38 @@ button:active {
     text-shadow: 0 0 10px rgba(37, 99, 235, 0.2);
 }
 
+/* Feedback Styles */
+.feedback-score,
+.feedback-strengths,
+.feedback-improvements,
+.feedback-model {
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    white-space: pre-wrap;
+}
+
+.feedback-score {
+    background-color: #9c27b0;
+    color: white;
+}
+
+.feedback-strengths {
+    background-color: #4caf50;
+    color: white;
+}
+
+.feedback-improvements {
+    background-color: #f44336;
+    color: white;
+}
+
+.feedback-model {
+    background-color: #2196f3;
+    color: white;
+    margin-top: 20px;
+}
+
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
     width: 8px;

@@ -33,7 +33,7 @@ async function generateQuestion() {
             },
             body: JSON.stringify({
                 type: 'question',
-                prompt: 'You are a GCSE Computer Science teacher creating exam questions. Generate a question from the AQA GCSE Computer Science specification (8525).\n\nRequirements:\n1. The question should follow AQA GCSE Computer Science exam style\n2. Include mark allocation in square brackets at the end of the question (e.g., [4 marks])\n3. Mark allocation should be between 2-8 marks\n4. The question should be challenging but appropriate for GCSE level\n5. Only provide the question with mark allocation, no answers\n\nExample format:\nExplain how the CPU uses the fetch-execute cycle to run a program. [4 marks]'
+                prompt: 'You are a GCSE Computer Science teacher creating exam questions. Generate a question from the AQA GCSE Computer Science specification (8525).\n\nRequirements:\n1. The question should follow AQA GCSE Computer Science exam style\n2. Include mark allocation by writing "X marks" at the end of the question (e.g., [2 marks])\n3. Mark allocation should be between 2-8 marks\n4. The question should be challenging but appropriate for GCSE level\n5. Only provide the question with mark allocation, no answers\n\nExample format:\nExplain how the CPU uses the fetch-execute cycle to run a program. [4 marks]'
             })
         });
 
@@ -87,12 +87,29 @@ async function handleSubmitAnswer() {
             },
             body: JSON.stringify({
                 type: 'feedback',
-                prompt: `Question: ${currentQuestion}\n\nStudent's Answer: ${answer}\n\nAs a GCSE Computer Science teacher, provide constructive feedback on this student's answer. The feedback should be encouraging and personal.\n\nProvide feedback in this format:\n\nStrengths:\n[Highlight what the student did well, being specific about correct concepts and good explanations]\n\nAreas for Improvement:\n[Provide constructive suggestions on what could be added or clarified, relating to missing marks]\n\nModel Answer:\n[Provide a clear, comprehensive answer that would achieve full marks, written in student-friendly language]\n\nRemember to:\n1. Be encouraging and speak directly to the student\n2. Relate feedback to the mark scheme and mark allocation\n3. Use clear, student-friendly language\n4. Be specific about concepts and explanations`
+                prompt: `Question: ${currentQuestion}\n\nStudent's Answer: ${answer}\n\nAs a GCSE Computer Science teacher, provide constructive feedback on this student's answer. The feedback should be encouraging and personal.\n\nProvide feedback in this EXACT format:\n\nScore:\n[State the score they achieved out of the total marks available]\n\nStrengths:\n[Highlight what the student did well, being specific about correct concepts and good explanations]\n\nAreas for Improvement:\n[Provide constructive suggestions on what could be added or clarified, relating to missing marks]\n\nModel Answer:\n[Provide a clear, comprehensive answer that would achieve full marks, written in student-friendly language]\n\nRemember to:\n1. Be encouraging and speak directly to the student\n2. Relate feedback to the mark scheme and mark allocation\n3. Use clear, student-friendly language\n4. Be specific about concepts and explanations`
             })
         });
 
         const data = await response.json();
-        feedbackText.innerHTML = data.message.replace(/\n/g, '<br>');
+        
+        // Split the feedback into sections
+        const sections = data.message.split('\n\n');
+        let formattedFeedback = '';
+        
+        sections.forEach(section => {
+            if (section.startsWith('Score:')) {
+                formattedFeedback += `<div class="feedback-score">${section}</div>`;
+            } else if (section.startsWith('Strengths:')) {
+                formattedFeedback += `<div class="feedback-strengths">${section}</div>`;
+            } else if (section.startsWith('Areas for Improvement:')) {
+                formattedFeedback += `<div class="feedback-improvements">${section}</div>`;
+            } else if (section.startsWith('Model Answer:')) {
+                formattedFeedback += `<div class="feedback-model">${section}</div>`;
+            }
+        });
+        
+        feedbackText.innerHTML = formattedFeedback;
         showFeedback();
     } catch (error) {
         console.error('Error:', error);
