@@ -1,5 +1,5 @@
 // Constants
-const API_ENDPOINT = '/.netlify/functions/chat';
+const API_ENDPOINT = '/api/chat';  // Update API endpoint
 let isInitialized = false;
 let currentQuestion = '';
 let currentMarkScheme = '';
@@ -7,13 +7,35 @@ let currentUnit = '';
 let questionExamples = {};
 
 // Load question examples when the page loads
-fetch('question_examples.json')
+fetch('/question_examples.json')
     .then(response => response.json())
     .then(data => {
         questionExamples = data;
         console.log('Loaded question examples for units:', Object.keys(questionExamples));
     })
-    .catch(error => console.error('Error loading question examples:', error));
+    .catch(error => {
+        console.error('Error loading question examples:', error);
+        // Use default examples if loading fails
+        questionExamples = {
+            '3.1': `Example Question: What is an algorithm? [2 marks]
+Mark Scheme: 
+• A step-by-step procedure to solve a problem (1)
+• Must be unambiguous/precise/detailed (1)`,
+            '3.2': `Example Question: Write a Python function that adds two numbers. [3 marks]
+\`\`\`python
+def add_numbers(a, b):
+    return a + b
+\`\`\`
+Mark Scheme:
+• Correct function definition with parameters (1)
+• Return statement used (1)
+• Correct addition of parameters (1)`,
+            '3.3': `Example Question: Convert the denary number 53 to binary. [2 marks]
+Mark Scheme:
+• Correct working shown (1)
+• Answer: 110101 (1)`
+        };
+    });
 
 // DOM Elements
 const welcomeScreen = document.getElementById('welcome-screen');
@@ -33,10 +55,19 @@ const feedbackSection = document.getElementById('feedback-section');
 const questionSection = document.getElementById('current-question');
 
 // Event Listeners
-document.addEventListener('DOMContentLoaded', initializeApp);
-submitButton.addEventListener('click', handleSubmitAnswer);
-nextQuestionButton.addEventListener('click', getNextQuestion);
-backToUnitsButton.addEventListener('click', showWelcomeScreen);
+document.addEventListener('DOMContentLoaded', () => {
+    const unitButtons = document.querySelectorAll('.unit-button');
+    unitButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            currentUnit = button.id;
+            console.log('Selected unit:', currentUnit);
+            welcomeScreen.classList.add('hidden');
+            questionContainer.classList.remove('hidden');
+            currentQuestionElement.classList.remove('hidden');
+            generateQuestion();
+        });
+    });
+});
 
 // Add click event listeners to unit buttons
 unitButtons.forEach(button => {
@@ -94,6 +125,7 @@ This shows how to format a practical application question.`;
 async function generateQuestion() {
     showLoading();
     const examples = getExampleQuestions(currentUnit);
+    console.log('Generating question for unit:', currentUnit);
     
     let prompt = `You are an expert Computer Science teacher creating exam questions for GCSE students.
 Create a new question in the style of AQA GCSE Computer Science exams for unit ${currentUnit}.`;
@@ -124,7 +156,7 @@ MARK SCHEME START
 MARK SCHEME END`;
 
     try {
-        console.log('Sending request to generate question for unit:', currentUnit);
+        console.log('Sending request to generate question...');
         const response = await fetch(API_ENDPOINT, {
             method: 'POST',
             headers: {
@@ -137,8 +169,7 @@ MARK SCHEME END`;
         });
 
         if (!response.ok) {
-            console.error('API response not ok:', response.status, response.statusText);
-            throw new Error('Failed to generate question');
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
@@ -151,20 +182,20 @@ MARK SCHEME END`;
         const questionMatch = content.match(/QUESTION START\n([\s\S]*?)\nQUESTION END/);
         const markSchemeMatch = content.match(/MARK SCHEME START\n([\s\S]*?)\nMARK SCHEME END/);
 
-        if (questionMatch && markSchemeMatch) {
-            currentQuestion = questionMatch[1].trim();
-            currentMarkScheme = markSchemeMatch[1].trim();
-            console.log('Successfully extracted question and mark scheme');
-            displayQuestion(currentQuestion);
-            hideLoading();
-        } else {
-            console.error('Failed to parse response format:', content);
-            throw new Error('Invalid question format received');
+        if (!questionMatch || !markSchemeMatch) {
+            throw new Error('Invalid response format');
         }
+
+        currentQuestion = questionMatch[1].trim();
+        currentMarkScheme = markSchemeMatch[1].trim();
+        console.log('Successfully extracted question and mark scheme');
         
+        displayQuestion(currentQuestion);
+        hideLoading();
+        showQuestion();
     } catch (error) {
         console.error('Error generating question:', error);
-        questionText.textContent = 'Error generating question. Please try again.';
+        questionText.textContent = `Error generating question: ${error.message}. Please try again.`;
         hideLoading();
     }
 }
