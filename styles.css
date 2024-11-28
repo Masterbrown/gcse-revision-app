@@ -222,43 +222,51 @@ button:active {
 #feedback-section {
     margin-top: 20px;
     width: 100%;
-    background: none !important; /* Force no background */
+    background: none !important;
 }
 
+/* Score Section - Purple */
 #score-container {
     background-color: #9c27b0 !important;
     padding: 1.5rem;
     border-radius: 8px;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     line-height: 1.6;
     color: white !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* Strengths Section - Green */
 #strengths-container {
     background-color: #4caf50 !important;
     padding: 1.5rem;
     border-radius: 8px;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     line-height: 1.6;
     color: white !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* Improvements Section - Red */
 #improvements-container {
     background-color: #f44336 !important;
     padding: 1.5rem;
     border-radius: 8px;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     line-height: 1.6;
     color: white !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* Model Answer Section - Blue */
 #model-container {
     background-color: #2196f3 !important;
     padding: 1.5rem;
     border-radius: 8px;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     line-height: 1.6;
     color: white !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .feedback-title {
@@ -266,6 +274,14 @@ button:active {
     font-size: 1.2em;
     margin-bottom: 1rem;
     color: white !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Remove any old feedback styles */
+#feedback-text {
+    background: none !important;
+    padding: 0 !important;
 }
 
 /* Scrollbar Styling */
