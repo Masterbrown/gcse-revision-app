@@ -60,13 +60,12 @@ async function initializeApp() {
 }
 
 function showLoading() {
-    loadingElement.classList.remove('hidden');
-    currentQuestionElement.classList.add('hidden');
-    feedbackContainer.classList.add('hidden');
+    loadingElement.style.display = 'block';
+    questionText.textContent = 'Generating question...';
 }
 
 function hideLoading() {
-    loadingElement.classList.add('hidden');
+    loadingElement.style.display = 'none';
 }
 
 function showQuestion() {
@@ -90,6 +89,7 @@ This shows how to format a practical application question.`;
 }
 
 async function generateQuestion() {
+    showLoading();
     const examples = getExampleQuestions(currentUnit);
     
     const prompt = `You are an expert Computer Science teacher creating exam questions for GCSE students.
@@ -113,20 +113,28 @@ MARK SCHEME START
 MARK SCHEME END`;
 
     try {
+        console.log('Sending request to generate question for unit:', currentUnit);
         const response = await fetch(API_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ prompt }),
+            body: JSON.stringify({ 
+                prompt,
+                type: 'question'
+            }),
         });
 
         if (!response.ok) {
+            console.error('API response not ok:', response.status, response.statusText);
             throw new Error('Failed to generate question');
         }
 
         const data = await response.json();
-        const content = data.message;
+        console.log('Received response:', data);
+
+        // Handle both possible response formats
+        const content = data.content || data.message || '';
 
         // Extract question and mark scheme using the separators
         const questionMatch = content.match(/QUESTION START\n([\s\S]*?)\nQUESTION END/);
@@ -135,18 +143,22 @@ MARK SCHEME END`;
         if (questionMatch && markSchemeMatch) {
             currentQuestion = questionMatch[1].trim();
             currentMarkScheme = markSchemeMatch[1].trim();
+            console.log('Successfully extracted question and mark scheme');
         } else {
+            console.error('Failed to parse response format:', content);
             throw new Error('Invalid question format received');
         }
         
         // Only display the question, not the mark scheme
         questionText.textContent = currentQuestion;
-        markSchemeText.textContent = currentMarkScheme;
         answerInput.value = '';
+        feedbackText.textContent = '';
         showQuestion();
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error generating question:', error);
         questionText.textContent = 'Error generating question. Please try again.';
+    } finally {
+        hideLoading();
     }
 }
 
