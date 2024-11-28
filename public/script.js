@@ -100,6 +100,8 @@ async function handleSubmitAnswer() {
             throw new Error(data.error || 'Failed to get feedback');
         }
 
+        console.log('Raw feedback message:', data.message); // Debug log for raw message
+
         // Clear previous feedback
         feedbackText.innerHTML = '';
 
@@ -115,23 +117,32 @@ async function handleSubmitAnswer() {
 
         // Parse the feedback sections
         const sections = data.message.split('\n\n');
+        console.log('Split sections:', sections); // Debug log for sections
+
         sections.forEach(section => {
+            console.log('Processing section:', section); // Debug log for current section
+            
             if (section.toLowerCase().includes('score')) {
-                scoreContainer.innerHTML = `<h3>Score</h3>${marked.parse(section.split('Score:')[1])}`;
+                console.log('Found score section');
+                scoreContainer.innerHTML = `<h3>Score</h3>${marked.parse(section.split('Score:')[1] || section)}`;
                 feedbackText.appendChild(scoreContainer);
-            } else if (section.toLowerCase().includes('strength')) {
-                strengthsContainer.innerHTML = `<h3>Strengths</h3>${marked.parse(section.split(/strengths:?/i)[1])}`;
+            } 
+            if (section.toLowerCase().includes('strength')) {
+                console.log('Found strengths section');
+                strengthsContainer.innerHTML = `<h3>Strengths</h3>${marked.parse(section.split(/strengths:?/i)[1] || section)}`;
                 feedbackText.appendChild(strengthsContainer);
-            } else if (section.toLowerCase().includes('improvement') || section.toLowerCase().includes('areas to improve')) {
-                improvementsContainer.innerHTML = `<h3>Areas for Improvement</h3>${marked.parse(section.split(/improvements:?|areas to improve:?/i)[1])}`;
+            } 
+            if (section.toLowerCase().includes('improve')) {
+                console.log('Found improvements section');
+                improvementsContainer.innerHTML = `<h3>Areas for Improvement</h3>${marked.parse(section.split(/improvements:?|areas to improve:?|areas for improvement:?/i)[1] || section)}`;
                 feedbackText.appendChild(improvementsContainer);
-            } else if (section.toLowerCase().includes('model answer')) {
-                modelContainer.innerHTML = `<h3>Model Answer</h3>${marked.parse(section.split(/model answer:?/i)[1])}`;
+            } 
+            if (section.toLowerCase().includes('model')) {
+                console.log('Found model answer section');
+                modelContainer.innerHTML = `<h3>Model Answer</h3>${marked.parse(section.split(/model answer:?/i)[1] || section)}`;
                 feedbackText.appendChild(modelContainer);
             }
         });
-
-        console.log('Feedback sections:', sections); // Debug log to see the sections
 
         hideLoading();
         showFeedback();
