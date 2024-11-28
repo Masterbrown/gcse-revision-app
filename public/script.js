@@ -67,6 +67,23 @@ function showFeedback() {
     feedbackContainer.classList.remove('hidden');
 }
 
+function getExampleQuestions(unit) {
+    const examples = {
+        '3.1': `Example Question 1: "Define the term abstraction. [Total 1 mark]"
+This shows how to format a knowledge-based definition question.
+
+Example Question 2: "A program is being developed that allows users to rate and review movies. A user will enter their rating (out of 10) and a written review for each movie they have watched. Decomposition has been used to break the problem down into smaller sub-problems. Complete the decomposition of this program by stating what should be written in the missing boxes. [Total 2 marks]"
+This shows how to format a scenario-based question with practical application.`,
+        '3.2': `Example Question 1: "State what is meant by the term variable. [Total 1 mark]"
+This shows how to format a knowledge-based definition question.
+
+Example Question 2: "A program stores the names and ages of students in a class. Write an algorithm that will output the average age of all students in the class. [Total 4 marks]"
+This shows how to format a programming problem-solving question.`,
+        // Add examples for other units as PDFs become available
+    };
+    return examples[unit] || examples['3.1']; // Default to 3.1 if unit not found
+}
+
 async function generateQuestion() {
     try {
         console.log('Generating question...');
@@ -81,12 +98,7 @@ async function generateQuestion() {
 
 Reference this AQA-style example from our question bank:
 
-For topic 3.1 (Fundamentals of Algorithms):
-Example Question 1: "Define the term abstraction. [Total 1 mark]"
-This shows how to format a knowledge-based definition question.
-
-Example Question 2: "A program is being developed that allows users to rate and review movies. A user will enter their rating (out of 10) and a written review for each movie they have watched. Decomposition has been used to break the problem down into smaller sub-problems. Complete the decomposition of this program by stating what should be written in the missing boxes. [Total 2 marks]"
-This shows how to format a scenario-based question with practical application.
+${getExampleQuestions(currentUnit)}
 
 Requirements for your question:
 1. Follow the exact AQA format shown in the examples:
