@@ -98,25 +98,41 @@ function showFeedback() {
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
+    initializeApp();
+    
     // Add unit button listeners
     const unitButtons = document.querySelectorAll('.unit-button');
+    console.log('Found unit buttons:', unitButtons.length);
+    
     unitButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            currentUnit = button.id;
-            console.log('Selected unit:', currentUnit);
-            
-            if (!unitKeywords[currentUnit]) {
-                console.error('Invalid unit selected:', currentUnit);
-                if (questionText) {
-                    questionText.textContent = 'Error: Invalid unit selected. Please try again.';
+        button.addEventListener('click', async () => {
+            try {
+                currentUnit = button.id;
+                console.log('Selected unit:', currentUnit);
+                
+                // Show loading state immediately
+                if (welcomeScreen) welcomeScreen.classList.add('hidden');
+                if (questionContainer) {
+                    questionContainer.classList.remove('hidden');
+                    showLoading();
                 }
-                return;
-            }
+                
+                // Validate unit selection
+                if (!unitKeywords[currentUnit]) {
+                    throw new Error('Invalid unit selected');
+                }
 
-            if (welcomeScreen) welcomeScreen.classList.add('hidden');
-            if (questionContainer) {
-                questionContainer.classList.remove('hidden');
-                generateQuestion();
+                // Generate question
+                await generateQuestion();
+            } catch (error) {
+                console.error('Error handling unit selection:', error);
+                hideLoading();
+                if (questionText) {
+                    questionText.textContent = `Error: ${error.message}. Please try again.`;
+                }
+                if (currentQuestionElement) {
+                    currentQuestionElement.classList.remove('hidden');
+                }
             }
         });
     });
@@ -125,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (backToUnitsButton) {
         backToUnitsButton.addEventListener('click', () => {
             console.log('Back to units clicked');
+            currentUnit = ''; // Reset current unit
             if (welcomeScreen) welcomeScreen.classList.remove('hidden');
             if (questionContainer) questionContainer.classList.add('hidden');
             if (currentQuestionElement) currentQuestionElement.classList.add('hidden');
@@ -135,19 +152,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Add other event listeners
-    if (submitButton) submitButton.addEventListener('click', handleSubmitAnswer);
-    if (nextQuestionButton) nextQuestionButton.addEventListener('click', getNextQuestion);
+    if (submitButton) {
+        submitButton.addEventListener('click', handleSubmitAnswer);
+        console.log('Added submit button listener');
+    }
+    if (nextQuestionButton) {
+        nextQuestionButton.addEventListener('click', getNextQuestion);
+        console.log('Added next question button listener');
+    }
 });
 
-async function initializeApp() {
+// Initialize the app
+function initializeApp() {
+    console.log('Initializing app...');
     isInitialized = true;
     if (welcomeScreen) welcomeScreen.classList.remove('hidden');
     if (questionContainer) questionContainer.classList.add('hidden');
     if (currentQuestionElement) currentQuestionElement.classList.add('hidden');
     if (feedbackSection) feedbackSection.style.display = 'none';
+    console.log('App initialized');
 }
 
-function getExampleQuestions(unit) {
+async function getExampleQuestions(unit) {
     let examples = questionExamples[unit] || '';
     
     // Add extracted questions from PDFs if available
@@ -174,7 +200,7 @@ async function generateQuestion() {
             throw new Error('Invalid unit selected. Please select a valid unit.');
         }
 
-        const examples = getExampleQuestions(currentUnit);
+        const examples = await getExampleQuestions(currentUnit);
         const topicDescription = getTopicDescription(currentUnit);
         const keywords = unitKeywords[currentUnit] || [];
         
