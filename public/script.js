@@ -29,6 +29,8 @@ const feedbackText = document.getElementById('feedback-text');
 const nextQuestionButton = document.getElementById('next-question');
 const backToUnitsButton = document.getElementById('back-to-units');
 const unitButtons = document.querySelectorAll('.unit-button');
+const feedbackSection = document.getElementById('feedback-section');
+const questionSection = document.getElementById('current-question');
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', initializeApp);
@@ -62,21 +64,21 @@ async function initializeApp() {
 function showLoading() {
     loadingElement.classList.remove('hidden');
     currentQuestionElement.classList.add('hidden');
-    feedbackContainer.classList.add('hidden');
 }
 
 function hideLoading() {
     loadingElement.classList.add('hidden');
+    currentQuestionElement.classList.remove('hidden');
 }
 
 function showQuestion() {
-    currentQuestionElement.classList.remove('hidden');
-    feedbackContainer.classList.add('hidden');
+    questionSection.style.display = 'block';
+    feedbackSection.style.display = 'none';
 }
 
 function showFeedback() {
-    currentQuestionElement.classList.add('hidden');
-    feedbackContainer.classList.remove('hidden');
+    questionSection.style.display = 'none';
+    feedbackSection.style.display = 'block';
 }
 
 function getExampleQuestions(unit) {
@@ -153,17 +155,13 @@ MARK SCHEME END`;
             currentQuestion = questionMatch[1].trim();
             currentMarkScheme = markSchemeMatch[1].trim();
             console.log('Successfully extracted question and mark scheme');
+            displayQuestion(currentQuestion);
+            hideLoading();
         } else {
             console.error('Failed to parse response format:', content);
             throw new Error('Invalid question format received');
         }
         
-        // Only display the question, not the mark scheme
-        displayQuestion(currentQuestion);
-        answerInput.value = '';
-        feedbackText.textContent = '';
-        hideLoading();
-        showQuestion();
     } catch (error) {
         console.error('Error generating question:', error);
         questionText.textContent = 'Error generating question. Please try again.';
