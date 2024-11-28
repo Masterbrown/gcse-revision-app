@@ -2,6 +2,7 @@
 const API_ENDPOINT = '/.netlify/functions/chat';
 let isInitialized = false;
 let currentQuestion = '';
+let currentMarkScheme = '';
 let currentUnit = '';
 let questionExamples = {};
 
@@ -20,6 +21,7 @@ const questionContainer = document.getElementById('question-container');
 const loadingElement = document.getElementById('loading');
 const currentQuestionElement = document.getElementById('current-question');
 const questionText = document.getElementById('question-text');
+const markSchemeText = document.getElementById('mark-scheme-text');
 const answerInput = document.getElementById('answer-input');
 const submitButton = document.getElementById('submit-answer');
 const feedbackContainer = document.getElementById('feedback-container');
@@ -102,11 +104,13 @@ Based on these examples, create a new question that:
 2. Includes a clear mark scheme that follows AQA's positive marking approach
 3. Has similar mark allocations to the examples
 
-Format your response as:
-QUESTION: (your question here) [X marks]
-
-MARK SCHEME:
-(list marking points, with mark allocations)`;
+Format your response EXACTLY as follows (including the separators):
+QUESTION START
+(your question here) [X marks]
+QUESTION END
+MARK SCHEME START
+(list marking points, with mark allocations)
+MARK SCHEME END`;
 
     try {
         const response = await fetch(API_ENDPOINT, {
@@ -117,21 +121,32 @@ MARK SCHEME:
             body: JSON.stringify({ prompt }),
         });
 
-        console.log('Response received:', response.status);
-        const data = await response.json();
-        
         if (!response.ok) {
-            throw new Error(data.error || 'Failed to generate question');
+            throw new Error('Failed to generate question');
         }
 
-        currentQuestion = data.message;
-        questionText.textContent = data.message.trim();
+        const data = await response.json();
+        const content = data.message;
+
+        // Extract question and mark scheme using the separators
+        const questionMatch = content.match(/QUESTION START\n([\s\S]*?)\nQUESTION END/);
+        const markSchemeMatch = content.match(/MARK SCHEME START\n([\s\S]*?)\nMARK SCHEME END/);
+
+        if (questionMatch && markSchemeMatch) {
+            currentQuestion = questionMatch[1].trim();
+            currentMarkScheme = markSchemeMatch[1].trim();
+        } else {
+            throw new Error('Invalid question format received');
+        }
+        
+        // Only display the question, not the mark scheme
+        questionText.textContent = currentQuestion;
+        markSchemeText.textContent = currentMarkScheme;
         answerInput.value = '';
         showQuestion();
     } catch (error) {
-        console.error('Error details:', error);
+        console.error('Error:', error);
         questionText.textContent = 'Error generating question. Please try again.';
-        hideLoading();
     }
 }
 
@@ -205,61 +220,40 @@ async function handleSubmitAnswer() {
 
     showLoading();
     try {
+        const prompt = `You are an expert Computer Science teacher marking a GCSE student's answer.
+
+The question was:
+${currentQuestion}
+
+The official mark scheme is:
+${currentMarkScheme}
+
+The student's answer:
+${answerInput.value}
+
+Please mark this answer following AQA's positive marking approach:
+1. Award marks for valid points that match the mark scheme
+2. Be specific about which points from the mark scheme were met
+3. Provide constructive feedback on how to improve
+
+Format your response as:
+Marks awarded: X out of Y
+Feedback: (your detailed feedback here)`;
+
         const response = await fetch(API_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                type: 'feedback',
-                prompt: `You are an AQA GCSE Computer Science examiner marking the following question and answer. Follow AQA's positive marking approach - award marks for valid points even if not perfectly expressed.
-                
-Question: ${currentQuestion}
-
-Student's Answer: ${answerInput.value}
-
-Key AQA Marking Principles:
-• Award marks for valid points even if not using exact technical terms
-• Accept alternative valid answers and approaches
-• If a student makes multiple valid points, award the marks even if mixed with incorrect points
-• Look for understanding rather than perfect terminology
-• For longer answers, credit valid points wherever they appear
-• Award marks for correct working even if final answer is wrong
-• If answer shows understanding but lacks detail, award partial marks
-• For 6+ mark questions, use levels marking focusing on overall quality
-
-Provide feedback in this format:
-
-Score:
-[Show marks awarded]/[total marks]
-• Brief explanation of marks awarded
-• Highlight what earned the marks
-
-Strengths:
-• Focus on the valid points made
-• Acknowledge partial understanding
-• Credit correct use of concepts even if terminology isn't perfect
-
-Areas for Improvement:
-• Suggest ways to gain additional marks
-• Frame as "To gain full marks, you could..."
-• Provide constructive suggestions rather than criticisms
-
-Model Answer:
-• Show a complete answer that would achieve full marks
-• Include alternative valid approaches
-• Demonstrate the level of detail required
-
-Provide the feedback now:`
-            })
+            body: JSON.stringify({ prompt }),
         });
 
-        const data = await response.json();
         if (!response.ok) {
-            throw new Error(data.error || 'Failed to get feedback');
+            throw new Error('Failed to generate feedback');
         }
 
-        console.log('Raw feedback message:', data.message); // Debug log for raw message
+        const data = await response.json();
+        const content = data.message;
 
         // Clear previous feedback
         feedbackText.innerHTML = '';
@@ -275,7 +269,7 @@ Provide the feedback now:`
         modelContainer.id = 'model-container';
 
         // Parse the feedback sections
-        const sections = data.message.split('\n\n');
+        const sections = content.split('\n\n');
         console.log('Split sections:', sections); // Debug log for sections
 
         sections.forEach(section => {
