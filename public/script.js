@@ -93,10 +93,18 @@ async function generateQuestion() {
     showLoading();
     const examples = getExampleQuestions(currentUnit);
     
-    const prompt = `You are an expert Computer Science teacher creating exam questions for GCSE students.
-Create a new question in the style of AQA GCSE Computer Science exams for unit ${currentUnit}.
+    let prompt = `You are an expert Computer Science teacher creating exam questions for GCSE students.
+Create a new question in the style of AQA GCSE Computer Science exams for unit ${currentUnit}.`;
 
-Here are example questions and mark schemes from this unit to guide your style:
+    if (currentUnit === '3.2') {
+        prompt += `\n\nFor Python programming questions:
+1. Always wrap Python code blocks with \`\`\`python and \`\`\` markers
+2. Ensure proper indentation in the code
+3. Include clear comments where helpful
+4. Format the code exactly as it would appear in a Python editor`;
+    }
+
+    prompt += `\n\nHere are example questions and mark schemes from this unit to guide your style:
 
 ${examples}
 
@@ -237,25 +245,51 @@ function displayQuestion(question) {
         if (hasPythonCode) {
             // First, handle explicit code blocks with ```python
             let formattedQuestion = question;
+            
+            // Handle explicit code blocks
             if (question.includes('```python')) {
-                formattedQuestion = question.replace(/```python([\s\S]*?)```/g, 
-                    (match, code) => `<div class="code-block"><code>${code.trim()}</code></div>`
-                );
+                formattedQuestion = question.replace(/```python([\s\S]*?)```/g, (match, code) => {
+                    // Preserve indentation and format code
+                    const formattedCode = code.trim()
+                        .split('\n')
+                        .map(line => line.trimRight())  // Remove trailing spaces but keep indentation
+                        .join('\n');
+                    return `<div class="code-block"><code>${formattedCode}</code></div>`;
+                });
             } else {
-                // For implicit code (when no explicit markers), detect and wrap Python code
+                // For implicit code (when no explicit markers)
                 const lines = question.split('\n');
+                let inCodeBlock = false;
+                let codeBlockContent = [];
+                
                 formattedQuestion = lines.map(line => {
+                    const trimmedLine = line.trim();
                     // Check if line looks like Python code
-                    if (line.trim().match(/^(def |class |if |for |while |print\(|return |import |from )/)) {
-                        return `<div class="code-block"><code>${line}</code></div>`;
-                    }
-                    // Handle indented lines following Python code
-                    if (line.startsWith('    ')) {
-                        return `<div class="code-block"><code>${line}</code></div>`;
+                    if (trimmedLine.match(/^(def |class |if |for |while |print\(|return |import |from )/) || 
+                        line.startsWith('    ')) {
+                        if (!inCodeBlock) {
+                            inCodeBlock = true;
+                            codeBlockContent = [];
+                        }
+                        codeBlockContent.push(line);
+                        return null;  // We'll join the code block later
+                    } else if (inCodeBlock) {
+                        inCodeBlock = false;
+                        const code = codeBlockContent.join('\n');
+                        return `<div class="code-block"><code>${code}</code></div>${line}`;
                     }
                     return line;
-                }).join('\n');
+                })
+                .filter(line => line !== null)  // Remove null entries
+                .join('\n');
+
+                // Handle any remaining code block
+                if (inCodeBlock) {
+                    const code = codeBlockContent.join('\n');
+                    formattedQuestion += `<div class="code-block"><code>${code}</code></div>`;
+                }
             }
+            
             questionText.innerHTML = formattedQuestion;
         } else {
             questionText.textContent = question;
@@ -264,6 +298,11 @@ function displayQuestion(question) {
         // For other units, display normally
         questionText.textContent = question;
     }
+
+    // Show question section and hide others
+    questionSection.style.display = 'block';
+    feedbackSection.style.display = 'none';
+    answerInput.value = '';
 }
 
 async function handleSubmitAnswer() {
