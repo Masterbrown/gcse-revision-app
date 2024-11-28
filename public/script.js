@@ -151,7 +151,7 @@ MARK SCHEME END`;
         }
         
         // Only display the question, not the mark scheme
-        questionText.textContent = currentQuestion;
+        displayQuestion(currentQuestion);
         answerInput.value = '';
         feedbackText.textContent = '';
         hideLoading();
@@ -223,6 +223,47 @@ function getTopicDescription(unit) {
 - Cultural issues`
     };
     return topics[unit] || 'General Computer Science topics';
+}
+
+function displayQuestion(question) {
+    if (currentUnit === 'unit2') {  // If Python unit is selected
+        // Look for Python code indicators
+        const hasPythonCode = question.includes('```python') || 
+                            question.includes('CODE:') ||
+                            question.includes('def ') ||
+                            question.includes('print(') ||
+                            question.includes('class ');
+
+        if (hasPythonCode) {
+            // First, handle explicit code blocks with ```python
+            let formattedQuestion = question;
+            if (question.includes('```python')) {
+                formattedQuestion = question.replace(/```python([\s\S]*?)```/g, 
+                    (match, code) => `<div class="code-block"><code>${code.trim()}</code></div>`
+                );
+            } else {
+                // For implicit code (when no explicit markers), detect and wrap Python code
+                const lines = question.split('\n');
+                formattedQuestion = lines.map(line => {
+                    // Check if line looks like Python code
+                    if (line.trim().match(/^(def |class |if |for |while |print\(|return |import |from )/)) {
+                        return `<div class="code-block"><code>${line}</code></div>`;
+                    }
+                    // Handle indented lines following Python code
+                    if (line.startsWith('    ')) {
+                        return `<div class="code-block"><code>${line}</code></div>`;
+                    }
+                    return line;
+                }).join('\n');
+            }
+            questionText.innerHTML = formattedQuestion;
+        } else {
+            questionText.textContent = question;
+        }
+    } else {
+        // For other units, display normally
+        questionText.textContent = question;
+    }
 }
 
 async function handleSubmitAnswer() {
