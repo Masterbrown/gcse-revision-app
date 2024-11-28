@@ -226,25 +226,57 @@ button:active {
     backdrop-filter: blur(10px);
 }
 
+/* Reset background for feedback container */
 #feedback-container {
-    width: 100%;
-    padding: 20px;
-    border-radius: var(--border-radius);
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 2px solid rgba(37, 99, 235, 0.1);
+    background: none !important;
+    backdrop-filter: none !important;
 }
 
 #feedback-text {
-    width: 100%;
+    background: none !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
 }
 
+/* Style each feedback section */
 #feedback-text > div {
-    padding: 20px;
-    margin: 15px 0;
-    border-radius: 10px;
-    white-space: pre-wrap;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px !important;
+    margin: 15px 0 !important;
+    border-radius: 10px !important;
+    background: none !important;
+    backdrop-filter: none !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    border: none !important;
+    color: white !important;
+}
+
+/* Score section - Purple */
+#feedback-text > div.feedback-score {
+    background-color: #9c27b0 !important;
+    font-weight: bold !important;
+    font-size: 1.1em !important;
+}
+
+/* Strengths section - Green */
+#feedback-text > div.feedback-strengths {
+    background-color: #4caf50 !important;
+}
+
+/* Improvements section - Red */
+#feedback-text > div.feedback-improvements {
+    background-color: #f44336 !important;
+}
+
+/* Model Answer section - Blue */
+#feedback-text > div.feedback-model {
+    background-color: #2196f3 !important;
+    margin-top: 25px !important;
+}
+
+/* Override any inherited styles */
+#feedback-text > div * {
+    color: white !important;
+    background: none !important;
 }
 
 #feedback-text .feedback-score {
