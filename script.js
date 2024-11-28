@@ -93,60 +93,57 @@ async function handleSubmitAnswer() {
 
         const data = await response.json();
         
-        // Split the feedback into sections and format each section
+        // Split the feedback into sections
         const feedbackTextContent = data.message;
-        
-        // Function to extract section content
-        const extractSection = (text, sectionStart, nextSectionStart) => {
-            const startIndex = text.indexOf(sectionStart);
-            if (startIndex === -1) return '';
-            
-            const endIndex = text.indexOf(nextSectionStart, startIndex);
-            const content = endIndex === -1 
-                ? text.slice(startIndex + sectionStart.length) 
-                : text.slice(startIndex + sectionStart.length, endIndex);
-                
-            return content.trim();
-        };
-
-        // Extract each section
-        const scoreSection = extractSection(feedbackTextContent, 'Score:', 'Strengths:');
-        const strengthsSection = extractSection(feedbackTextContent, 'Strengths:', 'Areas for Improvement:');
-        const improvementsSection = extractSection(feedbackTextContent, 'Areas for Improvement:', 'Model Answer:');
-        const modelSection = extractSection(feedbackTextContent, 'Model Answer:', '\n\nRemember');
-
-        // Function to create a feedback section
-        const createFeedbackSection = (content, className, title) => {
-            if (!content) return '';
-            const div = document.createElement('div');
-            div.className = `feedback-section ${className}`;
-            const titleElement = document.createElement('strong');
-            titleElement.textContent = title;
-            div.appendChild(titleElement);
-            
-            const contentDiv = document.createElement('div');
-            contentDiv.innerHTML = content.replace(/\n/g, '<br>');
-            div.appendChild(contentDiv);
-            
-            return div;
-        };
-
-        // Clear previous feedback
         const feedbackElement = document.getElementById('feedback-text');
+        
+        // Clear previous feedback
         feedbackElement.innerHTML = '';
 
-        // Add each section
-        const sections = [
-            createFeedbackSection(scoreSection, 'feedback-score', 'Score'),
-            createFeedbackSection(strengthsSection, 'feedback-strengths', 'Strengths'),
-            createFeedbackSection(improvementsSection, 'feedback-improvements', 'Areas for Improvement'),
-            createFeedbackSection(modelSection, 'feedback-model', 'Model Answer')
-        ];
+        // Create and append score section (purple)
+        const scoreDiv = document.createElement('div');
+        scoreDiv.style.backgroundColor = '#9c27b0';
+        scoreDiv.style.color = 'white';
+        scoreDiv.style.padding = '20px';
+        scoreDiv.style.margin = '15px 0';
+        scoreDiv.style.borderRadius = '10px';
+        scoreDiv.style.fontWeight = 'bold';
+        scoreDiv.innerHTML = feedbackTextContent.split('Strengths:')[0];
+        feedbackElement.appendChild(scoreDiv);
 
-        sections.forEach(section => {
-            if (section) feedbackElement.appendChild(section);
-        });
-        
+        // Create and append strengths section (green)
+        const strengthsDiv = document.createElement('div');
+        strengthsDiv.style.backgroundColor = '#4caf50';
+        strengthsDiv.style.color = 'white';
+        strengthsDiv.style.padding = '20px';
+        strengthsDiv.style.margin = '15px 0';
+        strengthsDiv.style.borderRadius = '10px';
+        const strengthsContent = feedbackTextContent.split('Strengths:')[1].split('Areas for Improvement:')[0];
+        strengthsDiv.innerHTML = 'Strengths:' + strengthsContent;
+        feedbackElement.appendChild(strengthsDiv);
+
+        // Create and append improvements section (red)
+        const improvementsDiv = document.createElement('div');
+        improvementsDiv.style.backgroundColor = '#f44336';
+        improvementsDiv.style.color = 'white';
+        improvementsDiv.style.padding = '20px';
+        improvementsDiv.style.margin = '15px 0';
+        improvementsDiv.style.borderRadius = '10px';
+        const improvementsContent = feedbackTextContent.split('Areas for Improvement:')[1].split('Model Answer:')[0];
+        improvementsDiv.innerHTML = 'Areas for Improvement:' + improvementsContent;
+        feedbackElement.appendChild(improvementsDiv);
+
+        // Create and append model answer section (blue)
+        const modelDiv = document.createElement('div');
+        modelDiv.style.backgroundColor = '#2196f3';
+        modelDiv.style.color = 'white';
+        modelDiv.style.padding = '20px';
+        modelDiv.style.margin = '15px 0';
+        modelDiv.style.borderRadius = '10px';
+        const modelContent = feedbackTextContent.split('Model Answer:')[1].split('\n\nRemember')[0];
+        modelDiv.innerHTML = 'Model Answer:' + modelContent;
+        feedbackElement.appendChild(modelDiv);
+
         showFeedback();
     } catch (error) {
         console.error('Error:', error);
