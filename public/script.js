@@ -77,19 +77,41 @@ async function generateQuestion() {
             },
             body: JSON.stringify({
                 type: 'question',
-                prompt: `Generate a GCSE Computer Science question following the AQA exam board style (Specification 8525).
+                prompt: `You are an AQA GCSE Computer Science examiner creating questions for topic ${currentUnit}. 
 
-Requirements:
-1. Use appropriate AQA command words (State, Describe, Explain, Compare, Evaluate)
-2. Include mark allocation in square brackets [X marks]
-3. For questions worth 4+ marks, break into parts (a), (b), etc.
-4. Use technical vocabulary from the AQA specification
-5. Match AQA's assessment objectives (AO1: Knowledge, AO2: Application, AO3: Analysis)
-6. The question must be specifically about topic ${currentUnit} from the specification:
+Reference this AQA-style example from our question bank:
+
+For topic 3.1 (Fundamentals of Algorithms):
+Example Question 1: "Define the term abstraction. [Total 1 mark]"
+This shows how to format a knowledge-based definition question.
+
+Example Question 2: "A program is being developed that allows users to rate and review movies. A user will enter their rating (out of 10) and a written review for each movie they have watched. Decomposition has been used to break the problem down into smaller sub-problems. Complete the decomposition of this program by stating what should be written in the missing boxes. [Total 2 marks]"
+This shows how to format a scenario-based question with practical application.
+
+Requirements for your question:
+1. Follow the exact AQA format shown in the examples:
+   - Clear scenario (if applicable)
+   - Precise command words (Define, Explain, State, etc.)
+   - Mark allocation in square brackets [Total X marks]
+   - For 4+ marks, break into parts (a), (b), etc.
+
+2. Match the difficulty level:
+   - 1-2 marks: Knowledge and understanding
+   - 3-4 marks: Application of knowledge
+   - 5-6 marks: Analysis and evaluation
+
+3. Use appropriate command words:
+   - "Define" for terminology
+   - "Explain" for processes
+   - "Describe" for features
+   - "Compare" for similarities/differences
+   - "Evaluate" for advantages/disadvantages
+
+4. Focus specifically on topic ${currentUnit} from the specification:
 
 ${getTopicDescription(currentUnit)}
 
-Generate a question now:`
+Generate an AQA-style question now, following this format exactly.`
             })
         });
 
