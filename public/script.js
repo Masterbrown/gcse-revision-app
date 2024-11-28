@@ -3,6 +3,16 @@ const API_ENDPOINT = '/.netlify/functions/chat';
 let isInitialized = false;
 let currentQuestion = '';
 let currentUnit = '';
+let questionExamples = {};
+
+// Load question examples when the page loads
+fetch('question_examples.json')
+    .then(response => response.json())
+    .then(data => {
+        questionExamples = data;
+        console.log('Loaded question examples for units:', Object.keys(questionExamples));
+    })
+    .catch(error => console.error('Error loading question examples:', error));
 
 // DOM Elements
 const welcomeScreen = document.getElementById('welcome-screen');
@@ -68,68 +78,47 @@ function showFeedback() {
 }
 
 function getExampleQuestions(unit) {
-    const examples = {
-        '3.1': `Example Question 1: "Define the term abstraction. [Total 1 mark]"
-This shows how to format a knowledge-based definition question.
+    // Return unit-specific examples if available, otherwise return default examples
+    return questionExamples[unit] || questionExamples['3.1'] || 
+        `Example Question 1: "What is an algorithm?"
+This shows how to format a knowledge-based question.
 
-Example Question 2: "A program is being developed that allows users to rate and review movies. A user will enter their rating (out of 10) and a written review for each movie they have watched. Decomposition has been used to break the problem down into smaller sub-problems. Complete the decomposition of this program by stating what should be written in the missing boxes. [Total 2 marks]"
-This shows how to format a scenario-based question with practical application.`,
-        '3.2': `Example Question 1: "State what is meant by the term variable. [Total 1 mark]"
-This shows how to format a knowledge-based definition question.
-
-Example Question 2: "A program stores the names and ages of students in a class. Write an algorithm that will output the average age of all students in the class. [Total 4 marks]"
-This shows how to format a programming problem-solving question.`,
-        // Add examples for other units as PDFs become available
-    };
-    return examples[unit] || examples['3.1']; // Default to 3.1 if unit not found
+Example Question 2: "Explain how a binary search algorithm works."
+This shows how to format a practical application question.`;
 }
 
 async function generateQuestion() {
+    const examples = getExampleQuestions(currentUnit);
+    
+    const prompt = `You are an expert Computer Science teacher creating exam questions for GCSE students.
+Create a new question in the style of AQA GCSE Computer Science exams for unit ${currentUnit}.
+
+Here are example questions and mark schemes from this unit to guide your style:
+
+${examples}
+
+Based on these examples, create a new question that:
+1. Matches the difficulty level and style of the examples
+2. Includes a clear mark scheme that follows AQA's positive marking approach
+3. Has similar mark allocations to the examples
+
+Format your response as:
+QUESTION: (your question here) [X marks]
+
+MARK SCHEME:
+(list marking points, with mark allocations)`;
+
     try {
-        console.log('Generating question...');
         const response = await fetch(API_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                type: 'question',
-                prompt: `You are an AQA GCSE Computer Science examiner creating questions for topic ${currentUnit}. 
-
-Reference this AQA-style example from our question bank:
-
-${getExampleQuestions(currentUnit)}
-
-Requirements for your question:
-1. Follow the exact AQA format shown in the examples:
-   - Clear scenario (if applicable)
-   - Precise command words (Define, Explain, State, etc.)
-   - Mark allocation in square brackets [Total X marks]
-   - For 4+ marks, break into parts (a), (b), etc.
-
-2. Match the difficulty level:
-   - 1-2 marks: Knowledge and understanding
-   - 3-4 marks: Application of knowledge
-   - 5-6 marks: Analysis and evaluation
-
-3. Use appropriate command words:
-   - "Define" for terminology
-   - "Explain" for processes
-   - "Describe" for features
-   - "Compare" for similarities/differences
-   - "Evaluate" for advantages/disadvantages
-
-4. Focus specifically on topic ${currentUnit} from the specification:
-
-${getTopicDescription(currentUnit)}
-
-Generate an AQA-style question now, following this format exactly.`
-            })
+            body: JSON.stringify({ prompt }),
         });
 
         console.log('Response received:', response.status);
         const data = await response.json();
-        console.log('Data:', data);
         
         if (!response.ok) {
             throw new Error(data.error || 'Failed to generate question');
