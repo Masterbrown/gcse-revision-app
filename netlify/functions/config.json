@@ -1,0 +1,5 @@
+{
+  "name": "chat",
+  "path": "chat.js",
+  "method": "POST"
+}

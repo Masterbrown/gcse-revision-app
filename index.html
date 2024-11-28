@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GCSE Computer Science Revision</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="circuit-background"></div>
+    <div class="circuit-overlay"></div>
+    <div class="blur-effect blur-1"></div>
+    <div class="blur-effect blur-2"></div>
+    <div class="container">
+        <header>
+            <h1>GCSE Computer Science Revision</h1>
+            <p>AQA Specification (8525)</p>
+        </header>
+        
+        <main>
+            <div id="question-container">
+                <div id="loading" class="hidden">Loading...</div>
+                <div id="current-question" class="hidden">
+                    <h2>Question:</h2>
+                    <p id="question-text"></p>
+                    <textarea id="answer-input" placeholder="Type your answer here..."></textarea>
+                    <button id="submit-answer">Submit Answer</button>
+                </div>
+                <div id="feedback-container" class="hidden">
+                    <h2>Feedback:</h2>
+                    <div id="feedback-text"></div>
+                    <button id="next-question">Next Question</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/script.js"></script>
+</body>
+</html>
