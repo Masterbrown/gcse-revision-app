@@ -7,6 +7,39 @@ let currentUnit = '';
 let questionExamples = {};
 let extractedQuestions = {};
 
+// DOM Elements
+let welcomeScreen;
+let questionContainer;
+let currentQuestionElement;
+let questionText;
+let answerInput;
+let submitButton;
+let feedbackSection;
+let nextQuestionButton;
+let backToUnitsButton;
+let loadingElement;
+
+// Initialize DOM references
+function initializeDOMReferences() {
+    welcomeScreen = document.getElementById('welcome-screen');
+    questionContainer = document.getElementById('question-container');
+    currentQuestionElement = document.getElementById('current-question');
+    questionText = document.getElementById('question-text');
+    answerInput = document.getElementById('answer-input');
+    submitButton = document.getElementById('submit-answer');
+    feedbackSection = document.getElementById('feedback-section');
+    nextQuestionButton = document.getElementById('next-question');
+    backToUnitsButton = document.getElementById('back-to-units');
+    loadingElement = document.getElementById('loading');
+    
+    if (!welcomeScreen || !questionContainer || !currentQuestionElement || !questionText || 
+        !answerInput || !submitButton || !feedbackSection || !nextQuestionButton || 
+        !backToUnitsButton || !loadingElement) {
+        console.error('Failed to initialize one or more DOM elements');
+        throw new Error('Failed to initialize DOM elements');
+    }
+}
+
 // Load both question examples and extracted questions when the page loads
 Promise.all([
     fetch('/question_examples.json')
@@ -64,17 +97,76 @@ const unitKeywords = {
     '3.8': ['ethical', 'legal', 'environmental', 'privacy', 'digital', 'impact', 'society']
 };
 
-// DOM Elements
-const welcomeScreen = document.getElementById('welcome-screen');
-const questionContainer = document.getElementById('question-container');
-const loadingElement = document.getElementById('loading');
-const currentQuestionElement = document.getElementById('current-question');
-const questionText = document.getElementById('question-text');
-const answerInput = document.getElementById('answer-input');
-const submitButton = document.getElementById('submit-answer');
-const feedbackSection = document.getElementById('feedback-section');
-const nextQuestionButton = document.getElementById('next-question');
-const backToUnitsButton = document.getElementById('back-to-units');
+// Initialize the app
+function initializeApp() {
+    console.log('Initializing app...');
+    isInitialized = true;
+    initializeDOMReferences();
+    if (welcomeScreen) welcomeScreen.classList.remove('hidden');
+    if (questionContainer) questionContainer.classList.add('hidden');
+    if (currentQuestionElement) currentQuestionElement.classList.add('hidden');
+    if (feedbackSection) feedbackSection.style.display = 'none';
+    console.log('App initialized');
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        console.log('DOM Content Loaded');
+        initializeApp();
+        
+        // Add unit button listeners
+        const unitButtons = document.querySelectorAll('.unit-button');
+        console.log('Found unit buttons:', unitButtons.length);
+        
+        unitButtons.forEach(button => {
+            button.addEventListener('click', async () => {
+                try {
+                    currentUnit = button.id;
+                    console.log('Selected unit:', currentUnit);
+                    
+                    // Show loading state immediately
+                    welcomeScreen.classList.add('hidden');
+                    questionContainer.classList.remove('hidden');
+                    showLoading();
+                    
+                    // Validate unit selection
+                    if (!unitKeywords[currentUnit]) {
+                        throw new Error('Invalid unit selected');
+                    }
+
+                    // Generate question
+                    await generateQuestion();
+                } catch (error) {
+                    console.error('Error handling unit selection:', error);
+                    hideLoading();
+                    questionText.textContent = `Error: ${error.message}. Please try again.`;
+                    currentQuestionElement.classList.remove('hidden');
+                }
+            });
+        });
+
+        // Add back to units button listener
+        backToUnitsButton.addEventListener('click', () => {
+            console.log('Back to units clicked');
+            currentUnit = ''; // Reset current unit
+            welcomeScreen.classList.remove('hidden');
+            questionContainer.classList.add('hidden');
+            currentQuestionElement.classList.add('hidden');
+            feedbackSection.style.display = 'none';
+            questionText.textContent = '';
+            answerInput.value = '';
+        });
+
+        // Add other event listeners
+        submitButton.addEventListener('click', handleSubmitAnswer);
+        nextQuestionButton.addEventListener('click', getNextQuestion);
+        
+        console.log('All event listeners added successfully');
+    } catch (error) {
+        console.error('Error during initialization:', error);
+    }
+});
 
 function showLoading() {
     if (loadingElement) loadingElement.classList.remove('hidden');
@@ -94,83 +186,6 @@ function showQuestion() {
 function showFeedback() {
     if (currentQuestionElement) currentQuestionElement.classList.add('hidden');
     if (feedbackSection) feedbackSection.style.display = 'block';
-}
-
-// Event Listeners
-document.addEventListener('DOMContentLoaded', () => {
-    initializeApp();
-    
-    // Add unit button listeners
-    const unitButtons = document.querySelectorAll('.unit-button');
-    console.log('Found unit buttons:', unitButtons.length);
-    
-    unitButtons.forEach(button => {
-        button.addEventListener('click', async () => {
-            try {
-                currentUnit = button.id;
-                console.log('Selected unit:', currentUnit);
-                
-                // Show loading state immediately
-                if (welcomeScreen) welcomeScreen.classList.add('hidden');
-                if (questionContainer) {
-                    questionContainer.classList.remove('hidden');
-                    showLoading();
-                }
-                
-                // Validate unit selection
-                if (!unitKeywords[currentUnit]) {
-                    throw new Error('Invalid unit selected');
-                }
-
-                // Generate question
-                await generateQuestion();
-            } catch (error) {
-                console.error('Error handling unit selection:', error);
-                hideLoading();
-                if (questionText) {
-                    questionText.textContent = `Error: ${error.message}. Please try again.`;
-                }
-                if (currentQuestionElement) {
-                    currentQuestionElement.classList.remove('hidden');
-                }
-            }
-        });
-    });
-
-    // Add back to units button listener
-    if (backToUnitsButton) {
-        backToUnitsButton.addEventListener('click', () => {
-            console.log('Back to units clicked');
-            currentUnit = ''; // Reset current unit
-            if (welcomeScreen) welcomeScreen.classList.remove('hidden');
-            if (questionContainer) questionContainer.classList.add('hidden');
-            if (currentQuestionElement) currentQuestionElement.classList.add('hidden');
-            if (feedbackSection) feedbackSection.style.display = 'none';
-            if (questionText) questionText.textContent = '';
-            if (answerInput) answerInput.value = '';
-        });
-    }
-
-    // Add other event listeners
-    if (submitButton) {
-        submitButton.addEventListener('click', handleSubmitAnswer);
-        console.log('Added submit button listener');
-    }
-    if (nextQuestionButton) {
-        nextQuestionButton.addEventListener('click', getNextQuestion);
-        console.log('Added next question button listener');
-    }
-});
-
-// Initialize the app
-function initializeApp() {
-    console.log('Initializing app...');
-    isInitialized = true;
-    if (welcomeScreen) welcomeScreen.classList.remove('hidden');
-    if (questionContainer) questionContainer.classList.add('hidden');
-    if (currentQuestionElement) currentQuestionElement.classList.add('hidden');
-    if (feedbackSection) feedbackSection.style.display = 'none';
-    console.log('App initialized');
 }
 
 async function getExampleQuestions(unit) {
