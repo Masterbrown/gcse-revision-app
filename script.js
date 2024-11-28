@@ -119,8 +119,15 @@ async function handleSubmitAnswer() {
         const createFeedbackSection = (content, className, title) => {
             if (!content) return '';
             const div = document.createElement('div');
-            div.className = className;
-            div.innerHTML = `<strong>${title}:</strong><br>${content.replace(/\n/g, '<br>')}`;
+            div.className = `feedback-section ${className}`;
+            const titleElement = document.createElement('strong');
+            titleElement.textContent = title;
+            div.appendChild(titleElement);
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.innerHTML = content.replace(/\n/g, '<br>');
+            div.appendChild(contentDiv);
+            
             return div;
         };
 
