@@ -39,7 +39,7 @@ backToUnitsButton.addEventListener('click', showWelcomeScreen);
 // Add click event listeners to unit buttons
 unitButtons.forEach(button => {
     button.addEventListener('click', () => {
-        currentUnit = button.dataset.unit;
+        currentUnit = button.id; // Update the unit identifier to match the button ID
         welcomeScreen.classList.add('hidden');
         questionContainer.classList.remove('hidden');
         currentQuestionElement.classList.remove('hidden');
@@ -226,7 +226,7 @@ function getTopicDescription(unit) {
 }
 
 function displayQuestion(question) {
-    if (currentUnit === 'unit2') {  // If Python unit is selected
+    if (currentUnit === '3.2') {  // If Python unit is selected
         // Look for Python code indicators
         const hasPythonCode = question.includes('```python') || 
                             question.includes('CODE:') ||
