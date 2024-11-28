@@ -259,7 +259,10 @@ FEEDBACK START
 FEEDBACK END
 IMPROVEMENTS START
 (only include this section if student didn't get full marks - suggest specific improvements to reach full marks)
-IMPROVEMENTS END`;
+IMPROVEMENTS END
+MODEL ANSWER START
+(provide a model answer that would achieve full marks)
+MODEL ANSWER END`;
 
     try {
         const response = await fetch(API_ENDPOINT, {
@@ -284,6 +287,7 @@ IMPROVEMENTS END`;
         const marksMatch = content.match(/MARKS START\n([\s\S]*?)\nMARKS END/);
         const feedbackMatch = content.match(/FEEDBACK START\n([\s\S]*?)\nFEEDBACK END/);
         const improvementsMatch = content.match(/IMPROVEMENTS START\n([\s\S]*?)\nIMPROVEMENTS END/);
+        const modelAnswerMatch = content.match(/MODEL ANSWER START\n([\s\S]*?)\nMODEL ANSWER END/);
 
         let feedbackHTML = '';
 
@@ -311,6 +315,15 @@ IMPROVEMENTS END`;
                     <p>${improvements}</p>
                 </div>`;
             }
+        }
+
+        // Always show model answer
+        if (modelAnswerMatch) {
+            const modelAnswer = modelAnswerMatch[1].trim();
+            feedbackHTML += `<div class="model-answer-section">
+                <h3>Model Answer:</h3>
+                <p>${modelAnswer}</p>
+            </div>`;
         }
 
         feedbackText.innerHTML = feedbackHTML;

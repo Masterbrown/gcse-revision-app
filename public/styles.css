@@ -215,14 +215,24 @@ button:hover {
     border-left: 5px solid var(--feedback-improvements-bg);
 }
 
+.model-answer-section {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: var(--bg-tertiary);
+    border-radius: var(--border-radius);
+    border-left: 5px solid var(--feedback-model-bg);
+}
+
 .feedback-section h3,
-.improvements-section h3 {
+.improvements-section h3,
+.model-answer-section h3 {
     color: var(--text-primary);
     margin-bottom: 0.5rem;
 }
 
 .feedback-section p,
-.improvements-section p {
+.improvements-section p,
+.model-answer-section p {
     color: var(--text-secondary);
     white-space: pre-wrap;
 }
