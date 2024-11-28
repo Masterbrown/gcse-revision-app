@@ -144,10 +144,16 @@ function getExampleQuestions(unit) {
 async function generateQuestion() {
     showLoading();
     const examples = getExampleQuestions(currentUnit);
+    const topicDescription = getTopicDescription(currentUnit);
     console.log('Generating question for unit:', currentUnit);
     
     let prompt = `You are an expert Computer Science teacher creating exam questions for GCSE students.
-Create a new question in the style of AQA GCSE Computer Science exams for unit ${currentUnit}.`;
+Create a new question in the style of AQA GCSE Computer Science exams for unit ${currentUnit}.
+
+This unit covers the following topics:
+${topicDescription}
+
+Your question MUST be specifically about one of these topics and at GCSE difficulty level.`;
 
     if (currentUnit === '3.2') {
         prompt += `\n\nFor Python programming questions:
@@ -155,6 +161,16 @@ Create a new question in the style of AQA GCSE Computer Science exams for unit $
 2. Ensure proper indentation in the code
 3. Include clear comments where helpful
 4. Format the code exactly as it would appear in a Python editor`;
+    } else if (currentUnit === '3.3') {
+        prompt += `\n\nFor number conversion questions:
+1. Include clear working out steps in the mark scheme
+2. Use appropriate notation (e.g., binary numbers prefixed with '0b')
+3. Show the conversion process step by step`;
+    } else if (currentUnit === '3.4') {
+        prompt += `\n\nFor Boolean logic and hardware questions:
+1. Use proper Boolean algebra notation
+2. Include truth tables where relevant
+3. Use correct technical terminology for hardware components`;
     }
 
     prompt += `\n\nHere are example questions and mark schemes from this unit to guide your style:
@@ -165,6 +181,8 @@ Based on these examples, create a new question that:
 1. Matches the difficulty level and style of the examples
 2. Includes a clear mark scheme that follows AQA's positive marking approach
 3. Has similar mark allocations to the examples
+4. Specifically tests knowledge of ${currentUnit} unit topics
+5. Uses appropriate technical terminology for this unit
 
 Format your response EXACTLY as follows (including the separators):
 QUESTION START
