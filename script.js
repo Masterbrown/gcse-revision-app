@@ -94,22 +94,41 @@ async function handleSubmitAnswer() {
         const data = await response.json();
         
         // Split the feedback into sections and format each section
-        const feedbackTextContent = data.message.replace(/\r\n/g, '\n');  // Normalize line endings
-        const sections = feedbackTextContent.split('\n\n');
+        const feedbackTextContent = data.message;
         let formattedFeedback = '';
         
-        sections.forEach(section => {
-            const sectionContent = section.replace(/\n/g, '<br>');
-            if (section.startsWith('Score:')) {
-                formattedFeedback += `<div class="feedback-score">${sectionContent}</div>`;
-            } else if (section.startsWith('Strengths:')) {
-                formattedFeedback += `<div class="feedback-strengths">${sectionContent}</div>`;
-            } else if (section.startsWith('Areas for Improvement:')) {
-                formattedFeedback += `<div class="feedback-improvements">${sectionContent}</div>`;
-            } else if (section.startsWith('Model Answer:')) {
-                formattedFeedback += `<div class="feedback-model">${sectionContent}</div>`;
-            }
-        });
+        // Function to extract section content
+        const extractSection = (text, sectionStart, nextSectionStart) => {
+            const startIndex = text.indexOf(sectionStart);
+            if (startIndex === -1) return '';
+            
+            const endIndex = text.indexOf(nextSectionStart, startIndex);
+            const content = endIndex === -1 
+                ? text.slice(startIndex + sectionStart.length) 
+                : text.slice(startIndex + sectionStart.length, endIndex);
+                
+            return content.trim();
+        };
+
+        // Extract each section
+        const scoreSection = extractSection(feedbackTextContent, 'Score:', 'Strengths:');
+        const strengthsSection = extractSection(feedbackTextContent, 'Strengths:', 'Areas for Improvement:');
+        const improvementsSection = extractSection(feedbackTextContent, 'Areas for Improvement:', 'Model Answer:');
+        const modelSection = extractSection(feedbackTextContent, 'Model Answer:', '\n\nRemember');
+
+        // Format each section with its own box
+        if (scoreSection) {
+            formattedFeedback += `<div class="feedback-score">Score:${scoreSection.replace(/\n/g, '<br>')}</div>`;
+        }
+        if (strengthsSection) {
+            formattedFeedback += `<div class="feedback-strengths">Strengths:${strengthsSection.replace(/\n/g, '<br>')}</div>`;
+        }
+        if (improvementsSection) {
+            formattedFeedback += `<div class="feedback-improvements">Areas for Improvement:${improvementsSection.replace(/\n/g, '<br>')}</div>`;
+        }
+        if (modelSection) {
+            formattedFeedback += `<div class="feedback-model">Model Answer:${modelSection.replace(/\n/g, '<br>')}</div>`;
+        }
         
         feedbackText.innerHTML = formattedFeedback;
         showFeedback();
