@@ -116,21 +116,39 @@ async function handleSubmitAnswer() {
         const improvementsSection = extractSection(feedbackTextContent, 'Areas for Improvement:', 'Model Answer:');
         const modelSection = extractSection(feedbackTextContent, 'Model Answer:', '\n\nRemember');
 
-        // Format each section with its own box
+        // Clear previous feedback
+        const feedbackElement = document.getElementById('feedback-text');
+        feedbackElement.innerHTML = '';
+
+        // Add each section as a separate div
         if (scoreSection) {
-            formattedFeedback += `<div class="feedback-score">Score:${scoreSection.replace(/\n/g, '<br>')}</div>`;
-        }
-        if (strengthsSection) {
-            formattedFeedback += `<div class="feedback-strengths">Strengths:${strengthsSection.replace(/\n/g, '<br>')}</div>`;
-        }
-        if (improvementsSection) {
-            formattedFeedback += `<div class="feedback-improvements">Areas for Improvement:${improvementsSection.replace(/\n/g, '<br>')}</div>`;
-        }
-        if (modelSection) {
-            formattedFeedback += `<div class="feedback-model">Model Answer:${modelSection.replace(/\n/g, '<br>')}</div>`;
+            const scoreDiv = document.createElement('div');
+            scoreDiv.className = 'feedback-score';
+            scoreDiv.innerHTML = `Score:${scoreSection.replace(/\n/g, '<br>')}`;
+            feedbackElement.appendChild(scoreDiv);
         }
         
-        document.getElementById('feedback-text').innerHTML = formattedFeedback;
+        if (strengthsSection) {
+            const strengthsDiv = document.createElement('div');
+            strengthsDiv.className = 'feedback-strengths';
+            strengthsDiv.innerHTML = `Strengths:${strengthsSection.replace(/\n/g, '<br>')}`;
+            feedbackElement.appendChild(strengthsDiv);
+        }
+        
+        if (improvementsSection) {
+            const improvementsDiv = document.createElement('div');
+            improvementsDiv.className = 'feedback-improvements';
+            improvementsDiv.innerHTML = `Areas for Improvement:${improvementsSection.replace(/\n/g, '<br>')}`;
+            feedbackElement.appendChild(improvementsDiv);
+        }
+        
+        if (modelSection) {
+            const modelDiv = document.createElement('div');
+            modelDiv.className = 'feedback-model';
+            modelDiv.innerHTML = `Model Answer:${modelSection.replace(/\n/g, '<br>')}`;
+            feedbackElement.appendChild(modelDiv);
+        }
+        
         showFeedback();
     } catch (error) {
         console.error('Error:', error);
