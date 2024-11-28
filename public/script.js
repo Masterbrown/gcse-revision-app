@@ -100,7 +100,33 @@ async function handleSubmitAnswer() {
             throw new Error(data.error || 'Failed to get feedback');
         }
 
-        feedbackText.innerHTML = data.message.replace(/\n/g, '<br>');
+        // Clear previous feedback
+        feedbackText.innerHTML = '';
+
+        // Create containers for each feedback section
+        const strengthsContainer = document.createElement('div');
+        strengthsContainer.id = 'strengths-container';
+        const improvementsContainer = document.createElement('div');
+        improvementsContainer.id = 'improvements-container';
+        const modelContainer = document.createElement('div');
+        modelContainer.id = 'model-container';
+
+        // Parse the feedback sections
+        const sections = data.message.split('\n\n');
+        sections.forEach(section => {
+            if (section.toLowerCase().includes('strengths')) {
+                strengthsContainer.innerHTML = `<h3>Strengths</h3>${marked.parse(section.split('Strengths:')[1])}`;
+                feedbackText.appendChild(strengthsContainer);
+            } else if (section.toLowerCase().includes('improvements')) {
+                improvementsContainer.innerHTML = `<h3>Areas for Improvement</h3>${marked.parse(section.split('Improvements:')[1])}`;
+                feedbackText.appendChild(improvementsContainer);
+            } else if (section.toLowerCase().includes('model answer')) {
+                modelContainer.innerHTML = `<h3>Model Answer</h3>${marked.parse(section.split('Model Answer:')[1])}`;
+                feedbackText.appendChild(modelContainer);
+            }
+        });
+
+        hideLoading();
         showFeedback();
     } catch (error) {
         console.error('Error:', error);
