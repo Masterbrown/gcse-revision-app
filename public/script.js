@@ -109,37 +109,43 @@ async function handleSubmitAnswer() {
             },
             body: JSON.stringify({
                 type: 'feedback',
-                prompt: `You are an AQA GCSE Computer Science examiner marking the following question and answer. 
+                prompt: `You are an AQA GCSE Computer Science examiner marking the following question and answer. Follow AQA's positive marking approach - award marks for valid points even if not perfectly expressed.
                 
 Question: ${currentQuestion}
 
 Student's Answer: ${answerInput.value}
 
-Provide feedback in this exact format:
+Key AQA Marking Principles:
+• Award marks for valid points even if not using exact technical terms
+• Accept alternative valid answers and approaches
+• If a student makes multiple valid points, award the marks even if mixed with incorrect points
+• Look for understanding rather than perfect terminology
+• For longer answers, credit valid points wherever they appear
+• Award marks for correct working even if final answer is wrong
+• If answer shows understanding but lacks detail, award partial marks
+• For 6+ mark questions, use levels marking focusing on overall quality
+
+Provide feedback in this format:
 
 Score:
-[Show marks awarded]/[total marks] with brief explanation
+[Show marks awarded]/[total marks]
+• Brief explanation of marks awarded
+• Highlight what earned the marks
 
 Strengths:
-• Point-by-point list of what the student did well
-• Include technical terms they used correctly
-• Highlight good understanding shown
+• Focus on the valid points made
+• Acknowledge partial understanding
+• Credit correct use of concepts even if terminology isn't perfect
 
 Areas for Improvement:
-• Specific points that could be added for more marks
-• Technical terms that should be included
-• Concepts that need clarification
+• Suggest ways to gain additional marks
+• Frame as "To gain full marks, you could..."
+• Provide constructive suggestions rather than criticisms
 
 Model Answer:
-• A complete answer that would achieve full marks
-• Include all technical terms and concepts required
-• Structure it according to the mark scheme format
-
-Use AQA's marking principles:
-• Award marks for valid alternatives
-• Use technical vocabulary from the specification
-• Follow the point-based marking system
-• For 6+ mark questions, use level-based marking (L1: 1-2, L2: 3-4, L3: 5-6)
+• Show a complete answer that would achieve full marks
+• Include alternative valid approaches
+• Demonstrate the level of detail required
 
 Provide the feedback now:`
             })
