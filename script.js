@@ -91,6 +91,27 @@ async function handleSubmitAnswer() {
             })
         });
 
+        // Check for rate limit error in the response
+        if (!response.ok) {
+            const errorData = await response.json();
+            if (errorData.error && errorData.error.includes('rate limit')) {
+                const feedbackElement = document.getElementById('feedback-text');
+                feedbackElement.innerHTML = `
+                    <div class="feedback-box error">
+                        <div class="title">Service Temporarily Busy</div>
+                        <div>
+                            The service is currently experiencing high demand. Please wait about an hour before trying again.
+                            <br><br>
+                            This helps ensure everyone can use the revision app fairly.
+                        </div>
+                    </div>
+                `;
+                showFeedback();
+                return;
+            }
+            throw new Error('Failed to get feedback');
+        }
+
         const data = await response.json();
         
         // Split the feedback into sections

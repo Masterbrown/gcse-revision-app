@@ -254,6 +254,11 @@ button:active {
     margin-top: 25px;
 }
 
+.feedback-box.error {
+    background-color: #ff5722;
+    color: white;
+}
+
 .feedback-box .title {
     font-weight: bold;
     margin-bottom: 10px;
