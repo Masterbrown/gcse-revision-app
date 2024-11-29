@@ -444,6 +444,7 @@ async function handleSubmitAnswer() {
 
         const data = await response.json();
         const feedbackContent = data.content;
+        console.log('Received feedback:', feedbackContent); // Debug log
 
         // Update the feedback section
         const scoreContainer = document.getElementById('score-container');
@@ -451,26 +452,36 @@ async function handleSubmitAnswer() {
         const improvementsContainer = document.getElementById('improvements-container');
         const modelContainer = document.getElementById('model-container');
 
-        // Extract sections using regex for more precise matching
-        const scoreMatch = feedbackContent.match(/Score:\s*([\s\S]*?)(?=\n\s*(?:Strengths:|$))/i);
-        const strengthsMatch = feedbackContent.match(/Strengths:\s*([\s\S]*?)(?=\n\s*(?:Areas for Improvement:|$))/i);
-        const improvementsMatch = feedbackContent.match(/Areas for Improvement:\s*([\s\S]*?)(?=\n\s*(?:Model Answer:|$))/i);
-        const modelMatch = feedbackContent.match(/Model Answer:\s*([\s\S]*?)(?=$)/i);
+        // Function to extract section content
+        const extractSection = (content, sectionName) => {
+            const regex = new RegExp(`${sectionName}:\\s*([\\s\\S]*?)(?=\\n(?:Score:|Strengths:|Areas for Improvement:|Model Answer:|$))`, 'i');
+            const match = content.match(regex);
+            return match ? match[1].trim() : null;
+        };
 
-        // Helper function to format bullet points
+        // Extract each section
+        const score = extractSection(feedbackContent, 'Score');
+        const strengths = extractSection(feedbackContent, 'Strengths');
+        const improvements = extractSection(feedbackContent, 'Areas for Improvement');
+        const modelAnswer = extractSection(feedbackContent, 'Model Answer');
+
+        console.log('Parsed sections:', { score, strengths, improvements, modelAnswer }); // Debug log
+
+        // Format bullet points if present
         const formatBulletPoints = (text) => {
             if (!text) return '';
             return text.split('\n')
                 .map(line => line.trim())
                 .filter(line => line.length > 0)
+                .map(line => line.startsWith('•') ? line : `• ${line}`)
                 .join('\n');
         };
 
-        // Update containers with formatted content
-        scoreContainer.innerHTML = marked.parse(scoreMatch ? `## Score\n${formatBulletPoints(scoreMatch[1])}` : 'Score not provided');
-        strengthsContainer.innerHTML = marked.parse(strengthsMatch ? `## Strengths\n${formatBulletPoints(strengthsMatch[1])}` : 'Strengths not provided');
-        improvementsContainer.innerHTML = marked.parse(improvementsMatch ? `## Areas for Improvement\n${formatBulletPoints(improvementsMatch[1])}` : 'Areas for improvement not provided');
-        modelContainer.innerHTML = marked.parse(modelMatch ? `## Model Answer\n${formatBulletPoints(modelMatch[1])}` : 'Model answer not provided');
+        // Update the containers with formatted content
+        scoreContainer.innerHTML = marked.parse(score ? `## Score\n${score}` : 'Score not provided');
+        strengthsContainer.innerHTML = marked.parse(strengths ? `## Strengths\n${formatBulletPoints(strengths)}` : '## Strengths\n• No specific strengths provided');
+        improvementsContainer.innerHTML = marked.parse(improvements ? `## Areas for Improvement\n${formatBulletPoints(improvements)}` : '## Areas for Improvement\n• No specific improvements provided');
+        modelContainer.innerHTML = marked.parse(modelAnswer ? `## Model Answer\n${modelAnswer}` : 'Model answer not provided');
 
         // Show the feedback section
         currentQuestionElement.style.display = 'none';

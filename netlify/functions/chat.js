@@ -54,61 +54,101 @@ exports.handler = async function(event, context) {
     }
 
     // Create context-aware prompt
-    const contextPrompt = `You are a GCSE Computer Science examiner creating and marking questions. Here are some example questions and mark schemes from the official GCSE papers:
+    const contextPrompt = `You are a GCSE Computer Science examiner marking a student's answer. 
 
 ${sampleQuestions.map((q, i) => `Example ${i + 1}:
 Question: ${q.question}
 Mark Scheme: ${q.markScheme}
 `).join('\n')}
 
-IMPORTANT INSTRUCTIONS:
-1. Generate a new question that is VERY similar in style, difficulty, and format to these example questions.
-2. Do NOT create general knowledge or discussion questions.
-3. The question MUST match the exact format of the examples (including mark allocation).
-4. Use similar command words (e.g., "State", "Explain", "Calculate" etc.) as used in the examples.
-5. The mark scheme must follow the same style as the examples.
+Based on these example questions and mark schemes, evaluate the student's answer.
 
-Now evaluate the student's answer using EXACTLY this format:
+YOU MUST RESPOND IN EXACTLY THIS FORMAT, including all section headers and bullet points:
 
 Score:
 [X] out of [Y] marks
 
 Strengths:
-• [Point 1]
-• [Point 2]
+• [First strength point]
+• [Second strength point]
+• [Add more points if applicable]
 
 Areas for Improvement:
-• [Point 1]
-• [Point 2]
+• [First improvement point]
+• [Second improvement point]
+• [Add more points if applicable]
 
 Model Answer:
-[Detailed model answer following the mark scheme format]
+[Provide a detailed model answer that would achieve full marks]
 
 Student's answer: ${prompt}`;
 
-    const completion = await openai.createChatCompletion({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a GCSE Computer Science examiner. You MUST format your response exactly as requested, including all sections (Score, Strengths, Areas for Improvement, and Model Answer) with the exact headings specified. Each section must contain detailed, relevant content.'
-        },
-        {
-          role: 'user',
-          content: contextPrompt
-        }
-      ],
-      temperature: 0.3, // Lower temperature for more consistent outputs
-      max_tokens: 1000 // Increased for longer responses
-    });
+    try {
+        const completion = await openai.createChatCompletion({
+            model: 'gpt-3.5-turbo',
+            messages: [
+                {
+                    role: 'system',
+                    content: 'You are a GCSE Computer Science examiner. You MUST include ALL sections in your response: Score, Strengths, Areas for Improvement, and Model Answer. Each section must start with its exact heading and be followed by relevant content. For Strengths and Areas for Improvement, use bullet points starting with •'
+                },
+                {
+                    role: 'user',
+                    content: contextPrompt
+                }
+            ],
+            temperature: 0.2,  // Reduced for more consistent formatting
+            max_tokens: 1000
+        });
 
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({
-        content: completion.data.choices[0].message.content
-      })
-    };
+        const response = completion.data.choices[0].message.content;
+        
+        // Log the response for debugging
+        console.log('AI Response:', response);
+
+        // Verify all sections are present
+        const sections = ['Score:', 'Strengths:', 'Areas for Improvement:', 'Model Answer:'];
+        const missingSections = sections.filter(section => !response.includes(section));
+        
+        if (missingSections.length > 0) {
+            console.log('Missing sections:', missingSections);
+            // If sections are missing, add them with default content
+            let modifiedResponse = response;
+            missingSections.forEach(section => {
+                if (!modifiedResponse.includes(section)) {
+                    if (section === 'Score:' && !modifiedResponse.includes('Score:')) {
+                        modifiedResponse = 'Score:\n0 out of 0 marks\n\n' + modifiedResponse;
+                    } else if (section === 'Strengths:' && !modifiedResponse.includes('Strengths:')) {
+                        modifiedResponse += '\n\nStrengths:\n• Attempted to answer the question';
+                    } else if (section === 'Areas for Improvement:' && !modifiedResponse.includes('Areas for Improvement:')) {
+                        modifiedResponse += '\n\nAreas for Improvement:\n• Review the topic material\n• Practice similar questions';
+                    } else if (section === 'Model Answer:' && !modifiedResponse.includes('Model Answer:')) {
+                        modifiedResponse += '\n\nModel Answer:\nA model answer should be provided';
+                    }
+                }
+            });
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify({ content: modifiedResponse })
+            };
+        }
+
+        return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify({ content: response })
+        };
+    } catch (error) {
+        console.error('Error:', error);
+        return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({
+                error: 'Failed to process request',
+                details: error.message
+            })
+        };
+    }
   } catch (error) {
     console.error('Error:', error);
     return {
