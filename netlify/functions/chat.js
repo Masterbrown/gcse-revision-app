@@ -68,7 +68,21 @@ IMPORTANT INSTRUCTIONS:
 4. Use similar command words (e.g., "State", "Explain", "Calculate" etc.) as used in the examples.
 5. The mark scheme must follow the same style as the examples.
 
-Now, generate a question and evaluate the student's answer:
+Now evaluate the student's answer using EXACTLY this format:
+
+Score:
+[X] out of [Y] marks
+
+Strengths:
+• [Point 1]
+• [Point 2]
+
+Areas for Improvement:
+• [Point 1]
+• [Point 2]
+
+Model Answer:
+[Detailed model answer following the mark scheme format]
 
 Student's answer: ${prompt}`;
 
@@ -77,7 +91,7 @@ Student's answer: ${prompt}`;
       messages: [
         {
           role: 'system',
-          content: 'You are a GCSE Computer Science examiner. Always format your response in a clear structure with sections for Question, Mark Scheme, Student Score, and Feedback. Never deviate from the style of the example questions provided.'
+          content: 'You are a GCSE Computer Science examiner. You MUST format your response exactly as requested, including all sections (Score, Strengths, Areas for Improvement, and Model Answer) with the exact headings specified. Each section must contain detailed, relevant content.'
         },
         {
           role: 'user',

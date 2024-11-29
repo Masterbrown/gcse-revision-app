@@ -434,7 +434,7 @@ async function handleSubmitAnswer() {
             },
             body: JSON.stringify({
                 prompt: answerInput.value,
-                unit: currentUnit  // Include the current unit
+                unit: currentUnit
             })
         });
 
@@ -443,40 +443,34 @@ async function handleSubmitAnswer() {
         }
 
         const data = await response.json();
-        
-        // Parse and display the feedback
         const feedbackContent = data.content;
-        
+
         // Update the feedback section
         const scoreContainer = document.getElementById('score-container');
         const strengthsContainer = document.getElementById('strengths-container');
         const improvementsContainer = document.getElementById('improvements-container');
         const modelContainer = document.getElementById('model-container');
 
-        // Split the feedback into sections using markdown parsing
-        const sections = feedbackContent.split('\n\n');
-        let score = '';
-        let strengths = '';
-        let improvements = '';
-        let modelAnswer = '';
+        // Extract sections using regex for more precise matching
+        const scoreMatch = feedbackContent.match(/Score:\s*([\s\S]*?)(?=\n\s*(?:Strengths:|$))/i);
+        const strengthsMatch = feedbackContent.match(/Strengths:\s*([\s\S]*?)(?=\n\s*(?:Areas for Improvement:|$))/i);
+        const improvementsMatch = feedbackContent.match(/Areas for Improvement:\s*([\s\S]*?)(?=\n\s*(?:Model Answer:|$))/i);
+        const modelMatch = feedbackContent.match(/Model Answer:\s*([\s\S]*?)(?=$)/i);
 
-        sections.forEach(section => {
-            if (section.toLowerCase().includes('score') || section.toLowerCase().includes('mark')) {
-                score = section;
-            } else if (section.toLowerCase().includes('strength') || section.toLowerCase().includes('good')) {
-                strengths = section;
-            } else if (section.toLowerCase().includes('improve') || section.toLowerCase().includes('could')) {
-                improvements = section;
-            } else if (section.toLowerCase().includes('model') || section.toLowerCase().includes('example')) {
-                modelAnswer = section;
-            }
-        });
+        // Helper function to format bullet points
+        const formatBulletPoints = (text) => {
+            if (!text) return '';
+            return text.split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0)
+                .join('\n');
+        };
 
-        // Update the containers with parsed markdown
-        scoreContainer.innerHTML = marked.parse(score || 'Score not provided');
-        strengthsContainer.innerHTML = marked.parse(strengths || 'Strengths not provided');
-        improvementsContainer.innerHTML = marked.parse(improvements || 'Improvements not provided');
-        modelContainer.innerHTML = marked.parse(modelAnswer || 'Model answer not provided');
+        // Update containers with formatted content
+        scoreContainer.innerHTML = marked.parse(scoreMatch ? `## Score\n${formatBulletPoints(scoreMatch[1])}` : 'Score not provided');
+        strengthsContainer.innerHTML = marked.parse(strengthsMatch ? `## Strengths\n${formatBulletPoints(strengthsMatch[1])}` : 'Strengths not provided');
+        improvementsContainer.innerHTML = marked.parse(improvementsMatch ? `## Areas for Improvement\n${formatBulletPoints(improvementsMatch[1])}` : 'Areas for improvement not provided');
+        modelContainer.innerHTML = marked.parse(modelMatch ? `## Model Answer\n${formatBulletPoints(modelMatch[1])}` : 'Model answer not provided');
 
         // Show the feedback section
         currentQuestionElement.style.display = 'none';
