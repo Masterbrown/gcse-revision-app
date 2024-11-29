@@ -287,54 +287,29 @@ MARK SCHEME END`;
             },
             body: JSON.stringify({ 
                 prompt,
-                type: 'question',
-                max_tokens: 500
+                unit: currentUnit,
+                type: 'question'
             }),
         });
 
         if (!response.ok) {
-            console.error('API response not OK:', response.status, response.statusText);
             throw new Error(`Failed to generate question (HTTP ${response.status})`);
         }
 
         const data = await response.json();
-        console.log('Received response:', data);
-
-        if (!data || (!data.content && !data.message)) {
-            console.error('Invalid API response:', data);
-            throw new Error('Invalid API response format');
+        if (!data.content) {
+            throw new Error('No question content received');
         }
 
-        // Handle both possible response formats
-        const content = data.content || data.message || '';
-
-        // Extract question and mark scheme using the separators
-        const questionMatch = content.match(/QUESTION START\n([\s\S]*?)\nQUESTION END/);
-        const markSchemeMatch = content.match(/MARK SCHEME START\n([\s\S]*?)\nMARK SCHEME END/);
+        const questionMatch = data.content.match(/QUESTION START\n([\s\S]*?)\nQUESTION END/);
+        const markSchemeMatch = data.content.match(/MARK SCHEME START\n([\s\S]*?)\nMARK SCHEME END/);
 
         if (!questionMatch || !markSchemeMatch) {
-            console.error('Invalid question format in response:', content);
-            throw new Error('The generated question format was invalid. Please try again.');
+            throw new Error('Invalid question format');
         }
 
-        const questionText = questionMatch[1].trim();
-        const markScheme = markSchemeMatch[1].trim();
-
-        // Validate that the question contains at least one keyword from the unit
-        const hasKeyword = keywords.some(keyword => 
-            questionText.toLowerCase().includes(keyword.toLowerCase()) || 
-            markScheme.toLowerCase().includes(keyword.toLowerCase())
-        );
-
-        if (!hasKeyword) {
-            console.error('Question missing keywords:', questionText);
-            throw new Error('The generated question was not relevant to the selected unit. Please try again.');
-        }
-
-        currentQuestion = questionText;
-        currentMarkScheme = markScheme;
-        console.log('Successfully extracted question and mark scheme');
-        
+        currentQuestion = questionMatch[1].trim();
+        currentMarkScheme = markSchemeMatch[1].trim();
         displayQuestion(currentQuestion);
         showQuestion();
     } catch (error) {

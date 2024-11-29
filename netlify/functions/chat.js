@@ -41,9 +41,30 @@ exports.handler = async function(event, context) {
   }
 
   try {
-    const { prompt, unit } = JSON.parse(event.body);
+    const { prompt, unit, type } = JSON.parse(event.body);
     
-    // Get questions for the unit
+    if (type === 'question') {
+      const completion = await openai.createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a GCSE Computer Science teacher. Create exam questions.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
+      });
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ content: completion.data.choices[0].message.content })
+      };
+    }
+    
+    // Handle answer evaluation
     const unitQuestions = questionBank[unit] || [];
     
     // Get a random question for evaluation
