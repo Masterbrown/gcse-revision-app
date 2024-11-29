@@ -42,7 +42,7 @@ function initializeDOMReferences() {
 
 // Load both question examples and extracted questions when the page loads
 Promise.all([
-    fetch('/question_examples.json')
+    fetch('question_examples.json')
         .then(response => response.json())
         .catch(error => {
             console.error('Error loading question examples:', error);
@@ -66,7 +66,7 @@ Mark Scheme:
 • Answer: 110101 (1)`
             };
         }),
-    fetch('/extracted_questions.json')
+    fetch('extracted_questions.json')
         .then(response => response.json())
         .catch(error => {
             console.error('Error loading extracted questions:', error);
