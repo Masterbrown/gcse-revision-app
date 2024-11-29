@@ -44,141 +44,135 @@ exports.handler = async function(event, context) {
     const { prompt, unit, type } = JSON.parse(event.body);
     
     if (type === 'question') {
-      const completion = await openai.createChatCompletion({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a GCSE Computer Science teacher. Create exam questions.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ]
-      });
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({ content: completion.data.choices[0].message.content })
-      };
+      try {
+        const completion = await openai.createChatCompletion({
+          model: 'gpt-3.5-turbo',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are a GCSE Computer Science teacher. Create exam questions.'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ]
+        });
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({ content: completion.data.choices[0].message.content })
+        };
+      } catch (error) {
+        if (error.message.includes('rate limit') || error.message.includes('resource_exhausted')) {
+          return {
+            statusCode: 429,
+            headers,
+            body: JSON.stringify({ 
+              error: 'Rate limit exceeded',
+              message: 'Please wait a minute before trying again'
+            })
+          };
+        }
+        throw error;
+      }
     }
     
     // Handle answer evaluation
     const unitQuestions = questionBank[unit] || [];
-    
-    // Get a random question for evaluation
     const randomQuestion = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
     
     if (!randomQuestion) {
-      throw new Error('No questions available for this unit');
+      return {
+        statusCode: 404,
+        headers,
+        body: JSON.stringify({ 
+          error: 'No questions found',
+          message: 'No questions available for this unit. Please try another unit.'
+        })
+      };
     }
 
     // Extract mark allocation from the question
     const markMatch = randomQuestion.question.match(/\[(\d+)\s*marks?\]/i);
     const totalMarks = markMatch ? parseInt(markMatch[1]) : 0;
 
-    // Create context-aware prompt
-    const contextPrompt = `You are a GCSE Computer Science examiner marking a student's answer to this specific question:
+    try {
+      const completion = await openai.createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a GCSE Computer Science examiner. Evaluate answers strictly according to the mark scheme.'
+          },
+          {
+            role: 'user',
+            content: `Evaluate this student's answer according to the mark scheme:
 
-${randomQuestion.question}
+Question: ${randomQuestion.question}
 
-The official mark scheme states:
-${randomQuestion.markScheme}
+Mark Scheme: ${randomQuestion.markScheme}
 
-Total marks available: ${totalMarks}
+Student's Answer: ${prompt}
 
-INSTRUCTIONS:
-1. Use ONLY the official mark scheme above to evaluate the student's answer
-2. Award marks strictly according to the mark scheme points
-3. Provide specific feedback based on the mark scheme
-4. Your model answer must match the style and depth of the mark scheme
-
-Evaluate this student answer:
-${prompt}
-
-RESPOND IN EXACTLY THIS FORMAT:
+Respond in EXACTLY this format:
 
 Score:
 [X] out of ${totalMarks} marks
-(Where X is the actual marks earned based on the mark scheme)
 
 Strengths:
 • List specific points from their answer that match the mark scheme
-• Each bullet point should reference specific mark scheme criteria they met
+• Each bullet point should reference mark scheme criteria they met
 
 Areas for Improvement:
 • List specific mark scheme points they missed
 • Explain what they should have included to get those marks
 
 Model Answer:
-[Provide an answer that would achieve full marks according to the mark scheme]`;
+[Write an answer that would achieve full marks according to the mark scheme]`
+          }
+        ],
+        temperature: 0.3
+      });
 
-    try {
-        const completion = await openai.createChatCompletion({
-            model: 'gpt-3.5-turbo',
-            messages: [
-                {
-                    role: 'system',
-                    content: 'You are a GCSE Computer Science examiner. You must evaluate answers strictly according to the provided mark scheme. Your feedback must be specific and reference the mark scheme criteria. Never award more marks than available in the question.'
-                },
-                {
-                    role: 'user',
-                    content: contextPrompt
-                }
-            ],
-            temperature: 0.2
-        });
+      const response = completion.data.choices[0].message.content;
+      
+      // Verify the response has all required sections
+      const sections = ['Score:', 'Strengths:', 'Areas for Improvement:', 'Model Answer:'];
+      let modifiedResponse = response;
 
-        const response = completion.data.choices[0].message.content;
-        console.log('AI Response:', response);
-
-        // Verify the response format
-        const requiredSections = ['Score:', 'Strengths:', 'Areas for Improvement:', 'Model Answer:'];
-        let modifiedResponse = response;
-
-        // Ensure score doesn't exceed total marks
-        const scoreMatch = response.match(/Score:\s*(\d+)\s*out of\s*(\d+)/i);
-        if (scoreMatch) {
-            const [, score, max] = scoreMatch;
-            if (parseInt(score) > totalMarks) {
-                modifiedResponse = modifiedResponse.replace(
-                    /Score:.*$/m,
-                    `Score:\n${totalMarks} out of ${totalMarks} marks`
-                );
-            }
+      sections.forEach(section => {
+        if (!modifiedResponse.includes(section)) {
+          if (section === 'Score:') {
+            modifiedResponse = `Score:\n0 out of ${totalMarks} marks\n\n${modifiedResponse}`;
+          } else if (section === 'Strengths:') {
+            modifiedResponse += '\n\nStrengths:\n• Attempted to answer the question';
+          } else if (section === 'Areas for Improvement:') {
+            modifiedResponse += '\n\nAreas for Improvement:\n• Review the mark scheme points';
+          } else if (section === 'Model Answer:') {
+            modifiedResponse += `\n\nModel Answer:\n${randomQuestion.markScheme}`;
+          }
         }
+      });
 
-        // Add any missing sections
-        requiredSections.forEach(section => {
-            if (!modifiedResponse.includes(section)) {
-                if (section === 'Score:' && !modifiedResponse.includes('Score:')) {
-                    modifiedResponse = `Score:\n0 out of ${totalMarks} marks\n\n${modifiedResponse}`;
-                } else if (section === 'Strengths:' && !modifiedResponse.includes('Strengths:')) {
-                    modifiedResponse += '\n\nStrengths:\n• Attempted to answer the question';
-                } else if (section === 'Areas for Improvement:' && !modifiedResponse.includes('Areas for Improvement:')) {
-                    modifiedResponse += '\n\nAreas for Improvement:\n• Review the mark scheme points\n• Include more specific details from the mark scheme';
-                } else if (section === 'Model Answer:' && !modifiedResponse.includes('Model Answer:')) {
-                    modifiedResponse += `\n\nModel Answer:\n${randomQuestion.markScheme.replace(/^Mark scheme:?\s*/i, '')}`;
-                }
-            }
-        });
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ content: modifiedResponse })
+      };
 
-        return {
-            statusCode: 200,
-            headers,
-            body: JSON.stringify({ 
-                content: modifiedResponse,
-                debug: {
-                    question: randomQuestion.question,
-                    markScheme: randomQuestion.markScheme,
-                    totalMarks: totalMarks
-                }
-            })
-        };
     } catch (error) {
-        console.error('OpenAI Error:', error);
-        throw error;
+      if (error.message.includes('rate limit') || error.message.includes('resource_exhausted')) {
+        return {
+          statusCode: 429,
+          headers,
+          body: JSON.stringify({ 
+            error: 'Rate limit exceeded',
+            message: 'Please wait a minute before trying again'
+          })
+        };
+      }
+      throw error;
     }
   } catch (error) {
     console.error('Error:', error);

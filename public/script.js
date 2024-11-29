@@ -463,7 +463,10 @@ async function handleSubmitAnswer() {
         feedbackSection.style.display = 'block';
     } catch (error) {
         console.error('Error:', error);
-        alert('Failed to submit answer. Please try again.');
+        const errorMessage = error.response?.status === 429 
+            ? 'The system is currently busy. Please wait a minute before trying again.'
+            : 'Failed to submit answer. Please try again.';
+        alert(errorMessage);
     } finally {
         hideLoading();
         submitButton.disabled = false;
