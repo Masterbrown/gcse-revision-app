@@ -9,22 +9,62 @@ async function extractQuestionsFromPDF(filePath) {
         const data = await pdf(dataBuffer);
         const content = data.text;
         
-        // Extract questions and their mark schemes
-        const sections = content.split(/Question \d+/g).slice(1); // Skip first split which is before first question
+        // Improved question extraction
+        // First split by "Question" followed by a number
+        const sections = content.split(/Question\s+\d+\.?\s*/g).slice(1);
         
         const questions = sections.map(section => {
-            // Find mark allocation if present [X marks]
+            // Find mark allocation
             const markAllocation = section.match(/\[(\d+)\s*marks?\]/i);
             const marks = markAllocation ? markAllocation[1] : '';
             
-            // Split into question and mark scheme if possible
-            const [questionPart, markSchemePart] = section.split(/Mark scheme/i);
+            // Split into question and mark scheme, handling multiple possible formats
+            let questionPart, markSchemePart;
             
-            return {
-                question: questionPart ? `Question${questionPart}${marks ? ` [${marks} marks]` : ''}` : '',
-                markScheme: markSchemePart ? `Mark scheme${markSchemePart}` : ''
+            // Try different mark scheme markers
+            const markSchemeMarkers = [
+                /Mark scheme:/i,
+                /Marking scheme:/i,
+                /Mark points:/i,
+                /Marking points:/i
+            ];
+            
+            for (const marker of markSchemeMarkers) {
+                const parts = section.split(marker);
+                if (parts.length > 1) {
+                    [questionPart, markSchemePart] = parts;
+                    break;
+                }
+            }
+            
+            // If no explicit mark scheme found, try to find it by structure
+            if (!markSchemePart && questionPart) {
+                // Look for bullet points or numbered items after the question
+                const bulletMatch = questionPart.match(/(.*?)(\s*[•\-\*]\s.*$)/s);
+                if (bulletMatch) {
+                    [, questionPart, markSchemePart] = bulletMatch;
+                }
+            }
+            
+            // Clean up the text
+            const cleanText = (text) => {
+                if (!text) return '';
+                return text
+                    .replace(/\s+/g, ' ')
+                    .replace(/\n+/g, '\n')
+                    .trim();
             };
-        }).filter(q => q.question && q.markScheme); // Only keep complete question-mark scheme pairs
+            
+            // Only include questions that have both a question and a mark scheme
+            if (questionPart && (markSchemePart || marks)) {
+                return {
+                    question: cleanText(`Question: ${questionPart}${marks ? ` [${marks} marks]` : ''}`),
+                    markScheme: cleanText(markSchemePart ? `Mark scheme:\n${markSchemePart}` : '')
+                };
+            }
+            
+            return null;
+        }).filter(q => q !== null); // Remove any null entries
         
         return questions;
     } catch (error) {

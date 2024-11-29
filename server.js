@@ -14,7 +14,7 @@ let questionBank = null;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // OpenAI API endpoint
 const OPENAI_API_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
@@ -38,17 +38,32 @@ app.post('/api/chat', async (req, res) => {
         
         // Get relevant questions for the unit
         const unitQuestions = questionBank[unit] || [];
-        const randomQuestion = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
         
-        // Create a context-aware prompt
-        const contextPrompt = `You are a GCSE Computer Science tutor. Using this example question and mark scheme as reference:
+        // Get 3 random questions for better context
+        const sampleQuestions = [];
+        for (let i = 0; i < Math.min(3, unitQuestions.length); i++) {
+            const randomIndex = Math.floor(Math.random() * unitQuestions.length);
+            sampleQuestions.push(unitQuestions[randomIndex]);
+        }
         
-        Example Question: ${randomQuestion?.question || 'No specific question available'}
-        Example Mark Scheme: ${randomQuestion?.markScheme || 'No specific mark scheme available'}
-        
-        Generate a similar but different question about ${unit} that tests the same concepts. Then evaluate the student's answer.
-        
-        Student's prompt: ${prompt}`;
+        // Create a context-aware prompt with multiple example questions
+        const contextPrompt = `You are a GCSE Computer Science examiner creating and marking questions. Here are some example questions and mark schemes from the official GCSE papers:
+
+${sampleQuestions.map((q, i) => `Example ${i + 1}:
+Question: ${q.question}
+Mark Scheme: ${q.markScheme}
+`).join('\n')}
+
+IMPORTANT INSTRUCTIONS:
+1. Generate a new question that is VERY similar in style, difficulty, and format to these example questions.
+2. Do NOT create general knowledge or discussion questions.
+3. The question MUST match the exact format of the examples (including mark allocation).
+4. Use similar command words (e.g., "State", "Explain", "Calculate" etc.) as used in the examples.
+5. The mark scheme must follow the same style as the examples.
+
+Now, generate a question and evaluate the student's answer:
+
+Student's answer: ${prompt}`;
         
         const response = await fetch(OPENAI_API_ENDPOINT, {
             method: 'POST',
@@ -60,11 +75,15 @@ app.post('/api/chat', async (req, res) => {
                 model: 'gpt-3.5-turbo',
                 messages: [
                     {
+                        role: 'system',
+                        content: 'You are a GCSE Computer Science examiner. Always format your response in a clear structure with sections for Question, Mark Scheme, Student Score, and Feedback. Never deviate from the style of the example questions provided.'
+                    },
+                    {
                         role: 'user',
                         content: contextPrompt
                     }
                 ],
-                temperature: 0.7
+                temperature: 0.3  // Lower temperature for more consistent outputs
             })
         });
 
@@ -83,7 +102,7 @@ app.post('/api/chat', async (req, res) => {
 
 // Serve the main page
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Initialize question bank when server starts
