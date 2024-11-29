@@ -423,117 +423,71 @@ async function handleSubmitAnswer() {
     }
 
     showLoading();
-    const userAnswer = answerInput.value;
-    
-    const prompt = `You are an expert Computer Science teacher marking a GCSE student's binary to denary conversion answer.
-
-The question was:
-${currentQuestion}
-
-The official mark scheme is:
-${currentMarkScheme}
-
-The student's answer:
-${userAnswer}
-
-Before providing feedback, carefully:
-1. Check if the answer is a valid binary number (only contains 1s and 0s) if converting from binary
-2. Verify the calculation:
-   - For binary to denary: Calculate the sum of each binary digit multiplied by its corresponding power of 2
-   - For denary to binary: Check if the binary number correctly represents the denary value
-3. Award full marks if the final answer is mathematically correct
-4. For incorrect answers, identify where the calculation went wrong
-
-Format your response EXACTLY as follows (DO NOT include section headers in the content):
-MARKS START
-X/Y marks
-MARKS END
-
-STRENGTHS START
-• List correct aspects of their calculation
-• Mention if they used the right method even if final answer is wrong
-STRENGTHS END
-
-IMPROVEMENTS START
-• Point out specific calculation errors
-• Suggest the correct method if they used the wrong approach
-IMPROVEMENTS END
-
-MODEL ANSWER START
-Show a clear step-by-step conversion process. For binary to denary, show the powers of 2 calculation. For denary to binary, show the division by 2 method.
-MODEL ANSWER END`;
+    submitButton.disabled = true;
+    answerInput.disabled = true;
 
     try {
         const response = await fetch(API_ENDPOINT, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                prompt,
-                type: 'feedback'
-            }),
+                prompt: answerInput.value,
+                unit: currentUnit  // Include the current unit
+            })
         });
 
         if (!response.ok) {
-            throw new Error('Failed to generate feedback');
+            throw new Error('Network response was not ok');
         }
 
         const data = await response.json();
-        const content = data.content || data.message || '';
+        
+        // Parse and display the feedback
+        const feedbackContent = data.content;
+        
+        // Update the feedback section
+        const scoreContainer = document.getElementById('score-container');
+        const strengthsContainer = document.getElementById('strengths-container');
+        const improvementsContainer = document.getElementById('improvements-container');
+        const modelContainer = document.getElementById('model-container');
 
-        // Extract sections using regex with non-greedy matching
-        const marksMatch = content.match(/MARKS START\r?\n([\s\S]*?)\r?\nMARKS END/);
-        const strengthsMatch = content.match(/STRENGTHS START\r?\n([\s\S]*?)\r?\nSTRENGTHS END/);
-        const improvementsMatch = content.match(/IMPROVEMENTS START\r?\n([\s\S]*?)\r?\nIMPROVEMENTS END/);
-        const modelAnswerMatch = content.match(/MODEL ANSWER START\r?\n([\s\S]*?)\r?\nMODEL ANSWER END/);
+        // Split the feedback into sections using markdown parsing
+        const sections = feedbackContent.split('\n\n');
+        let score = '';
+        let strengths = '';
+        let improvements = '';
+        let modelAnswer = '';
 
-        let feedbackHTML = '';
-
-        // Always show marks
-        if (marksMatch) {
-            const marks = marksMatch[1].trim();
-            feedbackHTML += `<div class="marks"><strong>${marks}</strong></div>`;
-        }
-
-        // Always show strengths (what they did well)
-        if (strengthsMatch) {
-            const strengths = strengthsMatch[1].trim();
-            feedbackHTML += `<div class="feedback-section">
-                <h3>What You Did Well:</h3>
-                <p>${strengths}</p>
-            </div>`;
-        }
-
-        // Only show improvements if they didn't get full marks
-        if (improvementsMatch && marksMatch) {
-            const marks = marksMatch[1].trim();
-            const [scored, total] = marks.split('/').map(n => parseInt(n));
-            if (scored < total) {
-                const improvements = improvementsMatch[1].trim();
-                feedbackHTML += `<div class="improvements-section">
-                    <h3>Areas for Improvement:</h3>
-                    <p>${improvements}</p>
-                </div>`;
+        sections.forEach(section => {
+            if (section.toLowerCase().includes('score') || section.toLowerCase().includes('mark')) {
+                score = section;
+            } else if (section.toLowerCase().includes('strength') || section.toLowerCase().includes('good')) {
+                strengths = section;
+            } else if (section.toLowerCase().includes('improve') || section.toLowerCase().includes('could')) {
+                improvements = section;
+            } else if (section.toLowerCase().includes('model') || section.toLowerCase().includes('example')) {
+                modelAnswer = section;
             }
-        }
+        });
 
-        // Always show model answer, but only the actual answer text
-        if (modelAnswerMatch) {
-            const modelAnswer = modelAnswerMatch[1].trim();
-            feedbackHTML += `<div class="model-answer-section">
-                <h3>Model Answer:</h3>
-                <p>${modelAnswer}</p>
-            </div>`;
-        }
+        // Update the containers with parsed markdown
+        scoreContainer.innerHTML = marked.parse(score || 'Score not provided');
+        strengthsContainer.innerHTML = marked.parse(strengths || 'Strengths not provided');
+        improvementsContainer.innerHTML = marked.parse(improvements || 'Improvements not provided');
+        modelContainer.innerHTML = marked.parse(modelAnswer || 'Model answer not provided');
 
-        if (feedbackSection) feedbackSection.innerHTML = feedbackHTML;
-        hideLoading();
-        showFeedback();
+        // Show the feedback section
+        currentQuestionElement.style.display = 'none';
+        feedbackSection.style.display = 'block';
     } catch (error) {
         console.error('Error:', error);
-        if (feedbackSection) feedbackSection.textContent = 'Error generating feedback. Please try again.';
+        alert('Failed to submit answer. Please try again.');
+    } finally {
         hideLoading();
+        submitButton.disabled = false;
+        answerInput.disabled = false;
     }
 }
 
