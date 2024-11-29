@@ -46,42 +46,52 @@ exports.handler = async function(event, context) {
     // Get questions for the unit
     const unitQuestions = questionBank[unit] || [];
     
-    // Get 3 random questions for context
-    const sampleQuestions = [];
-    for (let i = 0; i < Math.min(3, unitQuestions.length); i++) {
-      const randomIndex = Math.floor(Math.random() * unitQuestions.length);
-      sampleQuestions.push(unitQuestions[randomIndex]);
+    // Get a random question for evaluation
+    const randomQuestion = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
+    
+    if (!randomQuestion) {
+      throw new Error('No questions available for this unit');
     }
 
+    // Extract mark allocation from the question
+    const markMatch = randomQuestion.question.match(/\[(\d+)\s*marks?\]/i);
+    const totalMarks = markMatch ? parseInt(markMatch[1]) : 0;
+
     // Create context-aware prompt
-    const contextPrompt = `You are a GCSE Computer Science examiner marking a student's answer. 
+    const contextPrompt = `You are a GCSE Computer Science examiner marking a student's answer to this specific question:
 
-${sampleQuestions.map((q, i) => `Example ${i + 1}:
-Question: ${q.question}
-Mark Scheme: ${q.markScheme}
-`).join('\n')}
+${randomQuestion.question}
 
-Based on these example questions and mark schemes, evaluate the student's answer.
+The official mark scheme states:
+${randomQuestion.markScheme}
 
-YOU MUST RESPOND IN EXACTLY THIS FORMAT, including all section headers and bullet points:
+Total marks available: ${totalMarks}
+
+INSTRUCTIONS:
+1. Use ONLY the official mark scheme above to evaluate the student's answer
+2. Award marks strictly according to the mark scheme points
+3. Provide specific feedback based on the mark scheme
+4. Your model answer must match the style and depth of the mark scheme
+
+Evaluate this student answer:
+${prompt}
+
+RESPOND IN EXACTLY THIS FORMAT:
 
 Score:
-[X] out of [Y] marks
+[X] out of ${totalMarks} marks
+(Where X is the actual marks earned based on the mark scheme)
 
 Strengths:
-• [First strength point]
-• [Second strength point]
-• [Add more points if applicable]
+• List specific points from their answer that match the mark scheme
+• Each bullet point should reference specific mark scheme criteria they met
 
 Areas for Improvement:
-• [First improvement point]
-• [Second improvement point]
-• [Add more points if applicable]
+• List specific mark scheme points they missed
+• Explain what they should have included to get those marks
 
 Model Answer:
-[Provide a detailed model answer that would achieve full marks]
-
-Student's answer: ${prompt}`;
+[Provide an answer that would achieve full marks according to the mark scheme]`;
 
     try {
         const completion = await openai.createChatCompletion({
@@ -89,65 +99,65 @@ Student's answer: ${prompt}`;
             messages: [
                 {
                     role: 'system',
-                    content: 'You are a GCSE Computer Science examiner. You MUST include ALL sections in your response: Score, Strengths, Areas for Improvement, and Model Answer. Each section must start with its exact heading and be followed by relevant content. For Strengths and Areas for Improvement, use bullet points starting with •'
+                    content: 'You are a GCSE Computer Science examiner. You must evaluate answers strictly according to the provided mark scheme. Your feedback must be specific and reference the mark scheme criteria. Never award more marks than available in the question.'
                 },
                 {
                     role: 'user',
                     content: contextPrompt
                 }
             ],
-            temperature: 0.2,  // Reduced for more consistent formatting
-            max_tokens: 1000
+            temperature: 0.2
         });
 
         const response = completion.data.choices[0].message.content;
-        
-        // Log the response for debugging
         console.log('AI Response:', response);
 
-        // Verify all sections are present
-        const sections = ['Score:', 'Strengths:', 'Areas for Improvement:', 'Model Answer:'];
-        const missingSections = sections.filter(section => !response.includes(section));
-        
-        if (missingSections.length > 0) {
-            console.log('Missing sections:', missingSections);
-            // If sections are missing, add them with default content
-            let modifiedResponse = response;
-            missingSections.forEach(section => {
-                if (!modifiedResponse.includes(section)) {
-                    if (section === 'Score:' && !modifiedResponse.includes('Score:')) {
-                        modifiedResponse = 'Score:\n0 out of 0 marks\n\n' + modifiedResponse;
-                    } else if (section === 'Strengths:' && !modifiedResponse.includes('Strengths:')) {
-                        modifiedResponse += '\n\nStrengths:\n• Attempted to answer the question';
-                    } else if (section === 'Areas for Improvement:' && !modifiedResponse.includes('Areas for Improvement:')) {
-                        modifiedResponse += '\n\nAreas for Improvement:\n• Review the topic material\n• Practice similar questions';
-                    } else if (section === 'Model Answer:' && !modifiedResponse.includes('Model Answer:')) {
-                        modifiedResponse += '\n\nModel Answer:\nA model answer should be provided';
-                    }
-                }
-            });
-            return {
-                statusCode: 200,
-                headers,
-                body: JSON.stringify({ content: modifiedResponse })
-            };
+        // Verify the response format
+        const requiredSections = ['Score:', 'Strengths:', 'Areas for Improvement:', 'Model Answer:'];
+        let modifiedResponse = response;
+
+        // Ensure score doesn't exceed total marks
+        const scoreMatch = response.match(/Score:\s*(\d+)\s*out of\s*(\d+)/i);
+        if (scoreMatch) {
+            const [, score, max] = scoreMatch;
+            if (parseInt(score) > totalMarks) {
+                modifiedResponse = modifiedResponse.replace(
+                    /Score:.*$/m,
+                    `Score:\n${totalMarks} out of ${totalMarks} marks`
+                );
+            }
         }
+
+        // Add any missing sections
+        requiredSections.forEach(section => {
+            if (!modifiedResponse.includes(section)) {
+                if (section === 'Score:' && !modifiedResponse.includes('Score:')) {
+                    modifiedResponse = `Score:\n0 out of ${totalMarks} marks\n\n${modifiedResponse}`;
+                } else if (section === 'Strengths:' && !modifiedResponse.includes('Strengths:')) {
+                    modifiedResponse += '\n\nStrengths:\n• Attempted to answer the question';
+                } else if (section === 'Areas for Improvement:' && !modifiedResponse.includes('Areas for Improvement:')) {
+                    modifiedResponse += '\n\nAreas for Improvement:\n• Review the mark scheme points\n• Include more specific details from the mark scheme';
+                } else if (section === 'Model Answer:' && !modifiedResponse.includes('Model Answer:')) {
+                    modifiedResponse += `\n\nModel Answer:\n${randomQuestion.markScheme.replace(/^Mark scheme:?\s*/i, '')}`;
+                }
+            }
+        });
 
         return {
             statusCode: 200,
             headers,
-            body: JSON.stringify({ content: response })
-        };
-    } catch (error) {
-        console.error('Error:', error);
-        return {
-            statusCode: 500,
-            headers,
-            body: JSON.stringify({
-                error: 'Failed to process request',
-                details: error.message
+            body: JSON.stringify({ 
+                content: modifiedResponse,
+                debug: {
+                    question: randomQuestion.question,
+                    markScheme: randomQuestion.markScheme,
+                    totalMarks: totalMarks
+                }
             })
         };
+    } catch (error) {
+        console.error('OpenAI Error:', error);
+        throw error;
     }
   } catch (error) {
     console.error('Error:', error);
