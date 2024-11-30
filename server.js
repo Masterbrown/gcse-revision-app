@@ -117,22 +117,20 @@ app.post('/api/chat', async (req, res) => {
         const messages = [
             {
                 role: 'system',
-                content: `You are a GCSE Computer Science examiner. Format your responses with clear sections using markdown:
+                content: `You are a GCSE Computer Science examiner. When formatting questions with multiple parts:
 
-1. For questions:
-   - Use a double line break (\n\n) after each part number (e.g., "1a)", "1b)")
-   - Use a single line break (\n) between related items in the same part
-   - Use a double line break (\n\n) between different parts of the question
-   - Use triple backticks (\`\`\`) for code blocks with a line break before and after
-   - Use bullet points with line breaks for lists
+1. ALWAYS put each sub-part (a, b, c) on a new line with a blank line before it
+2. Format sub-parts exactly like this:
 
-2. For feedback:
-   - Use markdown headings (e.g., "# Score:", "## Strengths:", etc.)
-   - Use bullet points for listing strengths and improvements
-   - Format code examples in code blocks using triple backticks
-   - Use appropriate line breaks for readability
+1a) First part of question
 
-Always keep to the style of the example questions provided while ensuring proper formatting.`
+1b) Second part of question
+
+1c) Third part of question
+
+3. Use double newlines between parts to ensure proper spacing
+4. For code blocks, use triple backticks with newlines before and after
+5. Keep the feedback sections in markdown format with proper headings`
             },
             {
                 role: 'user',
@@ -144,41 +142,33 @@ Mark Scheme: ${q.markScheme}
 `).join('\n')}
 
 IMPORTANT FORMATTING INSTRUCTIONS:
-1. Structure multi-part questions with clear spacing:
-   1a) First part of the question\n\n
-   1b) Second part of the question\n\n
-   1c) Third part of the question\n\n
+1. Format ALL multi-part questions EXACTLY like this example:
+
+1a) First question part goes here
+
+1b) Second question part goes here
+
+1c) Third question part goes here
 
 2. For code examples:
-   \`\`\`
-   code here
-   \`\`\`
+\`\`\`
+code here
+\`\`\`
 
-3. For bullet point lists:
-   • First item\n
-   • Second item\n
-   • Third item\n\n
+3. For feedback sections:
+# Score:
+[score details]
 
-4. For example outputs:
-   Expected output:\n
-   \`\`\`
-   output here
-   \`\`\`\n\n
+## Strengths:
+• [strength point]
+• [strength point]
 
-5. For feedback sections:
-   # Score:
-   [score details]
+## Areas for Improvement:
+• [improvement point]
+• [improvement point]
 
-   ## Strengths:
-   • [strength point]
-   • [strength point]
-
-   ## Areas for Improvement:
-   • [improvement point]
-   • [improvement point]
-
-   ## Model Answer:
-   [detailed model answer]
+## Model Answer:
+[detailed model answer]
 
 ADDITIONAL INSTRUCTIONS:
 1. Generate questions similar in style and difficulty to the examples

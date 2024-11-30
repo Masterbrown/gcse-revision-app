@@ -255,8 +255,15 @@ function displayQuestion(questionData) {
         return;
     }
     
-    // Format the question text using marked for markdown parsing
-    let formattedQuestion = marked.parse(questionData.question);
+    // Ensure proper line breaks for question parts
+    let formattedQuestion = questionData.question
+        // Add extra newline before each question part
+        .replace(/(\d[a-z]\))/g, '\n\n$1')
+        // Convert to markdown
+        .split('\n').join('\n\n');
+    
+    // Parse as markdown
+    formattedQuestion = marked.parse(formattedQuestion);
     
     // Display the question
     questionText.innerHTML = formattedQuestion;
