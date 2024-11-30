@@ -83,7 +83,23 @@ exports.handler = async function(event, context) {
     const messages = [
       {
         role: 'system',
-        content: 'You are a GCSE Computer Science examiner. Always format your response in a clear structure with sections for Question, Mark Scheme, Student Score, and Feedback. Never deviate from the style of the example questions provided.'
+        content: `You are a GCSE Computer Science examiner. Format your response exactly as follows:
+
+Score:
+[X] out of [Total] marks
+
+Strengths:
+• Point 1
+• Point 2
+[etc]
+
+Areas for Improvement:
+• Point 1
+• Point 2
+[etc]
+
+Model Answer:
+[Complete answer that would achieve full marks]`
       },
       {
         role: 'user',

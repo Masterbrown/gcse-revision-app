@@ -298,15 +298,18 @@ async function handleSubmitAnswer() {
         }
         
         const data = await response.json();
+        console.log('Received feedback:', data.content); // Debug log
         
         // Hide question container
         currentQuestionElement.style.display = 'none';
         
-        // Split raw content into sections first
+        // Split raw content into sections
         const sections = data.content.split('\n\n');
         let score = '', strengths = '', improvements = '', model = '';
         
-        sections.forEach(section => {
+        // Find each section
+        for (let i = 0; i < sections.length; i++) {
+            const section = sections[i].trim();
             if (section.startsWith('Score:')) {
                 score = section;
             } else if (section.startsWith('Strengths:')) {
@@ -316,13 +319,15 @@ async function handleSubmitAnswer() {
             } else if (section.startsWith('Model Answer:')) {
                 model = section;
             }
-        });
+        }
         
-        // Parse each section with marked
-        document.getElementById('score-container').innerHTML = marked.parse(score);
-        document.getElementById('strengths-container').innerHTML = marked.parse(strengths);
-        document.getElementById('improvements-container').innerHTML = marked.parse(improvements);
-        document.getElementById('model-container').innerHTML = marked.parse(model);
+        console.log('Parsed sections:', { score, strengths, improvements, model }); // Debug log
+        
+        // Parse and display each section
+        document.getElementById('score-container').innerHTML = marked.parse(score || 'Score not provided');
+        document.getElementById('strengths-container').innerHTML = marked.parse(strengths || 'No strengths provided');
+        document.getElementById('improvements-container').innerHTML = marked.parse(improvements || 'No improvements provided');
+        document.getElementById('model-container').innerHTML = marked.parse(model || 'No model answer provided');
         
         // Show feedback section
         feedbackSection.style.display = 'block';
