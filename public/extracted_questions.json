@@ -1,10 +1,1018 @@
 {
-  "3.1": [],
-  "3.2": [],
-  "3.3": [],
-  "3.4": [],
-  "3.5": [],
-  "3.6": [],
-  "3.7": [],
-  "3.8": []
+  "3.1": [
+    {
+      "question": "Decomposition has been used to break the problem down into smaller sub-problems. The chart below represents the design of the program. Complete the decomposition of this program by stating what should be written in boxes  and . The figure below shows an algorithm represented using pseudo-code. •   Line numbers are included but are not part of the algorithm. 1     names ← ['Lily', 'Thomas'] 2     name1 ← 'Sarah' 3     name2 ← 'Freddie' 4     OUTPUT name1[0] 5     OUTPUT LEN(names) 6     var ← SUBSTRING(0, 3, name1) 7     OUTPUT var SUBSTRING returns part of a string. For example, SUBSTRING(3, 5, 'programming') will return the string 'gra'. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Shade one lozenge which shows the output of line 4 from the algorithm shown in the figure above. AF BFreddie CLily DS ESarah (1) (b)  Shade one lozenge which shows the output of line 5 from the algorithm shown in the figure above. A1 B2 C4 D5 E10 (1) (c)  State the output of line 7 from the algorithm shown in the figure above. (1) (d)  Two extra lines are being added to the end of the algorithm in the figure above. Fill in the gaps so the output from the new final line will be the string 'Thomasrah'. var ← SUBSTRING( _____ , _____ , name1) OUTPUT names[ _______ ] + var (2) Figure 1 shows a subroutine represented using pseudo-code. Figure 1 SUBROUTINE calculate(n) a ← n b ← 0 REPEAT a ← a DIV 2 b ← b + 1 UNTIL a ≤ 1 OUTPUT b ENDSUBROUTINE The DIV operator is used for integer division. [5 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Complete the trace table for the subroutine call calculate(50) You may not need to use all the rows in the table. nabOUTPUT 50 (4) (b)  State the value that will be output for the subroutine call calculate(1) (1) (c)  The identifier for the variable b in Figure 1 was not a good choice. State a better identifier for this variable that makes the algorithm easier to read and understand. (1) (d)  A REPEAT...UNTIL iteration structure was used in Figure 1. Figure 1 has been included again below. Figure 1 SUBROUTINE calculate(n) a ← n b ← 0 REPEAT a ← a DIV 2 b ← b + 1 UNTIL a ≤ 1 OUTPUT b ENDSUBROUTINE Figure 2 shows another subroutine called calculate that uses a WHILE...ENDWHILE iteration structure. Figure 2 SUBROUTINE calculate(n) a ← n b ← 0 WHILE a > 1 a ← a DIV 2 b ← b + 1 ENDWHILE OUTPUT b ENDSUBROUTINE One difference in the way the subroutines in Figure 1 and Figure 2 work is: •   the REPEAT...UNTIL iteration structure in Figure 1 loops until the condition is true •   the WHILE...ENDWHILE iteration structure in Figure 2 loops until the condition is false. Describe two other differences in the way the subroutines in Figure 1 and Figure 2 work. (2) (a)  The size of a sound file is calculated using the following formula: size (in bits) = sampling rate * sample resolution * seconds To calculate the size in bytes, the number is divided by 8 [8 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The algorithm in Figure 2, represented using pseudo-code, should output the size of a sound file in bytes that has been sampled 100 times per second, with a sample resolution of 16 bits and a recording length of 60 seconds. A subroutine called getSize has been developed as part of the algorithm. Complete Figure 2 by filling in the gaps using the items in Figure 1. You will not need to use all the items in Figure 1. Figure 1 bitbytegetSizeOUTPUT rateresRETURNsampRate secondssizesize + 8size * 8 size / 8size MOD 8SUBROUTINEUSERINPUT Figure 2 SUBROUTINE getSize(____________, ____________, seconds) ______________ ← sampRate * res * seconds size ← ______________ ______________ size ENDSUBROUTINE OUTPUT ______________(100, 16, 60) (6) (b)  A local variable called size has been used in getSize. Explain what is meant by a local variable in a subroutine. (1) (c)  State three advantages of using subroutines. (3) The figure below shows an algorithm represented in pseudo-code. A developer wants to check the algorithm works correctly. •   Line numbers are included but are not part of the algorithm. 1     arr[0] ← 'c' 2     arr[1] ← 'b' 3     arr[2] ← 'a' 4     FOR i ← 0 TO 1 5       FOR j ← 0 TO 1 6         IF arr[j + 1] < arr[j] THEN 7           temp ← arr[j] 8           arr[j] ← arr[j + 1] 9           arr[j + 1] ← temp 10        ENDIF 11      ENDFOR 12    ENDFOR [10 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Complete the trace table for the algorithm shown in the figure above. Some values have already been entered. You may not need to use all the rows in the table. arr ijtemp [0][1][2] cba (6) (b)  State the purpose of the algorithm. (1) (c)  The figure above has been included again below. 1     arr[0] ← 'c' 2     arr[1] ← 'b' 3     arr[2] ← 'a' 4     FOR i ← 0 TO 1 5       FOR j ← 0 TO 1 6         IF arr[j + 1] < arr[j] THEN 7           temp ← arr[j] 8           arr[j] ← arr[j + 1] 9           arr[j + 1] ← temp 10        ENDIF 11      ENDFOR 12    ENDFOR An earlier attempt at writing the algorithm in the figure above had different code for lines 4 and 5. Lines 4 and 5 of the pseudo-code were: FOR i ← 0 TO 2 FOR j ← 0 TO 2 Explain why the algorithm did not work when the value 2 was used instead of the value 1 on these two lines. (1) An algorithm, that uses the modulus operator, has been represented using pseudo-code in Figure 1. •   Line numbers are included but are not part of the algorithm. Figure 1 1     i ← USERINPUT 2     IF i MOD 2 = 0 THEN 3       OUTPUT i * i 4     ELSE 5       OUTPUT i 6     ENDIF The modulus operator is used to calculate the remainder after dividing one integer by another. For example: •   14 MOD 3 evaluates to 2 •   24 MOD 5 evaluates to 4 [8 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Shade one lozenge that shows the line number where selection is first used in the algorithm in Figure 1. ALine number 1 BLine number 2 CLine number 3 DLine number 4 (1) (b)  Shade one lozenge that shows the output from the algorithm in Figure 1 when the user input is 4 A0 B2 C4 D8 E16 (1) (c)  Shade one lozenge that shows the line number where assignment is first used in the algorithm in Figure 1. ALine number 1 BLine number 2 CLine number 3 DLine number 4 (1) (d)  Shade one lozenge that shows the line number that contains a relational operator in the algorithm in Figure 1. ALine number 1 BLine number 2 CLine number 3 DLine number 4 (1) Figure 1 has been included again below. Figure 1 1     i ← USERINPUT 2     IF i MOD 2 = 0 THEN 3       OUTPUT i * i 4     ELSE 5       OUTPUT i 6     ENDIF (e)  Shade one lozenge to show which of the following is a true statement about the algorithm in Figure 1. AThis algorithm uses a Boolean operator. BThis algorithm uses a named constant. CThis algorithm uses iteration. DThis algorithm uses the multiplication operator. (1) (f)  Figure 2 shows an implementation of the algorithm in Figure 1 using the C# programming language. •   Line numbers are included but are not part of the program. Figure 2 1     Console.Write(\"Enter a number: \"); 2     int i = Convert.ToInt32(Console.ReadLine()); 3     if (i % 2 == 0) { 4       Console.WriteLine(i * i); 5     } 6     else { 7       Console.WriteLine(i); 8     } The program in Figure 2 needs to be changed so that it repeats five times using definite (count controlled) iteration. Shade one lozenge next to the program that does this correctly. A for (int x = 0; x < 5; x++) { Console.Write(\"Enter a number: \"); int i = Convert.ToInt32(Console.ReadLine()); if (i % 2 == 0) { Console.WriteLine(i * i); } else { Console.WriteLine(i); } } B for (int x = 0; x < 6; x++) { Console.Write(\"Enter a number: \"); int i = Convert.ToInt32(Console.ReadLine()); if (i % 2 == 0) { Console.WriteLine(i * i); } else { Console.WriteLine(i); } } C int x = 1; while (x != 6) { Console.Write(\"Enter a number: \"); int i = Convert.ToInt32(Console.ReadLine()); if (i % 2 == 0) { Console.WriteLine(i * i); } else { Console.WriteLine(i); } x = x + 1; } D int x = 6; while (x != 0) { Console.Write(\"Enter a number: \"); int i = Convert.ToInt32(Console.ReadLine()); if (i % 2 == 0) { Console.WriteLine(i * i); } else { Console.WriteLine(i); } x = x - 1; } (1) The figure below shows a C# program that calculates car park charges. The user inputs their car registration (eg MA19 GHJ) and the length of the stay. The program then outputs the charge. •   Line numbers are included but are not part of the program. 1     int charge = 0; 2     Console.Write(\"Enter your car registration: \"); 3     string carReg = Console.ReadLine(); 4     while (carReg.Length > 8) { 5       string displayMessage = \" is not valid\"; 6       Console.Write(displayMessage); 7       carReg = Console.ReadLine(); 8     } 9     Console.Write(\"Enter your stay in hours: \"); 10    int hours = Convert.ToInt32(Console.ReadLine()); 11    if (hours < 2) { 12      charge = 0; 13    } 14    else { 15      charge = hours * 2; 16    } 17    Console.WriteLine(charge); [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Rewrite line 5 in the figure above to concatenate the car registration with the string \" is not valid\", and store the result in the variable displayMessage. Your answer must be written in C#. (1) (b)  The charge for parking for two or more hours is changed to include an additional £2 fee. Rewrite line 15 in the figure above to show this change. Your answer must be written in C#. (1) The two C# programs in the figure below output the value that is equivalent to adding together the integers between 1 and an integer entered by the user. For example, if the user entered the integer 5, both programs would output 15 Program A Console.Write(\"Enter a number: \"); int num = Convert.ToInt32(Console.ReadLine()); int total = 0; for (int i = 1; i < num + 1; i++) { total = total + i; } Console.WriteLine(total); Program B Console.Write(\"Enter a number: \"); int num1 = Convert.ToInt32(Console.ReadLine()); int num2 = num1 + 1; num2 = num1 * num2; num2 = num2 / 2; Console.WriteLine(num2); [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Shade one lozenge to indicate which of the statements is true about the programs in the figure above. ABoth programs are equally efficient. BProgram A is more efficient than Program B. CProgram B is more efficient than Program A. (1) (b)  Justify your answer for part (a). (2) An algorithm, that uses the modulus operator, has been represented using pseudo-code in Figure 1. •   Line numbers are included but are not part of the algorithm. Figure 1 1     i ← USERINPUT 2     IF i MOD 2 = 0 THEN 3       OUTPUT i * i 4     ELSE 5       OUTPUT i 6     ENDIF The modulus operator is used to calculate the remainder after dividing one integer by another. For example: •   14 MOD 3 evaluates to 2 •   24 MOD 5 evaluates to 4 [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Shade one lozenge that shows the line number where selection is first used in the algorithm in Figure 1. ALine number 1 BLine number 2 CLine number 3 DLine number 4 (1) (b)  Shade one lozenge that shows the output from the algorithm in Figure 1 when the user input is 4 A0 B2 C4 D8 E16 (1) (c)  Shade one lozenge that shows the line number where assignment is first used in the algorithm in Figure 1. ALine number 1 BLine number 2 CLine number 3 DLine number 4 (1) (d)  Shade one lozenge that shows the line number that contains a relational operator in the algorithm in Figure 1. ALine number 1 BLine number 2 CLine number 3 DLine number 4 (1) Figure 1 has been included again below. Figure 1 1     i ← USERINPUT 2     IF i MOD 2 = 0 THEN 3       OUTPUT i * i 4     ELSE 5       OUTPUT i 6     ENDIF (e)  Shade one lozenge to show which of the following is a true statement about the algorithm in Figure 1. AThis algorithm uses a Boolean operator. BThis algorithm uses a named constant. CThis algorithm uses iteration. DThis algorithm uses the multiplication operator. (1) (f)  Figure 2 shows an implementation of the algorithm in Figure 1 using the Python programming language. •   Line numbers are included but are not part of the program. Figure 2 1     i = int(input(\"Enter a number: \")) 2     if i % 2 == 0: 3       print(i * i) 4     else: 5       print(i) The program in Figure 2 needs to be changed so that it repeats five times using definite (count controlled) iteration. Shade one lozenge next to the program that does this correctly. A for x in range(0, 5): i = int(input(\"Enter a number: \")) if i % 2 == 0: print(i * i) else: print(i) B for x in range(0, 6): i = int(input(\"Enter a number: \")) if i % 2 == 0: print(i * i) else: print(i) C x = 1 while x != 6: i = int(input(\"Enter a number: \")) if i % 2 == 0: print(i * i) else: print(i) x = x + 1 D x = 6 while x != 0: i = int(input(\"Enter a number: \")) if i % 2 == 0: print(i * i) else: print(i) x = x – 1 (1) The two Python programs in the figure below output the value that is equivalent to adding together the integers between 1 and an integer entered by the user. For example, if the user entered the integer 5, both programs would output 15 Program A print(\"Enter a number: \") num = int(input()) total = 0 for i in range(1, num + 1): total = total + i print(total) Program B print(\"Enter a number: \") num1 = int(input()) num2 = num1 + 1 num2 = num1 * num2 num2 = num2 // 2 print(num2) [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Shade one lozenge to indicate which of the statements is true about the programs in the figure above. ABoth programs are equally efficient. BProgram A is more efficient than Program B. CProgram B is more efficient than Program A. (1) (b)  Justify your answer for part (a). (2) An algorithm, that uses the modulus operator, has been represented using pseudo-code in Figure 1. •   Line numbers are included but are not part of the algorithm. Figure 1 1     i ← USERINPUT 2     IF i MOD 2 = 0 THEN 3       OUTPUT i * i 4     ELSE 5       OUTPUT i 6     ENDIF The modulus operator is used to calculate the remainder after dividing one integer by another. For example: •   14 MOD 3 evaluates to 2 •   24 MOD 5 evaluates to 4 [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Shade one lozenge that shows the line number where selection is first used in the algorithm in Figure 1. ALine number 1 BLine number 2 CLine number 3 DLine number 4 (1) (b)  Shade one lozenge that shows the output from the algorithm in Figure 1 when the user input is 4 A0 B2 C4 D8 E16 (1) (c)  Shade one lozenge that shows the line number where assignment is first used in the algorithm in Figure 1. ALine number 1 BLine number 2 CLine number 3 DLine number 4 (1) (d)  Shade one lozenge that shows the line number that contains a relational operator in the algorithm in Figure 1. ALine number 1 BLine number 2 CLine number 3 DLine number 4 (1) Figure 1 has been included again below. Figure 1 1     i ← USERINPUT 2     IF i MOD 2 = 0 THEN 3       OUTPUT i * i 4     ELSE 5       OUTPUT i 6     ENDIF (e)  Shade one lozenge to show which of the following is a true statement about the algorithm in Figure 1. AThis algorithm uses a Boolean operator. BThis algorithm uses a named constant. CThis algorithm uses iteration. DThis algorithm uses the multiplication operator. (1) (f)  Figure 2 shows an implementation of the algorithm in Figure 1 using the VB.Net programming language. •   Line numbers are included but are not part of the program. Figure 2 1     Console.Write(\"Enter a number: \") 2     Dim i As Integer = Console.ReadLine() 3     If i Mod 2 = 0 Then 4       Console.WriteLine(i * i) 5     Else 6       Console.WriteLine(i) 7     End If The program in Figure 2 needs to be changed so that it repeats five times using definite (count controlled) iteration. Shade one lozenge next to the program that does this correctly. A Dim x As Integer = 1 While x <> 6 Console.Write(\"Enter a number: \") Dim i As Integer = Console.ReadLine() If i Mod 2 = 0 Then Console.WriteLine(i * i) Else Console.WriteLine(i) End If x = x + 1 End While B Dim x As Integer = 6 While x <> 0 Console.Write(\"Enter a number: \") Dim i As Integer = Console.ReadLine() If i Mod 2 = 0 Then Console.WriteLine(i * i) Else Console.WriteLine(i) End If x = x - 1 End While C For x As Integer = 0 To 4 Console.Write(\"Enter a number: \") Dim i As Integer = Console.ReadLine() If i Mod 2 = 0 Then Console.WriteLine(i * i) Else Console.WriteLine(i) End If Next D For x As Integer = 0 To 5 Console.Write(\"Enter a number: \") Dim i As Integer = Console.ReadLine() If i Mod 2 = 0 Then Console.WriteLine(i * i) Else Console.WriteLine(i) End If Next (1) The two VB.Net programs in the figure below output the value that is equivalent to adding together the integers between 1 and an integer entered by the user. For example, if the user entered the integer 5, both programs would output 15 Program A Console.Write(\"Enter a number: \") Dim num As Integer = Console.ReadLine() Dim total As Integer = 0 For i = 1 To num total = total + i Next Console.WriteLine(total) Program B Console.Write(\"Enter a number: \") Dim num1 As Integer num1 = Console.ReadLine() Dim num2 As Integer = num1 + 1 num2 = num1 * num2 num2 = num2 \\ 2 Console.WriteLine(num2) [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Shade one lozenge to indicate which of the statements is true about the programs in the figure above. ABoth programs are equally efficient. BProgram A is more efficient than Program B. CProgram B is more efficient than Program A. (1) (b)  Justify your answer for part (a). (2) Match the computer science process to each correct label. You should write a label A–F next to each process. You should not use the same label more than once. AAbstraction BData validation CDecomposition DEfficiency ERandom number generation FVariable assignment ProcessLabel (A–F) Breaking down a problem into sub-problems. Removing unimportant details. Ensuring the user enters data that is allowed, for example within a correct range. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  State the most appropriate data type of the variable seconds in the algorithm shown in the code above. (1) (b)  Explain why rest could have been defined as a constant in the algorithm shown in the code above. (1) (c)  State the line number where iteration is first used in the algorithm shown in the code above. (1) (d)  Complete the trace table for the algorithm shown in the code above. Some values have already been entered in the trace table: •   the first value of seconds •   the values returned by the subroutine getBPM that are assigned to the variable bpm. You may not need to use all rows of the trace table. secondsbpmeffortOUTPUT 070 80 100 120 (4) A developer is writing a program to convert a sequence of integers that represent playing cards to Unicode text. The developer has identified that they need to create the subroutines shown in Figure 1 to complete the program. Figure 1 SubroutinePurpose getSuit(n)Returns: •     the string 'hearts' if n is 0 •     the string 'diamonds' if n is 1 •     the string 'spades' if n is 2 •     the string 'clubs' if n is 3. getRank(n)Returns the number value of the card as a string, for example: •     if n is 1 then 'ace' is returned •     if n is 2 then 'two' is returned •     if n is 10 then 'ten' is returned •     if n is 11 then 'jack' is returned. convert(cards)Returns the complete string representation of the array cards. For example: •     if cards is [3, 1], the string returned would be 'three of diamonds ' •     if cards is [1, 0, 5, 2, 7, 0], the string returned would be 'ace of hearts five of spades seven of hearts '. [7 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Explain how the developer has used the structured approach to programming. (2) (b)  State two benefits to the developer of using the three separate subroutines described in Figure 1 instead of writing the program without using subroutines. (2) (c)  Figure 2 shows the subroutine convert described in Figure 1. Some parts of the subroutine have been replaced with the labels  to . Figure 2 SUBROUTINE convert(cards) result ← '' max ← LEN(cards) index ← 0 WHILE index < rank ← (cards[index]) suit ← getSuit(cards[ + 1]) c ← rank + ' of ' + suit + ' ' result ← result + index ← index + 2 ENDWHILE RETURN ENDSUBROUTINE State the pseudo-code that should be written in place of the labels in the subroutine written in Figure 2. _______________________________________________________________ _______________________________________________________________ _______________________________________________________________ _______________________________________________________________ _______________________________________________________________ (5) (a)  This is one row of a bitmap image that uses different shades of grey: This row is stored using the following numbers to represent the different shades of grey: [9 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The algorithm shown in the code below uses this row. row ← [56, 34, 0, 99, 72, 23] newRow ← [0, 0, 0, 0, 0, 0] FOR i ← 0 TO 5 IF row[i] > 50 THEN newRow[i] ← 99 ENDIF ENDFOR Complete the trace table for the algorithm shown in the code above. The first values have already been entered. You may not need to use all rows of the trace table. i newRow 012345 000000 0 (3) (b)  State the purpose of the algorithm shown in the code above. (1) Develop an algorithm, using either pseudo-code or a flowchart, that checks if the user has entered a string that represents a valid machine code instruction. The machine code instruction is valid if it contains exactly eight characters and all of those characters are either '0' or '1'. The algorithm should: •   prompt the user to enter an 8-bit machine code instruction and store it in a variable •   check that the instruction only contains the characters '0' or '1' •   check that the instruction is exactly eight characters long •   output 'ok' when the instruction is valid, otherwise it should output 'wrong'. For example: •   if the user enters the string '00101110' it should output 'ok' •   if the user enters the string '11110' it should output 'wrong' •   if the user enters the string '1x011001' it should output 'wrong'. [9 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State the comparisons that would be made when the linear search algorithm is used to search for the value 8 in the following array (array indices have been included above the array). 0123456 47813141517 [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State the comparisons that would be made when the binary search algorithm is used to search for the value 8 in the following array (array indices have been included above the array). 0123456 47813141517 [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State why binary search is considered a better algorithm than linear search. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Complete the trace table for the algorithm in the code above. The first row has been completed for you. You may not need to use all rows of the trace table. foundfinishedidown FalseFalse0False The code below shows an algorithm. x ← True y ← False IF NOT (x AND y) THEN OUTPUT 'A' IF NOT((NOT x) OR (NOT y)) THEN OUTPUT 'B' ELSE OUTPUT 'C' ENDIF ELSE OUTPUT 'D' IF (NOT x) AND (NOT y) THEN OUTPUT 'E' ELSE OUTPUT 'F' ENDIF ENDIF State the output from the algorithm shown in the code above. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Number the following lines of code in order (1–4) so that they create an algorithm where the final value of the variable n is 13. The LEFTSHIFT operator performs a binary left shift. For example, 4 LEFTSHIFT 2 would left shift the value 4 twice. Line of codePosition (1–4 where 1 is the first line) t←t - 1 n←t – n n←2 t←n LEFTSHIFT 3 [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "For example, if the cloth looks like this to begin with: The subroutine call gotoRow(2) will place the sewing machine needle at the point shown by the black cross: The subroutine call move(3) will move the sewing machine needle to the point shown by the black cross: The subroutine call gotoRow(1) will move the sewing machine needle to the point shown by the black cross: The subroutine call shape('square') will draw the following pattern and move the sewing machine needle to the point shown by the black cross: And finally, the subroutine call shape('circle') will draw the following pattern and move the sewing machine needle to the point shown by the black cross: All of the previous positions of the sewing machine needle would result in the subroutine call atEnd() returning False, however in the following example atEnd() would return True: (a)  Draw the final pattern after the following algorithm has executed. gotoRow(0) WHILE atEnd() = False shape('square') move(1) ENDWHILE gotoRow(1) shape('circle') move(1) IF atEnd() = True THEN gotoRow(2) ELSE move(1) ENDIF shape('square') You should draw your answer on the following grid. You do not need to show the position(s) of the needle in your answer. (4) (b)  Draw the final pattern after the following algorithm has executed. This question uses the MOD operator. MOD calculates the remainder after integer division, for example 7 MOD 5 = 2. patterns ← ['circle', 'square', 'square', 'circle'] r ← 2 FOR k ← 0 TO 3 gotoRow(k MOD r) move(k + 1) shape(patterns[k]) ENDFOR You should draw your answer on the following grid. You do not need to show the position(s) of the needle in your answer. (4) (c)  Develop an algorithm, using either pseudo-code or a flowchart, to produce the pattern shown in the diagram below. To gain full marks your answer must make appropriate use of iteration. (4) The algorithm shown below converts binary data entered as a string by the user into a representation of a black and white image. The algorithm uses the + operator to concatenate two strings. Characters in the string are indexed starting at zero. For example bdata[2] would access the third character of the string stored in the variable bdata The MOD operator calculates the remainder after integer division, for example 17 MOD 5 = 2 bdata ← USERINPUT image ← '' FOR i ← 0 TO LEN(bdata) - 1 IF bdata[i] = '0' THEN image ← image + '*' ELSE image ← image + '/' ENDIF IF i MOD 3 = 2 THEN OUTPUT image image ← '' ENDIF ENDFOR [12 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Complete the trace table for the algorithm shown above when the variable bdata is given the following value from the user: 110101 You may not need to use every row in the table. The algorithm output is not required. iimage Describe how the linear search algorithm works. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Develop an algorithm, using either pseudo-code or a flowchart, that: •   initialises a variable called regValid to False •   sets a variable called regValid to True if the string contained in the variable reg is an uppercase R followed by the character representation of a single numeric digit. Examples: •   if the value of reg is R0 or R9 then regValid should be True •   if the value of reg is r6 or Rh then regValid should be False You may wish to use the subroutine isDigit(ch) in your answer. The subroutine isDigit returns True if the character parameter ch is a string representation of a digit and False otherwise. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Complete the trace table for the algorithm shown in Figure 1 when the initial value of number is 4 You may not need to use all rows of the trace table. result (2) (b)  Complete the trace table for the algorithm shown in Figure 2 when the initial value of number is 4 You may not need to use all rows of the trace table. xresult (2) (c)  The algorithms in Figure 1 and Figure 2 have the same purpose. State this purpose. (1) (d)  Explain why the algorithm shown in Figure 1 can be considered to be a more efficient algorithm than the algorithm shown in Figure 2. (1) Show the steps involved, for either the bubble sort algorithm or the merge sort algorithm, to sort the array shown below so the result is [1, 4, 5, 8] [8, 4, 1, 5] Circle the algorithm you have chosen: Bubble sort                Merge sort [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Four subroutines are shown below. SUBROUTINE main(k) OUTPUT k WHILE k > 1 IF isEven(k) = True THEN k ← decrease(k) ELSE k ← increase(k) ENDIF OUTPUT k ENDWHILE ENDSUBROUTINE SUBROUTINE decrease(n) result ← n DIV 2 RETURN result ENDSUBROUTINE SUBROUTINE increase(n) result ← (3 * n) + 1 RETURN result ENDSUBROUTINE SUBROUTINE isEven(n) IF (n MOD 2) = 0 THEN RETURN True ELSE RETURN False ENDIF ENDSUBROUTINE [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Complete the table showing all of the outputs from the subroutine call main(3) The first output has already been written in the trace table. You may not need to use all rows of the table. Output 3 (4) (b)  Describe how the developer has used the structured approach to programming. (2) The subroutine CODE_TO_CHAR can be used to convert a character code into the corresponding Unicode character. For example: CODE_TO_CHAR(97) will return the character 'a' CODE_TO_CHAR(65) will return the character 'A' The subroutine CHAR_TO_CODE can be used to convert a Unicode character into the corresponding character code. For example: CHAR_TO_CODE('a') will return the integer 97 CHAR_TO_CODE('A') will return the integer 65 [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Shade one lozenge to show what value would be returned from the subroutine call CODE_TO_CHAR(100) A'c' B'd' C'e' D'f' (1) (b)  State the value that will be returned from the subroutine call: CODE_TO_CHAR(CHAR_TO_CODE('E') + 2) (1) (c)  Write a subroutine TO_LOWER, using either pseudo-code or a flowchart, that takes an upper case character as a parameter and returns the corresponding lower case character. For example, if the subroutine TO_LOWER is passed the character 'A' as a parameter, the subroutine should return the character 'a'. You should make use of the subroutines CODE_TO_CHAR and CHAR_TO_CODE in your answer. You can assume that the parameter passed to the subroutine will be in upper case. (5) An application allows only two users to log in. Their usernames are stated in the table along with their passwords. usernamepassword gower9Fdg3 tuff888rG Develop an algorithm, using either pseudo-code or a flowchart, that authenticates the user. The algorithm should: •   get the user to enter their username and password •   check that the combination of username and password is correct and, if so, output the string 'access granted' •   get the user to keep re-entering their username and password until the combination is correct. [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Develop an algorithm, using either pseudo-code or a flowchart, that helps an ice cream seller in a hot country calculate how many ice creams they are likely to sell on a particular day. Your algorithm should: •   get the user to enter whether it is the weekend or a weekday •   get the user to enter the temperature forecast in degrees Celsius (they should enter a number between 20 and 45 inclusive; if the number falls outside of this range then they should be made to re-enter another number until they enter a valid temperature) •   calculate the number of ice creams that are likely to be sold using the following information: ○   100 ice creams are likely to be sold if the temperature is between 20 and 30 degrees inclusive, ○   150 ice creams are likely to be sold if the temperature is between 31 and 38 degrees inclusive, ○   and 120 ice creams are likely to be sold if the temperature is higher than 38 degrees •   double the estimate if it is a weekend •   output the estimated number of ice creams that are likely to be sold. [9 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Array indices are shown above the array of lights. For example, if the starting array of the lights is 0123 offonoffon Then after the subroutine call SWITCH(2) the array of lights will become 0123 offononon And then after the subroutine call NEIGHBOUR(0) the array of lights will become 0123 onononon Finally, after the subroutine call RANGEOFF(0, 3) the array of lights will become 0123 onoffoffon (a)  If the starting array of lights is 0123456 onoffoffonoffoffon What will the array of lights become after the following algorithm has been followed? a ← 2 SWITCH(a) SWITCH(a + 1) NEIGHBOUR(a - 2) Write your final answer in the following array 0123456 (3) (b)  If the starting array of lights is 0123456 offoffonoffononon What will the array of lights become after the following algorithm has been followed? FOR a ← 0 TO 2 SWITCH(a) ENDFOR b ← 8 RANGEOFF((b / 2), 6) NEIGHBOUR(b - 4) Write your final answer in the following array 0123456 (3) (c)  If the starting array of lights is 0123456 offonoffonoffonoff What will the array of lights become after the following algorithm has been followed? a ← 0 WHILE a < 3 SWITCH(a) b ← 5 WHILE b ≤ 6 SWITCH(b) b ← b + 1 ENDWHILE a ← a + 1 ENDWHILE Write your final answer in the following array 0123456 (3) (d)  If the starting array of lights is 0123456 ononononononon Write an algorithm, using exactly three subroutine calls, that means the final array of lights will be 0123456 offoffoffoffoffoffoff You must use each of the subroutines SWITCH, NEIGHBOUR and RANGEOFFexactly once in your answer. If you do not do this you may still be able to get some marks. (3) A cake recipe uses 100 grams of flour and 50 grams of sugar for every egg used in the recipe. The code below shows the first line of an algorithm that will be used to calculate the amount of flour and sugar required based on the number of eggs being used. The number of eggs is entered by the user. [12 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "eggsUsed ⟵ USERINPUT (a)  Shade one lozenge to show which of the following lines of code correctly calculates the amount of flour needed in grams. A flourNeeded ⟵ USERINPUT B flourNeeded ⟵ eggsUsed * USERINPUT C flourNeeded ⟵ eggsUsed * 100 D flourNeeded ⟵ eggsUsed * 50 (1) (b)  Shade one lozenge to show which programming technique has been used in all of the lines of code in part (a). A Assignment B Indefinite iteration C Nested iteration D Selection (1) (c)  The developer wants to use validation to ensure that the user can only enter a positive number of eggs, ie one egg or more. The maximum number of eggs that can be used in the recipe is eight. Develop an algorithm, using either pseudo-code or a flowchart, so that the number of eggs is validated to ensure the user is made to re-enter the number of eggs used until a valid number is entered. You should assume that the user will always enter an integer. (4) (a)  Complete the trace table for the algorithm shown below for when the user enters the value 750 when prompted. constant PAYLOAD_SIZE ⟵ 250 constant HEADER_SIZE ⟵ 50 OUTPUT ‘Enter the number of bits of data to be sent’ dataToBeSent ⟵ USERINPUT totalSize ⟵ PAYLOAD_SIZE + HEADER_SIZE numberOfPackets ⟵ 0 REPEAT dataToBeSent ⟵ dataToBeSent – totalSize numberOfPackets ⟵ numberOfPackets + 1 UNTIL dataToBeSent ≤ 0 [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "totalSizedataToBeSentnumberOfPackets 750 (4) (b)  State why both PAYLOAD_SIZE and HEADER_SIZE from the algorithm did not need to be included in the trace table. (1) (c)  Shade one lozenge to show which of the following best represents the input and output to / from the algorithm in the pseudocode. AInput: dataToBeSent,  output: numberOfPackets BInput: numberOfPackets,  output: totalSize CInput: totalSize,  output: dataToBeSent (1) (d)  A developer looks at the algorithm and realises that the use of iteration is unnecessary if they use a combination of the DIV and MOD operators. • DIV calculates integer division, e.g. 11 DIV 4 = 2 • MOD calculates the remainder after integer division, e.g. 11 MOD 4 = 3 The programmer realises that she can rewrite the algorithm by replacing the REPEAT-UNTIL structure with code that uses selection, MOD and DIV instead. Complete this new algorithm by stating the code that should be written in the boxes labelled A, B and C. This new algorithm should calculate the same final result for the variable numberOfPackets as the original algorithm. (3) Run length encoding (RLE) is a form of compression that creates frequency / data pairs to describe the original data. For example, an RLE of the bit pattern 00000011101111 could be 6 0 3 1 1 0 4 1 because there are six 0s followed by three 1s followed by one 0 and finally four 1s. [9 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The algorithm below is designed to output an RLE for a bit pattern that has been entered by the user. Five parts of the code labelled L1, L2, L3, L4 and L5 are missing. • Note that indexing starts at zero. pattern ⟵ L1 i ⟵ L2 count ⟵ 1 WHILE i < LEN(pattern)-1 IF pattern[i] L3 pattern[i+1] THEN count ⟵ count + 1 ELSE L4 OUTPUT pattern[i] count ⟵ 1 ENDIF L5 ENDWHILE OUTPUT count OUTPUT pattern[i] (a)  Shade one lozenge to show what code should be written at point L1 of the algorithm. A OUTPUT B 'RLE' C True C USERINPUT (1) (b)  Shade one lozenge to show what value should be written at point L2 of the algorithm. A -1 B 0 C 1 C 2 (1) (c)  Shade one lozenge to show what operator should be written at point L3 of the algorithm. A = B ≤ C < C ≠ (1) (d)  Shade one lozenge to show what code should be written at point L4 of the algorithm. A count B count ⟵ count − 1 C count ⟵ USERINPUT C OUTPUT count (1) (e)  Shade one lozenge to show what code should be written at point L5 of the algorithm. A i ⟵ i * 2 B i ⟵ i + 1 C i ⟵ i + 2 C i ⟵ i DIV 2 (1) (f)  State a run length encoding of the series of characters ttjjeeess (2) (g)  A developer implements the algorithm and tests their code to check that it is working correctly. The developer tests it only with the input bit pattern that consists of six zeros and it correctly outputs 6 0. Using example test data, state three further tests that the developer could use to improve the testing of their code. (3) A developer creates the algorithm shown below to provide support for users of a new brand of computer monitor (display). [10 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "• Line numbers are included but are not part of the algorithm. 1    OUTPUT ꞌCan you turn it on?ꞌ 2    ans ⟵ USERINPUT 3    IF ans = 'no' THEN 4      OUTPUT ꞌIs it plugged in?ꞌ 5      ans ← USERINPUT 6      IF ans = ꞌyesꞌ THEN 7        OUTPUT ꞌContact supplierꞌ 8      ELSE 9        OUTPUT ꞌPlug it in and start againꞌ 10      ENDIF 11    ELSE 12      OUTPUT ꞌIs it connected to the computer?ꞌ 13      ans ⟵ USERINPUT 14      IF ans = ꞌyesꞌ THEN 15        OUTPUT ꞌContact supplierꞌ 16      ELSE 17        OUTPUT ꞌConnect it to the computerꞌ 18      ENDIF 19    ENDIF (a)  Shade one lozenge to show which programming technique is used on line 3 of the algorithm. A Assignment B Iteration C Selection (1) (b)  Shade one lozenge to show the data type of the variable ans in the algorithm. A Date B Integer C Real C String (1) (c)  Regardless of what the user inputs, the same number of OUTPUT instructions will always execute in the algorithm. State how many OUTPUT instructions will execute whenever the algorithm is run. (1) (d)  The phrase ꞌContact supplierꞌ appears twice in the algorithm. State the two possible sequences of user input that would result in ꞌContact supplierꞌ being output. (2) (e)  Another developer looks at the algorithm and makes the following statement. “At the moment if the user enters ‘y’ or ‘n’ they will sometimes get unexpected results. This problem could have been avoided.” Explain why this problem has occurred and describe what would happen if a user entered ‘y’ or ‘n’ instead of ‘yes’ or ‘no’. You may include references to line numbers in the algorithm where appropriate. You do not need to include any additional code in your answer. (3) State the comparisons that would be made if the binary search algorithm was used to search for the value 30 in the following array (array indices have been included above the array). 0123456 161421273135 [8 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "For a binary search algorithm to work correctly on an array of integers, what property must be true about the array? [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Two images are exact inverses of each other if: •  every white pixel in the first image is black in the second image •  every black pixel in the first image is white in the second image. For example, B is the inverse of A but C is not the inverse of A: A developer has started to create an algorithm that compares two 3x3 black and white images, image1 and image2, to see if they are exact inverses of each other. Complete the algorithm in pseudo-code, ensuring that, when the algorithm ends, the value of the variable inverse is true if the two images are inverses of each other or false if they are not inverses of each other. The algorithm should work for any 3x3 black and white images stored in image1 and image2. •  Note that indexing starts at zero. image1 ⟵ [  [0, 0, 0],  [0, 1, 1],  [1, 1, 0]  ] image2 ⟵ [  [1, 1, 1],  [1, 1, 0],  [0, 0, 1]  ] inverse ⟵ true i ⟵ 0 WHILE i ≤ 2 j ⟵ 0 WHILE j ≤ 2 A developer wants to simulate a simple version of the game of Battleships™. The ships are located on a one-dimensional array called board. There are always three ships placed on the board: •   one ‘carrier’ that has size three •   one ‘cruiser’ that has size two •   one ‘destroyer’ that has size one. [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The size of the board is always 15 squares. A possible starting configuration is shown below where the indices are also written above the board. 01234567891011121314 The carrier, for example, is found at locations board[1], board[2] and board[3]. A player makes a guess to see if a ship (or part of a ship) is located at a particular location. If a ship is found at the location then the player has ‘hit’ the ship at this location. Every value in the board array is 0, 1 or 2. •   The value 0 is used to indicate an empty location. •   The value 1 is used to indicate if a ship is at this location and this location has not been hit. •   The value 2 is used to indicate if a ship is at this location and this location has been hit. The developer identifies one of the sub-problems and creates the subroutine shown in the algorithm below. SUBROUTINE F(board, location) h ⟵ board[location] IF h = 1 THEN RETURN true ELSE RETURN false ENDIF ENDSUBROUTINE (a)  The subroutine uses the values true and false. Each element of the array board has the value 0, 1 or 2. State the most appropriate data type for these values. ValuesData Type true, false 0, 1, 2 (2) (b)  The developer has taken the overall problem of the game Battleships and has broken it down into smaller sub-problems. State the technique that the developer has used. (1) (c)  The identifier for the subroutine is F. This is not a good choice. State a better identifier for this subroutine and explain why you chose it. (2) (d)  The variable h in the subroutine is local to the subroutine. State two properties that only apply to local variables. (2) (e)  Develop a subroutine that works out how far away the game is from ending. The subroutine should: •  have a sensible identifier •  take the board as a parameter •  work out and output how many hits have been made •  work out how many locations containing a ship have yet to be hit and: ○  if 0 then output 'Winner' ○  if 1, 2 or 3 then output 'Almost there'. (11) Define the term algorithm. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The following are computer science terms (labelled A – E). A  assignment B  data type C  decomposition D  efficiency E  input For each of the definitions in the table, write the label of the most suitable computer science term. Use a label only once. Label Breaking a problem down into a number of sub-problems The process of setting the value stored in a variable Defines the range of values a variable may take [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Shade one lozenge which shows the line number where selection is first used in the algorithm. ALine number 2 BLine number 4 CLine number 9 DLine number 12 (1) (b)  Shade one lozenge which shows the line number where iteration is first used in the algorithm. ALine number 1 BLine number 8 CLine number 11 DLine number 13 (1) (c)  Shade one lozenge which shows how many times the subroutine DISPENSE_BISCUIT would be called if the user input is 'breakfast' in the algorithm. A1 subroutine call B2 subroutine calls C3 subroutine calls D4 subroutine calls (1) (d)  Shade one lozenge which shows the data type of the variable time in the algorithm. ADate/Time BString CInteger DReal (1) (e)  State how many times the subroutine DISPENSE_BISCUIT will be called with the parameter 'chewies' if the user input is 'lunch' in the algorithm. (1) The algorithm below is a sorting algorithm. •   Array indexing starts at 0. •   Line numbers are included but are not part of the algorithm. [5 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "1  arr ← [4, 1, 6] 2  swapsMade ← false 3  WHILE swapsMade = false 4    swapsMade ← true 5    i ← 0 6    WHILE i < 2 7      IF arr[i+1] < arr[i] THEN 8        t ← arr[i] 9        arr[i] ← arr[i+1] 10        arr[i+1] ← t 11        swapsMade ← false 12      ENDIF 13      i ← i + 1 14    ENDWHILE 15  ENDWHILE (a)  State the data type of the variable swapsMade in the algorithm shown above. (1) (b)  The identifier swapsMade is used in the algorithm shown above. Explain why this is a better choice than using the identifier s. (2) (c)  Shade one lozenge to show which of the following contains the false statement about the algorithm. AThe algorithm uses a named constant. BThe algorithm uses indefinite iteration. CThe algorithm uses nested iteration. (1) (d)  Complete the trace table for the algorithm shown above. Some values have already been entered. arr swawpsMadeit [0][1][2] 416false (6) Four separate subroutines have been written to control a robot. •   Forward(n) moves the robot n squares forward. •   TurnLeft() turns the robot 90 degrees left. •   TurnRight() turns the robot 90 degrees right. •   ObjectAhead() returns true if the robot is facing an object in the next square or returns false if this square is empty. [10 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Draw the path of the robot through the grid below if the following program is executed (the robot starts in the square marked by the ↑ facing in the direction of the arrow). Forward(2) TurnLeft() Forward(1) TurnRight() Forward(1) (3) (b)  Draw the path of the robot through the grid below if the following program is executed (the robot starts in the square marked by the ↑ facing in the direction of the arrow). If a square is black then it contains an object. WHILE ObjectAhead() = true TurnLeft() IF ObjectAhead() = true THEN TurnRight() TurnRight() ENDIF Forward(1) ENDWHILE Forward(1) (3) Fill in the blank arrays to show the steps involved in applying the bubble sort algorithm to the array [3, 5, 1, 4, 2]. You only need to show the missing steps where a change is applied to the array. 35142 [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "12345 A developer is developing a program for a client. The developer is given the following instructions. “Many of my friends ask me to walk their dogs for them. All of these friends pay me to do this and the amount I get paid depends on how long I walk their dogs for. If they have more than one dog then I don’t charge the owner any extra. I like to walk the dogs in the afternoon when the weather is normally best because I often get colds. I need you to help me keep track of how much I’m owed – fortunately for me all of my friends have different first names so it is really easy to tell them apart. I charge £10 for every 30 minutes of the walk (and I always round this up so 47 minutes would be two half-hour charges or £20).” [5 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  The developer needs to remove all of the unnecessary detail from the client’s request. Shade the lozenge next to the name for this process. AAbstraction BConversion CDecomposition DValidation (1) (b)  The developer has decided that the following two points are the only important details from the client’s request. •   The charge is based on time and not how many dogs are walked. •   The charge is £10 every 30 minutes. State two other relevant details that the developer has missed. (2) The following subroutines control the way that labelled blocks are placed in different columns. BLOCK_ON_TOP(column) returns the label of the block on top of the column given as a parameter. MOVE(source, destination) moves the block on top of the source column to the top of the destination column. HEIGHT(column) returns the number of blocks in the specified column. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  This is how the blocks A, B and C are arranged at the start. Draw the final arrangement of the blocks after the following algorithm has run. MOVE(0, 1) MOVE(0, 2) MOVE(0, 2) (3) (b)  This is how the blocks A, B and C are arranged at the start. Draw the final arrangement of the blocks after the following algorithm has run. WHILE HEIGHT(0) > 1 MOVE(0, 1) ENDWHILE MOVE(1, 2) (3) The following subroutines control the way that labelled blocks are placed in different columns. BLOCK_ON_TOP(column) returns the label of the block on top of the column given as a parameter. MOVE(source, destination) moves the block on top of the source column to the top of the destination column. HEIGHT(column) returns the number of blocks in the specified column. [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Develop an algorithm using either pseudo-code or a flowchart that will move every block from column 0 to column 1. Your algorithm should work however many blocks start in column 0. You may assume there will always be at least one block in column 0 at the start and that the other columns are empty. The order of the blocks must be preserved. The MOVE subroutine must be used to move a block from one column to another. You should also use the HEIGHT subroutine in your answer. For example, if the starting arrangement of the blocks is: Then the final arrangement should have block B above block A: Define the term algorithm. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Label Breaking a problem down into a number of sub-problems. The process of removing unnecessary detail from a problem. Defines the range of values a variable may take. The algorithm below is a sorting algorithm. •   Array indexing starts at 0. •   Line numbers are included but are not part of the algorithm. 1   arr ← [4, 1, 6] 2   sorted ← false 3   WHILE sorted = false 4     sorted ← true 5     i ← 0 6     WHILE i < 2 7       IF arr[i+1] < arr[i] THEN 8         t ← arr[i] 9         arr[i] ← arr[i+1] 10        arr[i+1] ← t 11        sorted ← false 12      ENDIF 13      i ← i + 1 14    ENDWHILE 15  ENDWHILE [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  State the data type of the variable sorted in the algorithm shown above. (1) (b)  The identifier sorted is used in the algorithm shown above. Explain why this is a better choice than using the identifier s. (2) (c)  Shade one lozenge to show which of the following contains the false statement about the algorithm above. A The algorithm uses a named constant B The algorithm uses indefinite iteration C The algorithm uses nested iteration (1) (d)  Complete the trace table for the algorithm shown above. Some values have already been entered. arr sortedit [0][1][2] 416false (6) (e)  Fill in the values in the boxes to show how the merge part of the merge sort algorithm operates. The first and last rows have been completed for you. (3) (f)  State one advantage of the merge sort algorithm compared to the sorting algorithm initially shown. (1) (g)  A programmer implementing the sorting algorithm decided to create it as a subroutine. Line 1 was removed and the array arr was made a parameter of the subroutine. State two reasons why the programmer decided to implement the algorithm as a subroutine. (2) The subroutine below is used to authenticate a username and password combination. •   Array indexing starts at 0. •   Line numbers are included but are not part of the algorithm. 1   SUBROUTINE Authenticate(user, pass) 2     us ← ['dave', 'alice', 'bob'] 3     ps ← ['abf32', 'woof2006', '!@34E$'] 4     z ← 0 5     correct ← false 6     WHILE z < 3 7       IF user = us[z] THEN 8         IF pass = ps[z] THEN 9           correct ← true 10        ENDIF 11      ENDIF 12      z ← z + 1 13    ENDWHILE 14    RETURN correct 15  ENDSUBROUTINE [16 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Complete the trace table for the following subroutine call: Authenticate('alice', 'woof2006') zcorrect (3) (b)  State the value that is returned by the following subroutine call: Authenticate('bob', 'abf32') (1) (c)  Lines 7 and 8 in the subroutine above could be replaced with a single line. Shade one lozenge to show which of the following corresponds to the correct new line. A IF user = us[z] OR pass = ps[z] THEN B IF user = us[z] AND pass = ps[z] THEN C IF NOT (user = us[z] AND pass = ps[z]) THEN (1) (d)  A programmer implements the subroutine shown above. He replaces line 9 with RETURN true He also replaces line 14 with RETURN false Explain how the programmer has made the subroutine more efficient. (2) The following algorithm is used to compare a property of two arrays stored in an array called arr. Note: Line numbers have been included but are not part of the algorithm. Note: For this algorithm, array indexing starts at 1. 1   arr ← [ [3, 2], [4, 3] ] 2   i ← 1 3   h ← 0 4   lenArr ← 2 5   WHILE i ≤ lenArr 6     j ← 1 7     a ← 0 8     WHILE j ≤ lenArr 9       a ← a + arr[i][j] 10       j ← j + 1 11    ENDWHILE 12    IF a > h THEN 13       h ← a 14    ENDIF 15    i ← i + 1 16   ENDWHILE 17   OUTPUT h [7 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  State the line number where iteration is first used. (1) (b)  (i)   Complete the trace table for this algorithm (the first row has been completed for you). You may not need to use all the rows in the table. ihja 1010 (6) (ii)  What does the final value of h represent? (2) (c)  Why could lenArr be considered to be a constant in this algorithm? (1) (d)  Line 1 in the algorithm has been changed to: arr ← [ [3, 2, 1], [4, 3, 1], [1, 1, 1] ] What change will need to be made to line 4 to ensure the algorithm still works as intended? (1) The image below shows a merge sort being carried out on a list. Merge sort being carried out on list The sort is carried out in two phases. The phases are separated by the dotted line. [11 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)     Explain the process that is being carried out in Phase 1 of the sort (above the dotted line). (3) (b)     Explain the process that is being carried out in Phase 2 of the sort (below the dotted line). (3) State one advantage and one disadvantage of merge sort when compared to bubble sort. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(b)     A programmer mistakenly tries to shorten the subroutine above by replacing the lines: c ← a + b WHILE a < c With the line: WHILE a < (a + b) Explain why this change is a mistake. (2) (c)     What value is returned by the subroutine call TotalOut(x, 0) where x is any positive integer? (1) Mark schemes Mark is for AO1 (recall) Removing unnecessary detail (from the problem); A. data / information in place of detail for this year only [1] [6 marks]",
+      "markScheme": "Mark scheme not found"
+    }
+  ],
+  "3.2": [
+    {
+      "question": "(a)  Shade one lozenge that shows the line number where selection is first used in the algorithm in Figure 1. ALine number 1 BLine number 2 CLine number 3 DLine number 4 (1) (b)  Shade one lozenge that shows the output from the algorithm in Figure 1 when the user input is 4 A0 B2 C4 D8 E16 (1) (c)  Shade one lozenge that shows the line number where assignment is first used in the algorithm in Figure 1. ALine number 1 BLine number 2 CLine number 3 DLine number 4 (1) (d)  Shade one lozenge that shows the line number that contains a relational operator in the algorithm in Figure 1. ALine number 1 BLine number 2 CLine number 3 DLine number 4 (1) Figure 1 has been included again below. Figure 1 1     i ← USERINPUT 2     IF i MOD 2 = 0 THEN 3       OUTPUT i * i 4     ELSE 5       OUTPUT i 6     ENDIF (e)  Shade one lozenge to show which of the following is a true statement about the algorithm in Figure 1. AThis algorithm uses a Boolean operator. BThis algorithm uses a named constant. CThis algorithm uses iteration. DThis algorithm uses the multiplication operator. (1) (f)  Figure 2 shows an implementation of the algorithm in Figure 1 using the Python programming language. •   Line numbers are included but are not part of the program. Figure 2 1     i = int(input(\"Enter a number: \")) 2     if i % 2 == 0: 3       print(i * i) 4     else: 5       print(i) The program in Figure 2 needs to be changed so that it repeats five times using definite (count controlled) iteration. Shade one lozenge next to the program that does this correctly. A for x in range(0, 5): i = int(input(\"Enter a number: \")) if i % 2 == 0: print(i * i) else: print(i) B for x in range(0, 6): i = int(input(\"Enter a number: \")) if i % 2 == 0: print(i * i) else: print(i) C x = 1 while x != 6: i = int(input(\"Enter a number: \")) if i % 2 == 0: print(i * i) else: print(i) x = x + 1 D x = 6 while x != 0: i = int(input(\"Enter a number: \")) if i % 2 == 0: print(i * i) else: print(i) x = x – 1 (1) The figure below shows a Python program that calculates car park charges. The user inputs their car registration (eg MA19 GHJ) and the length of the stay. The program then outputs the charge. •   Line numbers are included but are not part of the program. 1     charge = 0 2     carReg = input(\"Enter your car registration: \") 3     while len(carReg) > 8: 4       displayMessage = \" is not valid\" 5       carReg = input(displayMessage) 6     hours = int(input(\"Enter your stay in hours: \")) 7     if hours < 2: 8       charge = 0 9     else: 10      charge = hours * 2 11    print(charge) [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Rewrite line 4 in the figure above to concatenate the car registration with the string \" is not valid\", and store the result in the variable displayMessage. Your answer must be written in Python. (1) (b)  The charge for parking for two or more hours is changed to include an additional £2 fee. Rewrite line 10 in the figure above to show this change. Your answer must be written in Python. (1) The two Python programs in the figure below output the value that is equivalent to adding together the integers between 1 and an integer entered by the user. For example, if the user entered the integer 5, both programs would output 15 Program A print(\"Enter a number: \") num = int(input()) total = 0 for i in range(1, num + 1): total = total + i print(total) Program B print(\"Enter a number: \") num1 = int(input()) num2 = num1 + 1 num2 = num1 * num2 num2 = num2 // 2 print(num2) [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Shade one lozenge to indicate which of the statements is true about the programs in the figure above. ABoth programs are equally efficient. BProgram A is more efficient than Program B. CProgram B is more efficient than Program A. (1) (b)  Justify your answer for part (a). (2) A programmer has started to write a program using Python. Their program is shown in the figure below. The program should generate and output 10 numbers, each of which is randomly selected from the numbers in a data structure called numbers. The program uses the random module. For example, random.randrange(0, 8) would generate a random integer between 0 and 7 inclusive. One possible output from the finished program would be 11, 14, 14, 42, 2, 56, 56, 14, 4, 2 •   Line numbers are included but are not part of the program. 1     import random 2     numbers = [ 11, 14, 56, 4, 12, 6, 42, 2 ] 3     count = 0 4     while count < 10: 5       count = count + 1 6       number = random.randrange(0, 8 7       print(numbers[count]) [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  The program shown in the figure above contains a syntax error. Shade two lozenges to indicate the statements that are true about syntax errors. AA syntax error can be found by testing boundary values in a program. BA syntax error is a mistake in the grammar of the code. CA syntax error is generally harder to spot than a logic error. DA syntax error will stop a program from running. EAn example of a syntax error is trying to access the fifth character in a string which only contains four characters. (2) (b)  The program shown in the figure above also contains a logic error. Identify the line number that contains the logic error, and correct this line of the program. Your corrected line must be written in Python. (2) (c)  What type of data structure is the variable numbers? (1) Write a Python program to check if an email address has been entered correctly by a user. Your program must: •   get the user to input an email address •   get the user to input the email address a second time •   output the message Matchand output the email address if the email addresses entered are the same •   output the message Do not match if the email addresses entered are not the same. You should use indentation as appropriate, meaningful variable name(s) and Python syntax in your answer. The answer grid below contains vertical lines to help you indent your code. [5 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Write a Python program that calculates the value of a bonus payment for an employee based on how many items they have sold and the number of years they have been employed. The program should: •   get the user to input the number of items sold •   get the user to input the number of years employed •   output the value of the bonus payment: ○  if the years of employment is less than or equal to 2 and the number of items sold is greater than 100, then the bonus will be the number of items sold multiplied by 2 ○  if the years of employment is greater than 2, then the bonus will be the number of items sold multiplied by 10 ○  otherwise, the bonus is 0 You should use indentation as appropriate, meaningful variable name(s) and Python syntax in your answer. The answer grid below contains vertical lines to help you indent your code. [7 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(b)  There are 500 cards within the game in total. Each card is numbered from 1 to 250 and each number appears twice in the whole set of cards. The player’s 100 cards are always stored in numerical order. When a player has a valid run of five cards within their 100 cards they have won the game. A valid run: •   consists of five cards •   can start from any position in the player’s 100 cards •   the second card’s value is one more than the first card’s value, the third card’s value is one more than the second card’s value, the fourth card’s value is one more than the third card’s value, and the fifth card’s value is one more than the fourth card’s value. Below are examples of valid runs which means a player has won. Valid run example 1 Valid run example 2 Below are examples of invalid runs. Invalid run example 1 Invalid run example 2 Invalid run example 3 Write a Python program to check if a player has a valid run of five cards within their 100 cards. When writing your program you should assume: •   there is an array called cards that contains the values of the player’s 100 cards •   cards[0] will contain the value of the first card and cards[99] will contain the value of the last card •   the values in cards are already stored in numerical order •   there is a Boolean variable called gameWon that has a value of False. Your program should set gameWon to True if there is a valid run. You should use indentation as appropriate, meaningful variable name(s) and Python syntax in your answer. The answer grid below contains vertical lines to help you indent your code. (6) A programmer has written a Python program that asks the user to input two integers and then output which of the two integers is the largest. Complete the program below by filling in the gaps using the items in the box. You will not need to use all the items. Each item should only be used once. printnum1num2output else<>elif strfloatint [10 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "num1 = int(input(\"Enter a number: \")) num2 = ____________________ (input(\"Enter a second number: \")) if num1 > num2: print(\" ____________________ is bigger.\") elif num1 ____________________ num2: print(\" ____________________ is bigger.\") ____________________ print(\"The numbers are equal.\") Write a Python program that allows a taxi company to calculate how much a taxi fare should be. The program should: •   allow the user to enter the journey distance in kilometres (no validation is required) •   allow the user to enter the number of passengers (no validation is required) •   calculate the taxi fare by ◦   charging £2 for every passenger regardless of the distance ◦   charging a further £1.50 for every kilometre regardless of how many passengers there are •   output the final taxi fare. You should use meaningful variable name(s), correct syntax and indentation in your answer. The answer grid below contains vertical lines to help you indent your code accurately. [7 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Write a Python program that inputs a password and checks if it is correct. Your program should work as follows: •   input a password and store it in a suitable variable •   if the password entered is equal to secret display the message Welcome •   if the password entered is not equal to secret display the message Not welcome. You should use meaningful variable name(s), correct syntax and indentation in your answer. The answer grid below contains vertical lines to help you indent your code accurately. [5 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Write a Python program that inputs a character and checks to see if it is lowercase or not. Your program should work as follows: •   gets the user to enter a character and store it in a suitable variable •   determines if the entered character is a lowercase character •   outputs LOWER if the user has entered a lowercase character •   outputs NOT LOWER if the user has entered any other character. You should use meaningful variable name(s), correct syntax and indentation in your answer. The answer grid below contains vertical lines to help you indent your code accurately. [7 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "A total = 0 product = 1 for number in range(1, 6): total = total + number product = total * number print(total) print(product) B total = 0 product = 1 for number in range(1, 6): total = total + number product = product * number print(total) print(product) C total = 0 product = 1 for number in range(1, 6): total = total + number product = product * total print(total) print(product) D total = 0 product = 1 for number in range(1, 6): total = total + number product = (total + product) * number print(total) print(product) A program has been written in Python to display all the odd integers between 1 and the largest odd number smaller than an integer entered by the user. The program is shown below. odd = 1 number = int(input(\"Enter an integer: \")) while odd != number: print(odd) odd = odd + 2 print(\"Finished!\") The program works correctly if the integer entered by the user is an odd, positive integer. For example, if 7 is entered the program correctly displays the values 1, 3 and 5 The program does not work correctly if an odd integer less than 1 is entered by the user. For example, when -7 is entered the program should display the values 1, -1, -3 and -5 but it does not do this. Using Python only, change the program code inside the while loop so that it will work correctly for any odd integer entered by the user. The answer grid below contains vertical lines to help you indent your code accurately. [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Test typeTest dataExpected result Normal data5Valid choice message displayed Invalid data Boundary data The code below shows a Python program that is being developed. It is supposed to calculate and display the highest common factor of two numbers entered by the user. The highest common factor of two numbers is the largest number that both numbers can be divided by without leaving a remainder. Examples: •   the highest common factor of the numbers 6 and 9 is 3 •   the highest common factor of 2 and 5 is 1 Line numbers are shown but are not part of the program code. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "1  num1 = int(input()) 2  num2 = int(input()) 3  hcf = 1 4  count = 1 5  while count < num1: 6    if (num1 % count == 0 and num2 % count == 0): 7      hcf = count 8    count = count + 1 9  print(hcf) The program works correctly sometimes but not always. When the user enters the numbers 4 and 6 it correctly outputs 2, but when the user enters the numbers 4 and 4 it should output 4 but it does not. (a)  State the output from the program when the user enters the numbers 4 and 4 (1) (b)  State the line number from the program which contains the error that stops the program from sometimes working correctly. (1) (c)  Describe how the line of code identified in your answer to (b) should be changed so that the program will work correctly. (1) Write a Python program that calculates an estimate of the braking distance in metres for a new model of go-kart that is travelling between 10 and 50 kilometres per hour (kph). Your program should: •   keep asking the user to enter a speed for the go-kart until they enter a speed that is between 10 and 50 (inclusive) •   calculate the braking distance in metres by dividing the speed by 5 •   ask the user if the ground is wet (expect the user to enter yes if it is) •   if the ground is wet, multiply the braking distance by 1.5 •   output the final calculated braking distance. You should use meaningful variable name(s), correct syntax and indentation in your answer. The answer grid below contains vertical lines to help you indent your code accurately. [8 marks]",
+      "markScheme": "Mark scheme not found"
+    }
+  ],
+  "3.3": [
+    {
+      "question": "Convert the binary number 10111001 into hexadecimal. You should show your working. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State the largest decimal number that can be represented using 6 bits. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Add together the following three binary numbers and give your answer in binary. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Apply a binary shift three places to the right on the bit pattern 10101000 Give the result using 8 bits. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The arithmetic effect of applying a left binary shift of two to a binary number is to multiply that number by four. State the arithmetic effect of applying a left binary shift of four to a binary number. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The arithmetic effect of applying a left binary shift of two to a binary number is to multiply that number by four. State the arithmetic effect of applying a left binary shift of three followed by a right binary shift of five to a binary number. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "How many bits are there in two kilobytes? Show your working. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The ASCII value for the character x is the decimal number 120 Complete the table below with the missing ASCII and Unicode values. CharacterASCII valueUnicode value w x120 y z [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Calculate the minimum file size that would be required to store the bitmap image in the figure above. Give your answer in bytes. Show your working. Analogue sound must be converted to a digital form for storage and processing in a computer. (a)  Define the term sampleresolution. (1) [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(b)  State one disadvantage of a high sample resolution. (1) (c)  A 50-second sound has been recorded at a sample rate of 40 000 Hz. Two bytes have been used to store each sample of the sound. Calculate the file size of the sound file in megabytes. Show your working. (2) State two reasons why data are compressed. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The figure below shows a string. MISSISSIPPI One method for compressing data is run length encoding (RLE). When using RLE, the data in the figure above becomes: 1M 1I 2S 1I 2S 1I 2P 1I Explain why RLE is not a suitable method for compressing the data in the figure above. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Figure 2 shows a Huffman code for each different character in the string in Figure 1. Figure 2 CharacterBinary code M100 I0 S11 P101 Complete the Huffman tree below to show the position of the characters I, S and P using the codes from Figure 2. Shade one lozenge that states why Unicode is now commonly used in preference to ASCII. AUnicode can be represented in hexadecimal. BUnicode includes characters from many different alphabets. CUnicode is a sequential character set. DUnicode is easier to remember than ASCII. EUnicode takes up less space in memory than ASCII. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "A student has written the following statements about representing images. Two are correct and two are incorrect: Statement 1 “Bitmap images are made up of pixels.” Statement 2 “A 2 pixel by 4 pixel bitmap image contains 16 pixels.” Statement 3 “A pixel is a single point in a graphical image.” Statement 4 “Black and white images have a minimum colour depth of two.” Write the correct versions of the two incorrect statements that the student has made. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Calculate the minimum file size in bits of a 10 pixel by 10 pixel image with a colour depth of 3 bits. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Calculate the minimum file size in bytes of a 10 pixel by 10 pixel image with 12 different colours. You should show your working. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Number the following lines of code in order (1–4) so that they create an algorithm where the final value of the variable n is 13. The LEFTSHIFT operator performs a binary left shift. For example, 4 LEFTSHIFT 2 would left shift the value 4 twice. Line of codePosition (1–4 where 1 is the first line) t←t - 1 n←t – n n←2 t←n LEFTSHIFT 3 [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Convert the decimal number 220 into binary. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Convert the hexadecimal number AD into binary. You should show your working. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Convert the hexadecimal number 1A into decimal. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "What is the largest hexadecimal number that can be represented in binary using 8 bits? [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Which of the following is a reason why hexadecimal is used instead of binary? Shade one lozenge. AComputers work in hexadecimal, not binary. BHexadecimal can be used to represent a wider range of numbers. CHexadecimal is a standard language and binary is not. DHexadecimal is more compact when displayed on screen. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The code below shows a value represented as a bit pattern. 1  0  1  1  0  0  0  0 A binary shift can be used to divide the value in the code above by 4. What is the result of this shift? Your answer must be in binary. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Add the following binary numbers and give your answer in binary. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Calculate the minimum file size for the recording. Give your answer in megabytes. You should show your working. (4) (b)  Explain what effects increasing the sampling rate would have on the recording. (2) Figure 1 shows a black and white image. Figure 1 The image shown in Figure 1 could be compressed using Run Length Encoding (RLE). The RLE for the image in Figure 1 is B15 W9. [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Figure 2 shows another black and white image. Figure 2 Give the RLE for the image shown in Figure 2. (1) (b)  The RLE will be represented using binary, with one bit representing the colour (W = 1, B = 0) followed by seven bits representing the frequency. Give the binary representation of the RLE: B15 W9 (2) The table below is a frequency table that contains the frequency of characters in a string. A6 B2 C3 Use the frequencies given in the table above to draw a Huffman tree that represents the string. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Calculate how many bits would be saved if the phrase PIEDPIPER was encoded using the Huffman codes shown in above table, rather than using ASCII. You should show your working. A bitmap image is represented as a grid of pixels. State what is meant by the term pixel. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State the maximum number of different colours that can be used if a bitmap image has a colour depth of six bits. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "What is the minimum file size for an 800 pixel by 1000 pixel bitmap image that uses 20 different colours? You should give your answer in kilobytes. You should show your working. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Complete the trace table for the algorithm shown in Figure 1 when the initial value of number is 4 You may not need to use all rows of the trace table. result (2) (b)  Complete the trace table for the algorithm shown in Figure 2 when the initial value of number is 4 You may not need to use all rows of the trace table. xresult (2) (c)  The algorithms in Figure 1 and Figure 2 have the same purpose. State this purpose. (1) (d)  Explain why the algorithm shown in Figure 1 can be considered to be a more efficient algorithm than the algorithm shown in Figure 2. (1) State the hexadecimal representation of the binary number 10010100 [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State the decimal representation of the binary number 10010100 [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State the hexadecimal representation of the decimal number 143 You should show your working. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State the binary representation of the hexadecimal number BE You should show your working. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Give two reasons why hexadecimal is often used instead of binary in computer science. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Add together the following three binary numbers and give your answer in binary. 0 1 0 1 0 1 0 1 0 1 1 0 1 1 0 0 + 0 0 0 1 1 0 0 1 ________________ ________________ [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State the result, in binary, of performing a binary shift two places to the left on the binary value 00111001 [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "What is the largest decimal number that can be represented using 6 bits? [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "How many bits are there in 5 kB? You should show your working. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Explain how a sound wave is converted so that it can be stored in a computer. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "A student has recorded a 30 second digital sound track using a sample rate of 44 000Hz. 8 bits have been used to store each sample taken. Calculate the file size in kilobytes of the digital sound track. You should show your working. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Shade one lozenge to show which statement best describes data compression. AThe process of calculating the file size of a saved file. B The process of encoding characters into more than one language. C The process of encoding information to try and use fewer bits than the original. DThe process of removing necessary data from a file. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Give two reasons why data compression is often used. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Run length encoding (RLE) is one method of compressing data. State the feature of data that allows it to be compressed effectively using RLE. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Figure 2 COMPUTER  SCIENCE  IS  THE  BEST  SUBJECT (a)  Use the Huffman tree in Figure 1 to state the Huffman encoding for the string MOST MOST (3) (b)  A student was asked to describe how a Huffman tree could be created for the string in Figure 2. Her response was: “I would count the number of times each character appears in the string and create a frequency table sorted alphabetically. For example, the letter S has the highest frequency in Figure 2. Next I would take the two characters with the highest frequencies and combine them into a new node. The new node would be added to the end of the frequency table. The two characters with the lowest remaining frequencies are now combined into a new node and the process is repeated until all the characters have been added to nodes and the tree created.” State four mistakes the student has made in her response. (4) (c)  When the Huffman tree in Figure 1 is used, the string in Figure 2 can be represented using 130 bits. The 36-character string shown in Figure 2 could also be encoded using ASCII. How many bits are saved when Huffman coding is used rather than ASCII to represent the string shown in Figure 2? You must show your working. (2) The pseudo-code below assigns two string values to two variables. title ← 'computer science' level ← 'gcse' [9 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Shade one lozenge that shows the length of the contents of the variable level in the pseudo-code. A 1 B 2 C 3 D 4 (1) (b)  Shade one lozenge that shows the result of concatenating the variable title with the variable level in the pseudo-code. A 'computer science gcse' B 'Computer Science GCSE' C 'computersciencegcse' D 'computer sciencegcse' (1) (c)  Shade one lozenge to show which of the following strings is a substring of the variable title in the pseudo-code. A 'compsci' B 'puters' C 'sci' D 'tersci' (1) (d)  The Unicode character code of title[0], which is 'c', is 99. Shade one lozenge to show the Unicode character code of the character level[3] in the pseudo-code. A 95 B 99 C 101 D 103 (1) Run length encoding (RLE) is a form of compression that creates frequency / data pairs to describe the original data. For example, an RLE of the bit pattern 00000011101111 could be 6 0 3 1 1 0 4 1 because there are six 0s followed by three 1s followed by one 0 and finally four 1s. [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The algorithm below is designed to output an RLE for a bit pattern that has been entered by the user. Five parts of the code labelled L1, L2, L3, L4 and L5 are missing. • Note that indexing starts at zero. pattern ⟵ L1 i ⟵ L2 count ⟵ 1 WHILE i < LEN(pattern)-1 IF pattern[i] L3 pattern[i+1] THEN count ⟵ count + 1 ELSE L4 OUTPUT pattern[i] count ⟵ 1 ENDIF L5 ENDWHILE OUTPUT count OUTPUT pattern[i] (a)  Shade one lozenge to show what code should be written at point L1 of the algorithm. A OUTPUT B 'RLE' C True C USERINPUT (1) (b)  Shade one lozenge to show what value should be written at point L2 of the algorithm. A -1 B 0 C 1 C 2 (1) (c)  Shade one lozenge to show what operator should be written at point L3 of the algorithm. A = B ≤ C < C ≠ (1) (d)  Shade one lozenge to show what code should be written at point L4 of the algorithm. A count B count ⟵ count − 1 C count ⟵ USERINPUT C OUTPUT count (1) (e)  Shade one lozenge to show what code should be written at point L5 of the algorithm. A i ⟵ i * 2 B i ⟵ i + 1 C i ⟵ i + 2 C i ⟵ i DIV 2 (1) (f)  State a run length encoding of the series of characters ttjjeeess (2) (g)  A developer implements the algorithm and tests their code to check that it is working correctly. The developer tests it only with the input bit pattern that consists of six zeros and it correctly outputs 6 0. Using example test data, state three further tests that the developer could use to improve the testing of their code. (3) Convert the decimal number 197 into binary. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Convert the hexadecimal number A4 into decimal. Show your working. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "What is the largest decimal number that can be represented using 5 bits? [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "How many bits are there in 3 MB? Show your working. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State one advantage of using Unicode instead of using ASCII. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Part of the string ARE ALL STARS REAL was incorrectly encoded as in Figure 2 below. Figure 2 1111000010101011 What string does this encoding represent? (1) (b)  What would be the correct binary encoding for the substring STAR? Write the correct encoding below the letters in the table. STAR (2) A bit pattern is shown below. 01001110 [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Convert the bit pattern into decimal. (1) (b)  Convert the bit pattern into hexadecimal. (2) A student’s answer to the question “Why is hexadecimal often used instead of binary?” is shown below. Because it uses fewer digits it will take up less space in a computer’s memory. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Explain why the student’s answer is incorrect. Explain how a binary number can be multiplied by 8 by shifting bits. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    }
+  ],
+  "3.4": [
+    {
+      "question": "(b)  A game uses three sensors. A red light (R) in the game switches on if all of the following conditions are true: •   sensor D is off •   sensor L is on •   sensor W is on. Complete the logic circuit for this game. You must use the correct symbols for the logic gates. (3) (c)  Another circuit in the game will output True if any two sensors are activated or if all three sensors are activated. This has been represented as the Boolean expression: (W . D) + (D . L) . (W . L) The expression contains an error. Shade one lozenge that shows the expression with the error corrected. A (W . D) . (D . L) . (W . L) B ( . D) . (D . L) + (W . L) C (W . D) + (D . L) + (W . L) D ( . D) + (D + L) . (W . L) (1) (d)  A green light (G) in the game switches on if all of the following conditions are true: •   sensor D is off •   sensor L is off •   sensor W is on. Write a Boolean expression for this logic circuit. You must use Boolean expression operators in your answer. (3) Describe what is meant by the terms system software and application software. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State four functions of an operating system. [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Programming languages can be classified as low-level or high-level. Shade two lozenges to show the statements that are true about code written using a low-level language instead of a high-level language. AThe code more closely resembles English. BThe code is easier to write. CThe code is not translated using a compiler. DThe code is quicker to write. EThe code can directly manipulate computer registers. F The code never needs to be translated before being executed. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Assemblers and interpreters are two types of program translator. State the purpose of an assembler. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Assemblers and interpreters are two types of program translator. Explain how an interpreter works. [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State two reasons why computers have more RAM than cache memory. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Data is increasingly being stored ‘in the cloud’. State two advantages of using cloud storage instead of local storage. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Many new computers use solid-state storage for secondary storage rather than magnetic storage. Explain why solid-state storage is not fitted to every new computer. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The following are three types of program translator: AAssembler BCompiler CInterpreter Write the label (A–C) for the type of translator next to the description. DescriptionLabel (A–C) Converts a low-level language designed to be human-readable into machine code. Reads a high-level program line-by-line and calls corresponding subroutines. Takes the entire high-level program as input and produces machine code. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State two advantages of programming using a high-level language compared with programming using a low-level language. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Draw the logic circuit, using only one logic gate, that is represented by the following truth table: Input AInput BOutput Q 000 011 101 111 [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Shade one lozenge to show the Boolean expression that is equivalent to the logic circuit shown in the diagram below. AA AND NOT B BNOT (A AND B) C(NOT A) AND B D(NOT A) AND (NOT B) [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Shade one lozenge to show the Boolean expression which is equivalent to the logic circuit shown in the diagram below. ANOT ((A OR B) AND C) B(NOT A) OR ((NOT B) AND C) C(NOT (A OR B)) AND C D((NOT A) OR (NOT B)) AND C [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The code below shows an algorithm. x ← True y ← False IF NOT (x AND y) THEN OUTPUT 'A' IF NOT((NOT x) OR (NOT y)) THEN OUTPUT 'B' ELSE OUTPUT 'C' ENDIF ELSE OUTPUT 'D' IF (NOT x) AND (NOT y) THEN OUTPUT 'E' ELSE OUTPUT 'F' ENDIF ENDIF State the output from the algorithm shown in the code above. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Draw a logic circuit in the box below for the following scenario. A sewing machine is running (R) if either the foot pedal is on (F) or the hand dial is on (H) but not both. You should use only the gates AND, OR and NOT in your answer. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Shade two lozenges to show which of the following are functions of an operating system. AAddress filtering BApplication management CClock speed management DData encryption EProcessor management [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Define the term application software. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Give two examples of application software. You must not use brand names in your answer. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Describe three factual errors in the description. (3) (b)  State one correct fact in the description. (1) Shade the two lozenges that are correct statements about RAM. AIt is only used in solid state storage devices. BIt is used for main memory. CIt is used for secondary storage. DIt is volatile memory. EIt never loses data. FIt permanently stores programs and files. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Three factors that affect the performance of a CPU are: •   clock speed •   number of processor cores •   cache size. Explain how each of these factors affects CPU performance. [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  Complete the truth table for the circuit in Figure 1. TMAXYP 000 001 010 011 100 101 110 111 (3) (b)  State the type of logic gate shown in Figure 2. Figure 2 (1) (c)  The farmer wants to modify the system so that it will indicate that the soil conditions are right for planting if at least one of the three conditions has been met. Describe changes that could be made to the logic circuit in Figure 1 to allow this to happen. (2) Describe two differences between an embedded system and a non-embedded system. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State the name of the logic gate represented by the following truth table. Input AInput BOutput 000 010 100 111 [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "A partially complete logic circuit shown below detects if a computer system has been set up correctly. There are two keyboard input devices, keyboard A and keyboard B, and either one can be connected to the computer system. However, if they are both connected then the computer system will not work. Output P has the value 1 if either keyboard A or keyboard B, but not both, is connected to the computer system and 0 otherwise. State the name of the logic gates that should be placed in the positions indicated by the labels L1, L2, L3 and L4 above. LabelLogic gate L1 L2 L3 L4 [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State what an assembly language program must be translated into before it can be executed by a computer. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State two reasons why a programmer, who can program in both high-level and low-level languages, would usually choose to develop in a high-level language rather than a low-level language. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Shade three lozenges to show which of the following are essential components of the Von Neumann architecture. ABIOS BControl unit CKeyboard DMemory EMovement sensor FMultiple cores GNetwork socket HShared bus [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Main memory is any form of memory that is directly accessible by the CPU, except for cache and registers. Explain how main memory is used. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The cost and physical size of RAM and secondary storage are normally different. Describe two other differences between RAM and secondary storage. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "An operating system manages the memory of a computer. State two other things that are managed by the operating system. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Shade one lozenge to show the statement that is true about the examples of code. A None of the examples of code is in a low-level language. B Only one of the examples of code is in a low-level language. C Only two of the examples of code are in a low-level language. D All three of the examples of code are in a low-level language. Explain why a developer, who is good at both low-level and high-level programming, would normally use high-level languages when writing programs. [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Statement A: This type of translator can convert a high-level language program into machine code. The source code is analysed fully during the translation process. The result of this translation can be saved, meaning the translation process does not need to be repeated. Statement B: This type of translator was used to convert the code in Example 2 to the code in Example 3 in the table below. Example 1Example 2Example 3 a ← 4 b ← 3 IF a = b THEN c ← a + b ENDIF MOV R0, #4 MOV R1, #3 CMP R0, R1 BNE end ADD R2, R0, R1 end: HLT 1001 0000 0100 0000 1001 0001 0011 0000 0100 0000 0001 0000 1010 0101 0000 0000 1100 0010 0000 0001 1111 0000 0000 0000 State the type of program translators referred to in statements A and B. The expression (B AND (NOT A)) OR (B AND C) can be represented by the logic circuit shown below. In the circuit the logic gates are marked with labels instead of their proper symbols. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  State the name of the logic gate used at Gate 1 in the logic circuit. (1) (b)  State the name of the logic gate used at Gate 2 in the logic circuit. (1) (c)  Draw the logic circuit symbol in the space below for the logic gate used at Gate 3 in the logic circuit. (1) (d)  Draw the logic circuit symbol in the space below for the logic gate used at Gate 4 in the logic circuit. (1) Complete the truth table for the Boolean expression: (X AND Y) OR (NOT X) XYX AND YNOT X(X AND Y) OR (NOT X) 00 01 10 11 [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Shade one lozenge which shows a simpler expression which is the equivalent of the original, more complex, expression. A NOT A1 B A2 OR A3 C A1 AND (NOT A2) C A1 AND A3 Which two of the following are components of a CPU? Shade two lozenges. AArithmetic logic unit BControl unit CFan DHard disk drive EKeyboard FPower supply unit [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "A computer game is one type of application software. State two other types of application software. You must not use brand names in your answer. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Select the correct statement about secondary storage. Shade one lozenges. ASecondary storage is a type of ROM. BSecondary storage is non-volatile. CSecondary storage is temporary. DSecondary storage loses its content when it is turned off. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Describe how an optical disk is read. [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Define the term embedded system. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Draw a logic circuit that represents the truth table above. You must use the correct symbols for logic gates. You may not need to use all the gates shown. Specifications for two different devices are shown in the table below. Discuss the advantages and disadvantages of Device A compared to Device B. Your answer should explain the impact each advantage / disadvantage will have on the operation of the device. You should assume that any aspects of the specifications not mentioned below are the same for both devices. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Device ADevice B Quad (4) core 1.6 GHz CPU with 8 MB cache Dual (2) core 3.9 GHz CPU with 2 MB cache 16 GB RAM4 GB RAM 2 TB Hard Disk Drive (HDD)250 GB Solid State Drive (SSD) An SD card is a type of solid state storage. State two advantages of solid state storage compared to magnetic storage. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Many modern desktop computers have both solid state drives and magnetic hard disk drives. Give two reasons why desktop computers have a magnetic hard disk drive and a solid state drive instead of having just a solid state drive. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Describe how data is stored on, and read from, a magnetic hard disk. [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "In recent years, there has been a large growth in the use of cloud storage. Discuss the advantages and disadvantages of using cloud storage. In your answer you should include an explanation of the reasons for the large growth in recent years and consider any legal, ethical and environmental issues related to the use of cloud storage. [9 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Many computers use the Von Neumann architecture. In a computer that uses the Von Neumann architecture, bit patterns can be stored in the main memory. Shade the correct lozenge to indicate what these bit patterns could represent. You should only shade one lozenge. AData BInstructions CData and instructions DData or instructions, but not both [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Five components of a CPU are given below. For each row in the table, choose the letter A, B, C, D, E that best matches the description. Letters should not be used more than once. A. Bus B. Arithmetic Logic Unit C. Control Unit D. Clock E. Register DescriptionLetter Sends a continuous series of electronic pulses Decodes the current instruction Completes calculations [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Complete the truth table for the AND logic gate. ABA AND B 00 01 10 11 [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "A logic circuit is being developed for an audio advert in a shop that plays automatically if a customer is detected nearby. •  The system has two sensors, A 1 and A 2 , that detect if a customer is near. The audio plays if either of these sensors is activated. •  The system should only play if another audio system, S, is not playing. •  The output from the circuit, for whether the advert should play or not, is Q. Complete the logic circuit for this system. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Complete the truth table for the AND logic gate. ABA AND B 00 01 10 11 [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "A logic circuit is being developed for an audio advert in a shop that plays automatically if a customer is detected nearby. •   The system has two sensors, A 1 and A 2 , that detect if a customer is near. The audio plays if either of these sensors is activated. •   The system should only play if another audio system, S, is not playing. •   The output from the circuit, for whether the advert should play or not, is Q. Complete the logic circuit for this system. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "ROM is a type of memory used in computers. Shade two lozenges to show which statements are true about ROM. ADesktop computers usually store application software in ROM B Desktop computers typically have more ROM than RAM C ROM is commonly used to store start-up instructions D ROM is non-volatile EROM is used to increase the quality of graphics on a computer [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Explain how a magnetic hard disk drive (HDD) operates. [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(a)  State the type of logic gate labelled G 1 in the diagram. (1) (b)  State the type of logic gate labelled G 2 in the diagram. (1) (c)  State what a NOT gate does. (1) (d)  Complete the following truth table for the logic circuit shown in the diagram above by filling in the grey shaded cells. ABCDEF 000000 001011 010000 011011 100 101011 1101 111 (3) State three components of the CPU and describe their purpose. [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The diagram below shows a simplified diagram of the Fetch-Execute cycle. Fill in the name of the missing stage in the diagram below. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    }
+  ],
+  "3.5": [
+    {
+      "question": "Computer networks can be installed using wired or wireless technology. Describe two differences between a Local Area Network (LAN) and a Wide Area Network (WAN). [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Computer networks can be installed using wired or wireless technology. Give three advantages of using a wireless network instead of a wired network. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Computer networks can be installed using wired or wireless technology. Shade one lozenge to indicate the application layer protocol used for sending emails from a client device to a mail server. AFTP BHTTP CSMTP DUDP [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Computer networks can be installed using wired or wireless technology. Explain the purpose of the HTTPS protocol. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Define the term computer network. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Explain how a firewall can be used to improve the security of a computer network. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Authentication and MAC address filtering can be used to improve network security. Explain how one of these security methods works. Ring your chosen security method: Authentication        MAC address filtering [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Shade the two lozenges that are correct statements about network protocols. AA protocol is a set of rules. BAll protocols only work with specific hardware. CAll protocols transmit data securely. DEthernet is a family of protocols. EWi-Fi is a single protocol. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Explain one data privacy concern an organisation would need to consider when setting up a wireless network. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Describe the role of one protocol from each layer in the table above. You must state which protocol you are describing. Define the term ‘computer network’. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Computer networks can be wired or wireless. Discuss the advantages and disadvantages of wired and wireless networks. In your answer you should: •   discuss the advantages and disadvantages of each network type •   compare the security of wired and wireless networks. [9 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State which layer of the TCP/IP model each of the network protocols operates at by ticking one box in each row of the table. Network Protocol Application layer Transport layer Internet layerLink layer HTTP UDP IP IMAP [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Draw a simple diagram to show a star network topology containing four desktop computers. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Draw a simple diagram to show a bus network topology containing four desktop computers. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State two advantages of using a star topology instead of a bus topology. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State one disadvantage of using a star topology instead of a bus topology. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Discuss the benefits and risks of using a computer network. [9 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Define the term network protocol. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Which two of the following are email protocols? Shade two lozenges. A FTP B HTTP C IMAP D SMTP E TCP F UDP [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Explain why a firewall improves network security. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "A  Application layer B  Transport layer C  Internet layer D  Link layer DescriptionLetter Addresses data for transmission Sets up the communication between the two hosts Where the network hardware is located Where the user software, such as web browsers or email programs, operates Most schools have a computer network. Some schools allow teachers to access the school network from their home computers. Give one reason why some schools allow this and one reason why some schools do not allow this. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State three advantages of using a computer network. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(b)  Give one example of where a PAN could be used. (1) When two computers on a network communicate with each other they need to use the same protocol. Define the term network protocol. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(b)  Used to make a payment securely when purchasing goods from a website. AHTTP BHTTPS CFTP DSMTP EIMAP (1) (c)  Used to send an email from a client machine to an email server. AHTTP BHTTPS CFTP DSMTP EIMAP (1) TCP/IP is a protocol used in networking. There are 4 layers in the TCP/IP stack. Complete the table by placing the four layers of the TCP/IP stack into order (1-4) where 1 is the top layer and 4 is the bottom layer. LayerOrder (1-4) Transport Link Internet Application [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(b)  Explain why it would not be appropriate for the café to use MAC address filtering on their wireless network. (2) Explain two differences between a LAN and a WAN. [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "HTTP and HTTPS are two application layer protocols. Explain why HTTPS is often used rather than HTTP. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The application layer and the network (internet) layer are two of the layers within the TCP/IP stack. What are the names of the other two TCP/IP stack layers? [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "What is the purpose of the network (internet) layer within the TCP/IP stack? [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Explain how MAC address filtering works. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "List three different measures that can be used to maintain the security of a computer system. For each measure: •        Outline what the measure is. •        Explain what types of threat to cyber security it is effective against. [9 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Most schools have a computer network. Some schools allow teachers to access the school network from their home computers. Give one reason why some schools allow this and one reason why some schools do not allow this. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "PANs and LANs are two different types of network. Describe one difference between a PAN and a LAN. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Give one example of where a PAN could be used. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "“Schools should use a wireless network instead of a wired network”. Discuss this statement. [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "When two computers on a network communicate with each other they need to use the same protocol. Define the term protocol. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(b)     Used to make a payment securely when purchasing goods from a website. AHTTP BHTTPS CFTP DSMTP EIMAP (1) (c)     Used to send an email from a client machine to an email server. AHTTP BHTTPS CFTP DSMTP EIMAP (1) TCP / IP is a protocol stack used in networking. There are four layers in the TCP / IP stack. Complete the table by placing the four layers of the TCP / IP stack into order (1 – 4), where 1 is the top layer and 4 is the bottom layer). LayerOrder (1‑4) Transport Link Internet Application [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Define the term network. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Describe three advantages of using a computer network rather than standalone machines. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "One disadvantage of using a computer network is that there are increased security risks. Describe three other disadvantages of using a computer network. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Barnes Pest Control is a small business with four employees. Each of their employees has a standalone desktop computer. They have decided to use a network instead of standalone machines. Two security measures that Barnes Pest Control could use are authentication and encryption. Explain each of these security measures and how Barnes Pest Control could use them. [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Draw a diagram showing a four-computer network using a bus topology. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Barnes Pest Control is a small business with four employees. Each of their employees has a standalone desktop computer. They have decided to use a network instead of standalone machines. Barnes Pest Control decides to use a star network topology. State two reasons why this topology may not be the most suitable choice. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The application layer and the internet layer are two of the layers in the four-layer TCP / IP model. Describe the roles of each of the four layers in the TCP / IP model. In your answer you should also state the names of the other two layers of the TCP / IP model. [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(b)     State two advantages of this particular topology. (2) Discuss the advantages and disadvantages of connecting a computer to a network. In this question you will be marked on your ability to use good English, to organise information clearly and to use specialist vocabulary where appropriate. [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "What is a computer network? [2 marks]",
+      "markScheme": "Mark scheme not found"
+    }
+  ],
+  "3.6": [
+    {
+      "question": "Describe one security measure that could be used, in addition to a password, to make sure that a user is who they are claiming to be. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "State two reasons why automatic software updates provide better security than manual software updates. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Explain what penetration testing is. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Describe the aim of a white-box penetration test. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The table below shows screenshots of three different security measures. Tick the box next to the CAPTCHA screenshot. Security measureTick one box [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Give three examples of when it would be suitable to use a CAPTCHA system. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Shade the two lozenges that are examples of social engineering. ABlagging BBlogging CFaking DPhishing EPorting FSmashing [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Define the term ‘cyber security’. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Define the term ‘malware’. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Explain how each of the following cyber security threats could be used by a student to gain unauthorised access to a school network: •   weak and default passwords •   misconfigured access rights •   removable media •   unpatched and/or outdated software. In your answer you should also describe some possible consequences of these threats. [8 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Shade one lozenge to show which statement best describes the definition of the term ‘social engineering’. A The art of hacking a network to access confidential information. B The art of hacking a network to access public information. C The art of manipulating people so they give up confidential information. D The art of manipulating people so they give up public information. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Phishing is a form of social engineering. Describe two methods a school could use to protect its staff and students from phishing. [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Penetration testing can be conducted as either black-box or white-box testing. Explain the difference between these two types of penetration testing. [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "A virus is a specific category of malware. Describe three other different categories of malware. [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Most schools have a computer network. Some schools allow teachers to access the school network from their home computers. Give one reason why some schools allow this and one reason why some schools do not allow this. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Social engineering is where someone is tricked or manipulated into providing secure information or access to a secure system. Describe each of the following social engineering techniques. [3 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(b)  Explain why it would not be appropriate for the café to use MAC address filtering on their wireless network. (2) Social engineering is where someone is tricked or manipulated into providing secure information or access to a secure system. Describe each of the following social engineering techniques. Blagging [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Phishing Shouldering (or shoulder surfing) AQATravel is a tour operator that sells holidays to places all around the world. They hold all of their customer and business data electronically. Following recent news articles about the effects of malware attacks on businesses, the management of AQATravel have been investigating how they could protect themselves against malware attacks. Discuss four methods that AQATravel could use to prevent infections from malware and/or to minimise the damage that could be caused by malware. [12 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The valid usernames and passwords are listed below. UsernamePassword Rachel49Class SamSmile Traceyb1K3 (a)     Shade in one lozenge in each row of the table below to indicate the most appropriate data type to use for each listed Variable from the algorithm, when the algorithm is implemented in a programming language. Most appropriate data type (shade one lozenge per row) VariableIntegerRealBooleanCharacterString password validlogin usernum (3) (b)     It is suggested that line 09 of the algorithm is replaced with the following line: FOR usernum ← 0 TO LEN(userlist) The function LEN returns the number of items that are stored in the array that is passed to it as a parameter. Explain why using the LEN function would make the algorithm more flexible and why the suggested replacement line would not work as it is. (3) (c)     It is suggested that lines 08 to 14 of the algorithm are replaced with the following lines: FOR usernum ← 0 TO 2 IF username = userlist[usernum] AND password = passlist[usernum] THEN validlogin ← True ELSE validlogin ← False ENDIF ENDFOR Explain why making this replacement would mean that the algorithm no longer worked. (3) (d)     State which of the three passwords listed in the table above is the least secure and explain why this is the case. (2) List three different measures that can be used to maintain the security of a computer system. For each measure: •        Outline what the measure is. •        Explain what types of threat to cyber security it is effective against. [9 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(b)     Outdated software. (2) (c)     Misconfigured access rights. (2) Most schools have a computer network. Some schools allow teachers to access the school network from their home computers. Give one reason why some schools allow this and one reason why some schools do not allow this. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Organisations often spend a lot of money on cyber security. Penetration testing is an attack on its own computer system by an organisation to try and identify security weaknesses. Describe one difference between black-box and white-box penetration testing. [1 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Social engineering is often used to try to gain unauthorised access to a computer system. Phishing is a commonly used social engineering technique where emails are sent that pretend to be from a reputable organisation / company to try and obtain personal details. Describe another two social engineering techniques. You should also explain measures that an organisation can take to try to reduce the security risks from phishing and the two other social engineering techniques you have described. [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "In recent years, there has been a large growth in the use of cloud storage. Discuss the advantages and disadvantages of using cloud storage. In your answer you should include an explanation of the reasons for the large growth in recent years and consider any legal, ethical and environmental issues related to the use of cloud storage. [9 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Barnes Pest Control is a small business with four employees. Each of their employees has a standalone desktop computer. They have decided to use a network instead of standalone machines. Two security measures that Barnes Pest Control could use are authentication and encryption. Explain each of these security measures and how Barnes Pest Control could use them. [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Computer viruses, Trojans, adware and spyware are different types of malware. Describe the similarities and differences between these different types of malware. Your answer should also describe measures that can be taken to reduce the risks from these malware. [9 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(ii)     Why is the set of test data that you have chosen in part (i) likely to be enough to show that the code above works as expected? (1) (b)     Develop an algorithm using pseudocode or a flowchart that asks the user to create a new password. The algorithm should: •        get the user to enter a password •        get the user to re-enter the password •        repeat the two bullet points above until both entered passwords are identical •        output \"password created\" when they are identical. (5) (c)     State two possible weaknesses of the passwords that this algorithm would accept. (2) Mark schemes 2 marks for AO1 (understanding) Maximum of two marks from: •   (weak) passwords are easily cracked // a program could be used to try out lots of passwords // users might choose passwords which are not strong enough // (weak) passwords can be easily guessed; •   usernames/passwords may have appeared in data leak; •   (if users write down/store their passwords) these can be stolen; •   susceptible to shouldering; •   it is difficult to verify the actual identity of the person logging in (eg compared to fingerprint/Touch/facial recognition/Face ID, multi-factor authentication); [2] [9 marks]",
+      "markScheme": "Mark scheme not found"
+    }
+  ],
+  "3.7": [
+    {
+      "question": "(a)  Define the term relationaldatabase. (2) (b)  State one benefit of using relational databases. (1) (c)  State the name of the field from the Member table that is the most suitable to use as the primary key. (1) (d)  State the name of the field from the Award table that is a foreign key. (1) The figure above has been included again below. Member MemberIDFirstNameLastNameDateJoined 1ZarahTariq2020-01-05 2PennyHill2020-01-05 3PeterBoyes2020-02-14 4ReubenBailey2020-10-20 Award AwardIDMemberIDDatePresentedAwardName 112020-09-10Teamwork 212020-10-13Outdoors 332020-06-19Challenge 422020-11-11Leader (e)  The youth club needs to produce a report listing the members who have been given the Leader award. The report must include both names of each member and the date the award was presented. Write an SQL query that could be used to find this information. The results must be in order of the date the awards were presented, starting with the earliest. (6) (f)  A new member joins the youth club. The following SQL is run to add their details to the database: INSERT INTO (5, 'Alina', 'Ahmed', '2020-11-30') Some of the SQL has been replaced by labels. State the SQL that should have been written in place of the labels  and . (2) A relational database is being developed to store information about the games that are available to play at a games café and the advance bookings that have been made for those games. Each game has a unique name. The database contains two tables: Game and Booking. The database is currently being tested by the person who has developed it so the database tables only contain a small amount of data that is being used for testing. The contents of the tables are shown below. [13 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Game NameMinPlayersMaxPlayersLengthOfGameComplexity Friday11252.12 Scythe15903.37 Terra Mystica251003.95 Agricola14903.31 Pandemic24452.42 Booking GameTableIDNameDateStartTimeCustomerHours 1Friday28/05/1911Hawkins1 2Scythe28/05/1911Jemisin1 3Pandemic28/05/1915Gormally1 1Pandemic28/05/1913Van Perlo2 1Terra Mystica29/05/1915Hawkins2 (a)  State the field in the Booking table that is a foreign key. (1) (b)  State the most suitable data type to use for the Complexity field. (1) Due to a change in layout at a games café, the game table with an ID of 2 is no longer suitable for games that can have more than four players. The manager needs to find out the customer, date and time of all bookings made for the game table with an ID of 2 that are for a game that can have more than four players. Write an SQL query that could be used to find this information for the manager. The results should be shown in date order. [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "The LengthOfGame field shows the average amount of time it takes to play a game in minutes. A query to add 10 minutes to the length of time taken for all games that have a Complexity of more than three is shown below. UPDATE Game SET LengthOfGame = LengthOfGame + 9 WHERE Complexity <= 3 The query contains two errors. Refine the query to correct the errors. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    }
+  ],
+  "3.8": [
+    {
+      "question": "Several companies produce microchips that can be implanted in humans. Thousands of people around the world have voluntarily had these microchips implanted in their hands. These tiny microchips are the size of a grain of rice. They can be a form of identification and can store a range of personal data. Describe how human microchip implants might be used when travelling or visiting places away from home. In your answer you should include: •   potential uses •   advantages to the person who has the implant •   legal and ethical considerations of human chip implants. [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Explain one data privacy concern an organisation would need to consider when setting up a wireless network. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "A healthcare publication contains the following article. ‘VeriChip, a company that makes microchips which can be implanted in humans, has sold 7000 chips, approximately 2000 of which have been placed in people. The company’s present focus is tagging “high-risk” patients, such as those with diabetes, heart conditions or Alzheimer’s. “People who wear identification tags and bracelets often remove them because they do not like the way they look or feel,” said Allison Tomek, Vice President, Investor Relations and Corporate Communications at Applied Digital. “The VeriChip is the only medical device that is guaranteed to always be with you to provide your identification and medical records information in an emergency situation.” VeriChip has offered hospitals free RFID scanners to encourage use of the chips, but acceptance has been limited, and the potential risks associated with RFID may be to blame.’ Explain two potential legal and/or ethical impacts of using implanted microchips in healthcare. [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Explain two reasons why software companies usually do not make their source code publicly available. Source code is the code they wrote to create the software. [4 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Most schools have a computer network. Some schools allow teachers to access the school network from their home computers. Give one reason why some schools allow this and one reason why some schools do not allow this. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Many organisations provide free public access to a wireless network. Explain three ethical, legal or data privacy issues that an organisation should be aware of when allowing this access. [6 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Many people use smartphones. Smartphones often include a range of sensors and have the ability to run software known as apps. Smartphones are an example of a mobile technology. Discuss some of the ethical, legal and environmental issues that surround the use of smartphones and apps on them. [9 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "Cloud storage is being increasingly used by individuals and businesses to store their data. Discuss some of the ethical, legal and environmental issues that surround the use of cloud storage. [9 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "In recent years, there has been a large growth in the use of cloud storage. Discuss the advantages and disadvantages of using cloud storage. In your answer you should include an explanation of the reasons for the large growth in recent years and consider any legal, ethical and environmental issues related to the use of cloud storage. [9 marks]",
+      "markScheme": "Mark scheme not found"
+    },
+    {
+      "question": "(b)     The program code that Rybka was accused of copying was open-source, this means that it was publically available so that anyone could look at it. The programmers of Rybka could have tried to prove they were innocent by publishing all their program code. This would allow people to compare it to the code they were accused of copying and see that it was different. Assuming that there was not any copied program code in Rybka, state one reason why the programmers might not want to do this. (1) Some people believe that copying program code without permission should not be a crime. State one reason why they might believe this and state one reason why some people would disagree with them. [2 marks]",
+      "markScheme": "Mark scheme not found"
+    }
+  ]
 }

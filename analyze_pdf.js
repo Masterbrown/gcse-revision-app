@@ -15,78 +15,85 @@ async function extractQuestionsFromPDF(filePath) {
             .filter(line => line.length > 0);
 
         const questions = [];
-        let currentQuestion = null;
+        let currentQuestion = '';
         let currentMarkScheme = '';
-        let isInMarkScheme = false;
+        let currentMarks = '';
+        let isInQuestion = false;
+        let questionNumber = '';
 
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
             
-            // Check for question start
-            const questionMatch = line.match(/^(?:Question\s+)?(\d+)[\s\.]+(.*)/i);
-            
-            if (questionMatch) {
+            // Look for question numbers (e.g., "1." or just numbered lines)
+            const questionStart = line.match(/^(\d+)\./);
+            if (questionStart) {
                 // Save previous question if exists
-                if (currentQuestion && currentMarkScheme) {
+                if (currentQuestion && currentMarks) {
                     questions.push({
                         question: currentQuestion.trim(),
-                        markScheme: currentMarkScheme.trim()
+                        markScheme: currentMarkScheme.trim() || 'Mark scheme not found',
+                        marks: currentMarks
                     });
                 }
                 
                 // Start new question
-                currentQuestion = questionMatch[2];
+                questionNumber = questionStart[1];
+                currentQuestion = line.substring(line.indexOf('.') + 1).trim();
                 currentMarkScheme = '';
-                isInMarkScheme = false;
-                
-                // Look ahead for marks
-                const nextLine = lines[i + 1] || '';
-                const marksMatch = (currentQuestion + ' ' + nextLine).match(/\[(\d+)\s*marks?\]/i);
-                if (marksMatch) {
-                    currentQuestion += ` [${marksMatch[1]} marks]`;
-                }
-                
+                currentMarks = '';
+                isInQuestion = true;
                 continue;
             }
-            
-            // Check for mark scheme start
-            if (line.match(/^(?:Mark|Marking)\s+[Ss]cheme:?/) || 
-                line.match(/^(?:Mark|Marking)\s+[Pp]oints:?/)) {
-                isInMarkScheme = true;
+
+            // Look for mark allocations
+            const marksMatch = line.match(/\(?Total\s+(\d+)\s*marks?\)?/i);
+            if (marksMatch) {
+                currentMarks = marksMatch[1];
                 continue;
             }
-            
+
+            // Look for mark scheme indicators
+            if (line.match(/^Mark scheme:/i) || line.match(/^Marking scheme:/i)) {
+                isInQuestion = false;
+                continue;
+            }
+
             // Add content to current section
-            if (isInMarkScheme) {
-                if (line.match(/^\d+[\s\.]|[•\-\*]\s/)) {
-                    currentMarkScheme += '\n' + line;
-                } else {
-                    currentMarkScheme += ' ' + line;
+            if (isInQuestion) {
+                // Don't add page numbers or headers
+                if (!line.match(/Page \d+ of \d+/) && !line.match(/Calday Grange Grammar School/)) {
+                    currentQuestion += ' ' + line;
                 }
-            } else if (currentQuestion) {
-                currentQuestion += ' ' + line;
+            } else {
+                // Only add mark scheme lines that look like marking points
+                if (line.match(/^[•\-\*]|\d+[\s\.]|[A-Z]\)/) || 
+                    line.match(/award|accept|allow|credit/i)) {
+                    currentMarkScheme += '\n' + line;
+                }
             }
         }
-        
+
         // Add the last question
-        if (currentQuestion && currentMarkScheme) {
+        if (currentQuestion && currentMarks) {
             questions.push({
                 question: currentQuestion.trim(),
-                markScheme: currentMarkScheme.trim()
+                markScheme: currentMarkScheme.trim() || 'Mark scheme not found',
+                marks: currentMarks
             });
         }
-        
-        // Filter out invalid questions and clean up
-        return questions.filter(q => 
-            q.question && 
-            q.markScheme && 
-            q.question.length > 10 && 
-            q.markScheme.length > 10
-        ).map(q => ({
-            question: q.question.replace(/\s+/g, ' '),
-            markScheme: q.markScheme.replace(/\s+/g, ' ')
-        }));
-        
+
+        // Clean up and validate questions
+        return questions
+            .filter(q => 
+                q.question && 
+                q.marks && 
+                q.question.length > 10
+            )
+            .map(q => ({
+                question: `${q.question} [${q.marks} marks]`,
+                markScheme: q.markScheme || 'Mark scheme not found'
+            }));
+
     } catch (error) {
         console.error(`Error parsing PDF ${filePath}:`, error);
         return [];
