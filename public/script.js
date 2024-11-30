@@ -259,7 +259,7 @@ etc.`;
             },
             body: JSON.stringify({
                 prompt,
-                type: 'generate',
+                type: 'question',
                 unit: currentUnit
             })
         });
