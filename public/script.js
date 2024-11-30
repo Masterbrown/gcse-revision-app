@@ -189,288 +189,133 @@ function showFeedback() {
     if (feedbackSection) feedbackSection.style.display = 'block';
 }
 
-async function getExampleQuestions(unit) {
-    let examples = questionExamples[unit] || '';
-    
-    // Add extracted questions from PDFs if available
-    const extractedUnitQuestions = extractedQuestions[unit] || [];
-    if (extractedUnitQuestions.length > 0) {
-        // Add up to 3 random extracted questions
-        const selectedQuestions = extractedUnitQuestions
-            .sort(() => 0.5 - Math.random())
-            .slice(0, 3);
-            
-        examples += '\n\nExtracted example questions:\n' + 
-            selectedQuestions.map(q => 
-                `${q.question}\n${q.markScheme}`
-            ).join('\n\n');
+// Function to get random questions for a unit
+function getExampleQuestions(unit) {
+    const questions = extractedQuestions[unit] || [];
+    if (!questions.length) {
+        console.error(`No questions found for unit ${unit}`);
+        return [];
     }
     
-    return examples;
+    // Get 3 random questions
+    const selectedQuestions = [];
+    const numQuestions = Math.min(3, questions.length);
+    const indices = new Set();
+    
+    while (indices.size < numQuestions) {
+        const randomIndex = Math.floor(Math.random() * questions.length);
+        if (!indices.has(randomIndex)) {
+            indices.add(randomIndex);
+            selectedQuestions.push(questions[randomIndex]);
+        }
+    }
+    
+    return selectedQuestions;
 }
 
+// Function to generate a new question
 async function generateQuestion() {
     showLoading();
+    currentQuestionElement.classList.add('hidden');
+    feedbackSection.style.display = 'none';
+    
     try {
-        console.log('Current unit:', currentUnit);
-        console.log('Requesting question for unit:', currentUnit);
-        if (!currentUnit || !unitKeywords[currentUnit]) {
-            throw new Error('Invalid unit selected. Please select a valid unit.');
+        // Get example questions for the current unit
+        const examples = getExampleQuestions(currentUnit);
+        if (!examples || examples.length === 0) {
+            throw new Error(`No questions available for unit ${currentUnit}`);
         }
-
-        const examples = await getExampleQuestions(currentUnit);
-        const topicDescription = getTopicDescription(currentUnit);
-        const keywords = unitKeywords[currentUnit] || [];
         
-        if (keywords.length === 0) {
-            throw new Error('No keywords found for the selected unit. Please try another unit.');
+        // Select a random question from the examples
+        const randomIndex = Math.floor(Math.random() * examples.length);
+        const selectedQuestion = examples[randomIndex];
+        
+        if (!selectedQuestion || !selectedQuestion.question) {
+            throw new Error('Invalid question format');
         }
-
-        console.log('Generating question for unit:', currentUnit);
         
-        let prompt = `You are an expert Computer Science teacher creating exam questions for GCSE students.
-You MUST create a question SPECIFICALLY for unit ${currentUnit} that tests the following topics ONLY:
-${topicDescription}
+        currentQuestion = selectedQuestion.question;
+        currentMarkScheme = selectedQuestion.markScheme;
+        
+        displayQuestion(selectedQuestion);
+    } catch (error) {
+        console.error('Error generating question:', error);
+        questionText.innerHTML = 'Error loading question. Please try again.';
+    } finally {
+        hideLoading();
+        currentQuestionElement.classList.remove('hidden');
+    }
+}
 
-IMPORTANT RULES:
-1. The question MUST be about one of these topics ONLY
-2. DO NOT create questions about topics from other units
-3. Use at least one of these key terms: ${keywords.join(', ')}
-4. The question difficulty MUST be at GCSE level (14-16 year olds)
-5. Make the question practical and relevant to real-world applications
-6. ALWAYS include the mark allocation in square brackets at the start of the question, e.g. "[4 marks]"
-7. The mark scheme MUST have exactly the same number of points as marks allocated
+// Function to display a question
+function displayQuestion(questionData) {
+    if (!questionData || !questionData.question) {
+        console.error('Invalid question data:', questionData);
+        return;
+    }
+    
+    // Format the question text
+    let formattedQuestion = questionData.question;
+    
+    // Handle code blocks if present
+    if (formattedQuestion.includes('```')) {
+        formattedQuestion = marked.parse(formattedQuestion);
+    }
+    
+    // Display the question
+    questionText.innerHTML = formattedQuestion;
+    answerInput.value = '';
+    
+    // Show the question container
+    currentQuestionElement.classList.remove('hidden');
+    feedbackSection.style.display = 'none';
+}
 
-Here are some example questions and mark schemes to guide you:
-${examples}
-
-Create a new question with mark scheme in this format:
-Question: [X marks] <question text>
-
-Mark scheme:
-• Point 1 [1 mark]
-• Point 2 [1 mark]
-etc.`;
-
-        const response = await fetch(API_ENDPOINT, {
+// Function to handle answer submission
+async function handleSubmitAnswer() {
+    if (!currentQuestion || !answerInput.value.trim()) {
+        return;
+    }
+    
+    showLoading();
+    feedbackSection.style.display = 'none';
+    
+    try {
+        const response = await fetch('/api/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                prompt,
-                type: 'question',
+                prompt: answerInput.value.trim(),
                 unit: currentUnit
             })
         });
-
+        
         if (!response.ok) {
-            throw new Error('Failed to generate question');
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to get feedback');
         }
-
+        
         const data = await response.json();
-        if (!data.content) {
-            throw new Error('No question generated');
-        }
-
-        const content = data.content;
-        const questionMatch = content.match(/Question:\s*(\[\d+\s*marks?\])?\s*([\s\S]+?)(?=\n\s*Mark scheme:|$)/i);
-        const markSchemeMatch = content.match(/Mark scheme:\s*([\s\S]+)$/i);
-
-        if (!questionMatch || !markSchemeMatch) {
-            throw new Error('Invalid question format received');
-        }
-
-        const marksMatch = (questionMatch[1] || '[1 mark]').match(/\[(\d+)\s*marks?\]/i);
-        const totalMarks = marksMatch ? parseInt(marksMatch[1]) : 1;
-
-        currentQuestion = questionMatch[0].trim();
-        currentMarkScheme = markSchemeMatch[1].trim();
-
-        // Validate mark scheme has correct number of points
-        const markSchemePoints = currentMarkScheme.split('\n').filter(line => line.trim().startsWith('•')).length;
-        if (markSchemePoints !== totalMarks) {
-            throw new Error(`Mark scheme has ${markSchemePoints} points but question is worth ${totalMarks} marks`);
-        }
-
-        console.log('Generated question:', {
-            question: currentQuestion,
-            markScheme: currentMarkScheme,
-            totalMarks: totalMarks
-        });
-
-        displayQuestion(currentQuestion);
-        hideLoading();
-        submitButton.disabled = false;
-        answerInput.disabled = false;
-        answerInput.value = '';
-        feedbackText.innerHTML = '';
-
-    } catch (error) {
-        console.error('Error generating question:', error);
-        hideLoading();
-        alert(error.message || 'Failed to generate question. Please try again.');
-    }
-}
-
-function displayQuestion(question) {
-    if (!questionText) return;
-    
-    if (currentUnit === '3.2') {  // If Python unit is selected
-        // Look for Python code indicators
-        const hasPythonCode = question.includes('```python') || 
-                            question.includes('CODE:') ||
-                            question.includes('def ') ||
-                            question.includes('print(') ||
-                            question.includes('class ');
-
-        if (hasPythonCode) {
-            // First, handle explicit code blocks with ```python
-            let formattedQuestion = question;
-            
-            // Handle explicit code blocks
-            if (question.includes('```python')) {
-                formattedQuestion = question.replace(/```python([\s\S]*?)```/g, (match, code) => {
-                    // Preserve indentation and format code
-                    const formattedCode = code.trim()
-                        .split('\n')
-                        .map(line => line.trimRight())  // Remove trailing spaces but keep indentation
-                        .join('\n');
-                    return `<div class="code-block"><code>${formattedCode}</code></div>`;
-                });
-            } else {
-                // For implicit code (when no explicit markers)
-                const lines = question.split('\n');
-                let inCodeBlock = false;
-                let codeBlockContent = [];
-                
-                formattedQuestion = lines.map(line => {
-                    const trimmedLine = line.trim();
-                    // Check if line looks like Python code
-                    if (trimmedLine.match(/^(def |class |if |for |while |print\(|return |import |from )/) || 
-                        line.startsWith('    ')) {
-                        if (!inCodeBlock) {
-                            inCodeBlock = true;
-                            codeBlockContent = [];
-                        }
-                        codeBlockContent.push(line);
-                        return null;  // We'll join the code block later
-                    } else if (inCodeBlock) {
-                        inCodeBlock = false;
-                        const code = codeBlockContent.join('\n');
-                        return `<div class="code-block"><code>${code}</code></div>${line}`;
-                    }
-                    return line;
-                })
-                .filter(line => line !== null)  // Remove null entries
-                .join('\n');
-
-                // Handle any remaining code block
-                if (inCodeBlock) {
-                    const code = codeBlockContent.join('\n');
-                    formattedQuestion += `<div class="code-block"><code>${code}</code></div>`;
-                }
-            }
-            
-            questionText.innerHTML = formattedQuestion;
-        } else {
-            questionText.textContent = question;
-        }
-    } else {
-        // For other units, display normally
-        questionText.textContent = question;
-    }
-}
-
-async function handleSubmitAnswer() {
-    if (!answerInput.value.trim()) {
-        alert('Please enter an answer before submitting.');
-        return;
-    }
-
-    showLoading();
-    submitButton.disabled = true;
-    answerInput.disabled = true;
-
-    try {
-        console.log('Submitting answer for unit:', currentUnit);
-        const response = await fetch(API_ENDPOINT, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                prompt: answerInput.value,
-                unit: currentUnit,
-                type: 'answer',
-                question: currentQuestion,
-                markScheme: currentMarkScheme
-            })
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            console.error('Server response:', errorData);
-            throw new Error(errorData.message || 'Network response was not ok');
-        }
-
-        const data = await response.json();
-        if (!data.content) {
-            throw new Error('No feedback content received');
-        }
-        const feedbackContent = data.content;
-        console.log('Received feedback:', feedbackContent); // Debug log
-
-        // Update the feedback section
-        const scoreContainer = document.getElementById('score-container');
-        const strengthsContainer = document.getElementById('strengths-container');
-        const improvementsContainer = document.getElementById('improvements-container');
-        const modelContainer = document.getElementById('model-container');
-
-        // Function to extract section content
-        const extractSection = (content, sectionName) => {
-            const regex = new RegExp(`${sectionName}:\\s*([\\s\\S]*?)(?=\\n(?:Score:|Strengths:|Areas for Improvement:|Model Answer:|$))`, 'i');
-            const match = content.match(regex);
-            return match ? match[1].trim() : null;
-        };
-
-        // Extract each section
-        const score = extractSection(feedbackContent, 'Score');
-        const strengths = extractSection(feedbackContent, 'Strengths');
-        const improvements = extractSection(feedbackContent, 'Areas for Improvement');
-        const modelAnswer = extractSection(feedbackContent, 'Model Answer');
-
-        console.log('Parsed sections:', { score, strengths, improvements, modelAnswer }); // Debug log
-
-        // Format bullet points if present
-        const formatBulletPoints = (text) => {
-            if (!text) return '';
-            return text.split('\n')
-                .map(line => line.trim())
-                .filter(line => line.length > 0)
-                .map(line => line.startsWith('•') ? line : `• ${line}`)
-                .join('\n');
-        };
-
-        // Update the containers with formatted content
-        scoreContainer.innerHTML = marked.parse(score ? `## Score\n${score}` : 'Score not provided');
-        strengthsContainer.innerHTML = marked.parse(strengths ? `## Strengths\n${formatBulletPoints(strengths)}` : '## Strengths\n• No specific strengths provided');
-        improvementsContainer.innerHTML = marked.parse(improvements ? `## Areas for Improvement\n${formatBulletPoints(improvements)}` : '## Areas for Improvement\n• No specific improvements provided');
-        modelContainer.innerHTML = marked.parse(modelAnswer ? `## Model Answer\n${modelAnswer}` : 'Model answer not provided');
-
-        // Show the feedback section
-        currentQuestionElement.style.display = 'none';
+        
+        // Display feedback
+        feedbackSection.innerHTML = marked.parse(data.content);
         feedbackSection.style.display = 'block';
+        
+        // Add next question button
+        const nextButton = document.createElement('button');
+        nextButton.textContent = 'Next Question';
+        nextButton.onclick = getNextQuestion;
+        nextButton.className = 'next-button';
+        feedbackSection.appendChild(nextButton);
+        
     } catch (error) {
-        console.error('Error:', error);
-        const errorMessage = error.response?.status === 429 
-            ? 'The system is currently busy. Please wait a minute before trying again.'
-            : 'Failed to submit answer. Please try again.';
-        alert(errorMessage);
+        console.error('Error submitting answer:', error);
+        feedbackSection.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+        feedbackSection.style.display = 'block';
     } finally {
         hideLoading();
-        submitButton.disabled = false;
-        answerInput.disabled = false;
     }
 }
 
