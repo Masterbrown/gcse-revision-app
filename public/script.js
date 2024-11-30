@@ -281,7 +281,7 @@ async function handleSubmitAnswer() {
     feedbackSection.style.display = 'none';
     
     try {
-        const response = await fetch('/api/chat', {
+        const response = await fetch(API_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
