@@ -176,7 +176,7 @@ function showLoading() {
 
 function hideLoading() {
     if (loadingElement) loadingElement.classList.add('hidden');
-    if (currentQuestionElement) currentQuestionElement.classList.remove('hidden');
+    // Don't automatically show question - let the calling function handle visibility
 }
 
 function showQuestion() {
@@ -242,8 +242,8 @@ async function generateQuestion() {
         questionText.innerHTML = 'Error loading question. Please try again.';
     } finally {
         hideLoading();
-        // Ensure question is visible after everything is done
-        currentQuestionElement.classList.remove('hidden');
+        // Show question after loading is done
+        showQuestion();
         answerInput.value = ''; // Clear previous answer
     }
 }
