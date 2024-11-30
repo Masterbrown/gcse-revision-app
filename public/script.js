@@ -1,5 +1,5 @@
 // Constants
-const API_ENDPOINT = '/api/chat';  // Update to match server endpoint
+const API_ENDPOINT = '/.netlify/functions/chat';  // Use Netlify functions endpoint
 let isInitialized = false;
 let currentQuestion = '';
 let currentMarkScheme = '';
@@ -283,13 +283,12 @@ MARK SCHEME END`;
         const response = await fetch(API_ENDPOINT, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 
-                prompt,
+            body: JSON.stringify({
                 unit: currentUnit,
                 type: 'question'
-            }),
+            })
         });
 
         if (!response.ok) {
@@ -410,7 +409,8 @@ async function handleSubmitAnswer() {
             },
             body: JSON.stringify({
                 prompt: answerInput.value,
-                unit: currentUnit
+                unit: currentUnit,
+                type: 'answer'
             })
         });
 
