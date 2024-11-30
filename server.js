@@ -135,11 +135,12 @@ IMPORTANT INSTRUCTIONS:
 4. Questions must be readable not include diagrams are where the students needs to look at something visually.
 5. Do NOT create general knowledge or discussion questions.
 6. The question MUST match the exact format of the examples (including mark allocation).
-7. Use similar command words (e.g., "State", "Explain", "Calculate" etc.) as used in the examples.
-8. The mark scheme must follow the same style as the examples.
-9. When markking, be lenient with spelling and grammar errors.
-10. When markiing, be forgiving if student forget the unit of measurmeent in the question or mark scheme.
-11. When allocating marks make sure to take into account the mark scheme but also consider if they got any partially correct.
+7. When generating a question with multiple parts (e.g 1a, 1b, 1c), be sure to correctly label each part and line-break after each part.
+8. Use similar command words (e.g., "State", "Explain", "Calculate" etc.) as used in the examples.
+9. The mark scheme must follow the same style as the examples.
+10. When markking, be lenient with spelling and grammar errors.
+11. When markiing, be forgiving if student forget the unit of measurmeent in the question or mark scheme.
+12. When allocating marks make sure to take into account the mark scheme but also consider if they got any partially correct.
 
 Now, generate a question and evaluate the student's answer:
 
