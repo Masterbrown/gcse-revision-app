@@ -44,38 +44,31 @@ exports.handler = async function(event, context) {
     const { prompt, unit, type } = JSON.parse(event.body);
     
     if (type === 'question') {
-      try {
-        const completion = await openai.createChatCompletion({
-          model: 'gpt-3.5-turbo',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a GCSE Computer Science teacher. Create exam questions.'
-            },
-            {
-              role: 'user',
-              content: prompt
-            }
-          ]
-        });
+      // Get questions for the specified unit
+      const unitQuestions = questionBank[unit] || [];
+      
+      if (!unitQuestions.length) {
         return {
-          statusCode: 200,
+          statusCode: 404,
           headers,
-          body: JSON.stringify({ content: completion.data.choices[0].message.content })
+          body: JSON.stringify({ 
+            error: 'No questions found',
+            message: 'No questions available for this unit. Please try another unit.'
+          })
         };
-      } catch (error) {
-        if (error.message.includes('rate limit') || error.message.includes('resource_exhausted')) {
-          return {
-            statusCode: 429,
-            headers,
-            body: JSON.stringify({ 
-              error: 'Rate limit exceeded',
-              message: 'Please wait a minute before trying again'
-            })
-          };
-        }
-        throw error;
       }
+
+      // Select a random question from the unit
+      const randomQuestion = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
+      
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ 
+          content: randomQuestion.question,
+          markScheme: randomQuestion.markScheme 
+        })
+      };
     }
     
     // Handle answer evaluation

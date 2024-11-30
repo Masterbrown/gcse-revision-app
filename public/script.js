@@ -300,15 +300,10 @@ MARK SCHEME END`;
             throw new Error('No question content received');
         }
 
-        const questionMatch = data.content.match(/QUESTION START\n([\s\S]*?)\nQUESTION END/);
-        const markSchemeMatch = data.content.match(/MARK SCHEME START\n([\s\S]*?)\nMARK SCHEME END/);
+        currentQuestion = data.content;
+        currentMarkScheme = data.markScheme;
 
-        if (!questionMatch || !markSchemeMatch) {
-            throw new Error('Invalid question format');
-        }
-
-        currentQuestion = questionMatch[1].trim();
-        currentMarkScheme = markSchemeMatch[1].trim();
+        // Display the question
         displayQuestion(currentQuestion);
         showQuestion();
     } catch (error) {
