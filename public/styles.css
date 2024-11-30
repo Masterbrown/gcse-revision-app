@@ -86,6 +86,23 @@ body {
     margin-bottom: 20px;
 }
 
+#question-text p {
+    margin-bottom: 1rem;
+}
+
+#question-text pre {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    overflow-x: auto;
+}
+
+#question-text code {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
 #answer-input {
     width: 100%;
     min-height: 150px;

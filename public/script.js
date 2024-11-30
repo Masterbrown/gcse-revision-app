@@ -255,14 +255,8 @@ function displayQuestion(questionData) {
         return;
     }
     
-    // Format the question text
-    let formattedQuestion = questionData.question
-        .replace(/\n/g, '<br>'); // Replace newlines with <br> tags
-    
-    // Handle code blocks if present
-    if (formattedQuestion.includes('```')) {
-        formattedQuestion = marked.parse(formattedQuestion);
-    }
+    // Format the question text using marked for markdown parsing
+    let formattedQuestion = marked.parse(questionData.question);
     
     // Display the question
     questionText.innerHTML = formattedQuestion;
