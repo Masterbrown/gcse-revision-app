@@ -299,9 +299,16 @@ async function handleSubmitAnswer() {
         
         const data = await response.json();
         
-        // Display feedback
-        feedbackSection.innerHTML = marked.parse(data.content);
-        feedbackSection.style.display = 'block';
+        // Hide question and show feedback
+        currentQuestionElement.classList.add('hidden');
+        
+        // Display feedback with CSS classes
+        const feedbackContent = marked.parse(data.content);
+        feedbackSection.innerHTML = `
+            <div class="feedback-content">
+                ${feedbackContent}
+            </div>
+        `;
         
         // Add next question button
         const nextButton = document.createElement('button');
@@ -309,6 +316,10 @@ async function handleSubmitAnswer() {
         nextButton.onclick = getNextQuestion;
         nextButton.className = 'next-button';
         feedbackSection.appendChild(nextButton);
+        
+        // Show feedback section
+        feedbackSection.classList.remove('hidden');
+        feedbackSection.style.display = 'block';
         
     } catch (error) {
         console.error('Error submitting answer:', error);
