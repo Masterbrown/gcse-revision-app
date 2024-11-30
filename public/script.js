@@ -330,10 +330,10 @@ async function handleSubmitAnswer() {
         console.log('Parsed sections:', { score, strengths, improvements, model }); // Debug log
         
         // Parse and display each section with preserved line breaks
-        document.getElementById('score-container').innerHTML = marked.parse(score?.replace(/\n/g, '<br>') || 'Score not provided');
-        document.getElementById('strengths-container').innerHTML = marked.parse(strengths?.replace(/\n/g, '<br>') || 'No strengths provided');
-        document.getElementById('improvements-container').innerHTML = marked.parse(improvements?.replace(/\n/g, '<br>') || 'No improvements provided');
-        document.getElementById('model-container').innerHTML = marked.parse(model?.replace(/\n/g, '<br>') || 'No model answer provided');
+        document.getElementById('score-container').innerHTML = marked.parse(score || 'Score not provided');
+        document.getElementById('strengths-container').innerHTML = marked.parse(strengths || 'No strengths provided');
+        document.getElementById('improvements-container').innerHTML = marked.parse(improvements || 'No improvements provided');
+        document.getElementById('model-container').innerHTML = marked.parse(model || 'No model answer provided');
         
     } catch (error) {
         console.error('Error submitting answer:', error);

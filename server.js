@@ -117,7 +117,22 @@ app.post('/api/chat', async (req, res) => {
         const messages = [
             {
                 role: 'system',
-                content: 'You are a GCSE Computer Science examiner. Always format your response in a clear structure with sections for Question, Mark Scheme, Student Score, and Feedback. Keep to the style of the example questions provided. But make sure that the questions are readable and the students have all the information they need from the question in order to answer it.'
+                content: `You are a GCSE Computer Science examiner. Format your responses with clear sections using markdown:
+
+1. For questions:
+   - Use a double line break (\n\n) after each part number (e.g., "1a)", "1b)")
+   - Use a single line break (\n) between related items in the same part
+   - Use a double line break (\n\n) between different parts of the question
+   - Use triple backticks (\`\`\`) for code blocks with a line break before and after
+   - Use bullet points with line breaks for lists
+
+2. For feedback:
+   - Use markdown headings (e.g., "# Score:", "## Strengths:", etc.)
+   - Use bullet points for listing strengths and improvements
+   - Format code examples in code blocks using triple backticks
+   - Use appropriate line breaks for readability
+
+Always keep to the style of the example questions provided while ensuring proper formatting.`
             },
             {
                 role: 'user',
@@ -128,27 +143,54 @@ Question: ${q.question}
 Mark Scheme: ${q.markScheme}
 `).join('\n')}
 
-IMPORTANT INSTRUCTIONS:
-1. Generate a new question that is VERY similar in style, difficulty, and format to these example questions.
-2. Remember these questions are GCSE level, keep the questions at this level.
-3. Students will not have access to any calculator or calculator software.
-4. Questions must be readable not include diagrams are where the students needs to look at something visually.
-5. Do NOT create general knowledge or discussion questions.
-6. The question should be in the same style as the example questions but feel free to make your own simillar questions as long as they are relevant
-7. When generating a question with multiple parts (e.g 1a, 1b, 1c), be sure to start at 1a then 1b and so on.
-8. make sure only one question is asked at a time.
-9. Use similar command words (e.g., "State", "Explain", "Calculate" etc.) as used in the examples.
-10. The mark scheme must follow the same style as the examples.
-11. When markking, be lenient with spelling and grammar errors.
-12. When markiing, be forgiving if student forget the unit of measurmeent in the question or mark scheme.
-13. When marking, student are allowed to round to: 1000 bytes = 1KB, 1000 kilobytes = 1MB, 1000 megabytes = 1GB
-14. When allocating marks make sure to take into account the mark scheme but also consider if they got any partially correct.
-15. Use line breaks (\n) in these specific places:
-    - After each part number (1a, 1b, etc.)
-    - Between the question and any code examples
-    - After each bullet point in lists
-    - Between different sections of a question
-    - Before and after any example outputs
+IMPORTANT FORMATTING INSTRUCTIONS:
+1. Structure multi-part questions with clear spacing:
+   1a) First part of the question\n\n
+   1b) Second part of the question\n\n
+   1c) Third part of the question\n\n
+
+2. For code examples:
+   \`\`\`
+   code here
+   \`\`\`
+
+3. For bullet point lists:
+   • First item\n
+   • Second item\n
+   • Third item\n\n
+
+4. For example outputs:
+   Expected output:\n
+   \`\`\`
+   output here
+   \`\`\`\n\n
+
+5. For feedback sections:
+   # Score:
+   [score details]
+
+   ## Strengths:
+   • [strength point]
+   • [strength point]
+
+   ## Areas for Improvement:
+   • [improvement point]
+   • [improvement point]
+
+   ## Model Answer:
+   [detailed model answer]
+
+ADDITIONAL INSTRUCTIONS:
+1. Generate questions similar in style and difficulty to the examples
+2. Keep questions at GCSE level
+3. No calculators allowed
+4. No visual diagrams required
+5. No general knowledge questions
+6. Use command words like "State", "Explain", "Calculate"
+7. Be lenient with spelling and grammar
+8. Accept answers without units of measurement
+9. Allow rounding: 1000 bytes = 1KB, 1000 KB = 1MB, 1000 MB = 1GB
+10. Consider partial marks for partially correct answers
 
 Now, generate a question and evaluate the student's answer:
 
