@@ -18,27 +18,46 @@ try {
   questionBank = {};
   for (const [unit, content] of Object.entries(rawQuestions)) {
     questionBank[unit] = [];
+    
     // Split content into individual questions
     const questions = content.split('Example Question');
-    for (let q of questions) {
+    
+    for (let i = 1; i < questions.length; i++) {  // Start from 1 to skip initial empty split
+      const q = questions[i];
       if (!q.trim()) continue;
       
-      // Extract question and mark scheme
-      const parts = q.split('Mark Scheme for');
-      if (parts.length < 2) continue;
-      
-      const questionText = parts[0].replace(/^\d+:\s*/, '').trim();
-      const markScheme = parts[1].split('\n\n')[0].trim();
-      
-      if (questionText && markScheme) {
-        questionBank[unit].push({
-          question: questionText,
-          markScheme: markScheme
-        });
+      try {
+        // Extract question number and text
+        const questionMatch = q.match(/\d+:\s*"([^"]+)"/);
+        if (!questionMatch) continue;
+        const questionText = questionMatch[1].trim();
+        
+        // Extract mark scheme
+        const markSchemeMatch = q.match(/Mark Scheme for Q\d+:\s*([^"]+?)(?=\n\nExample Question|\n\n{|$)/);
+        const markScheme = markSchemeMatch ? markSchemeMatch[1].trim() : '';
+        
+        if (questionText && markScheme) {
+          // Extract total marks from question text
+          const marksMatch = questionText.match(/\(Total\s+(\d+)\s+marks?\)/i);
+          const totalMarks = marksMatch ? parseInt(marksMatch[1]) : 1;
+          
+          questionBank[unit].push({
+            question: questionText,
+            markScheme: markScheme,
+            totalMarks: totalMarks
+          });
+          console.log(`Added question for unit ${unit}:`, { questionText, totalMarks });
+        }
+      } catch (err) {
+        console.error(`Error parsing question in unit ${unit}:`, err);
+        continue;
       }
     }
   }
-  console.log('Question bank loaded successfully');
+  console.log('Question bank loaded successfully. Units:', Object.keys(questionBank));
+  Object.entries(questionBank).forEach(([unit, questions]) => {
+    console.log(`Unit ${unit}: ${questions.length} questions`);
+  });
 } catch (error) {
   console.error('Error loading question bank:', error);
   questionBank = {};
@@ -118,8 +137,7 @@ exports.handler = async function(event, context) {
     }
 
     // Extract mark allocation from the question
-    const markMatch = randomQuestion.question.match(/\[(\d+)\s*marks?\]/i);
-    const totalMarks = markMatch ? parseInt(markMatch[1]) : 0;
+    const totalMarks = randomQuestion.totalMarks;
 
     try {
       const completion = await openai.createChatCompletion({
@@ -127,33 +145,35 @@ exports.handler = async function(event, context) {
         messages: [
           {
             role: 'system',
-            content: 'You are a GCSE Computer Science examiner. Evaluate answers strictly according to the mark scheme.'
+            content: `You are a GCSE Computer Science examiner. Evaluate answers according to the mark scheme and AQA guidelines.
+                     Be strict but fair in your marking. Award marks only when the student's answer clearly demonstrates the required knowledge or understanding.`
           },
           {
             role: 'user',
-            content: `Evaluate this student's answer according to the mark scheme:
+            content: `Question [${totalMarks} marks]:
+${randomQuestion.question}
 
-Question: ${randomQuestion.question}
+Mark Scheme:
+${randomQuestion.markScheme}
 
-Mark Scheme: ${randomQuestion.markScheme}
+Student's Answer:
+${prompt}
 
-Student's Answer: ${prompt}
-
-Respond in EXACTLY this format:
+Please evaluate the answer and respond in this exact format:
 
 Score:
 [X] out of ${totalMarks} marks
 
 Strengths:
-• List specific points from their answer that match the mark scheme
-• Each bullet point should reference mark scheme criteria they met
+• List specific points the student got correct
+• Reference the mark scheme for each point
 
 Areas for Improvement:
-• List specific mark scheme points they missed
-• Explain what they should have included to get those marks
+• List specific points the student missed
+• Explain what was needed for each missing mark
 
 Model Answer:
-[Write an answer that would achieve full marks according to the mark scheme]`
+A complete answer that would achieve full marks according to the mark scheme.`
           }
         ],
         temperature: 0.3
