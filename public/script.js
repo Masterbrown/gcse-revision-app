@@ -237,90 +237,79 @@ IMPORTANT RULES:
 2. DO NOT create questions about topics from other units
 3. Use at least one of these key terms: ${keywords.join(', ')}
 4. The question difficulty MUST be at GCSE level (14-16 year olds)
-5. Make the question practical and relevant to real-world applications`;
+5. Make the question practical and relevant to real-world applications
+6. ALWAYS include the mark allocation in square brackets at the start of the question, e.g. "[4 marks]"
+7. The mark scheme MUST have exactly the same number of points as marks allocated
 
-        if (currentUnit === '3.2') {
-            prompt += `\n\nFor Python programming questions:
-1. Always wrap Python code blocks with \`\`\`python and \`\`\` markers
-2. Ensure proper indentation in the code
-3. Include clear comments where helpful
-4. Format the code exactly as it would appear in a Python editor
-5. Focus on: ${keywords.join(', ')}`;
-        } else if (currentUnit === '3.3') {
-            prompt += `\n\nFor number conversion questions:
-1. Include clear working out steps in the mark scheme
-2. Use appropriate notation (e.g., binary numbers prefixed with '0b')
-3. Show the conversion process step by step
-4. Focus on: ${keywords.join(', ')}`;
-        } else if (currentUnit === '3.4') {
-            prompt += `\n\nFor Boolean logic and hardware questions:
-1. Use proper Boolean algebra notation
-2. Include truth tables where relevant
-3. Use correct technical terminology for hardware components
-4. Focus on: ${keywords.join(', ')}`;
-        }
-
-        prompt += `\n\nHere are example questions and mark schemes from this unit to guide your style:
-
+Here are some example questions and mark schemes to guide you:
 ${examples}
 
-Based on these examples, create a new question that:
-1. Matches the difficulty level and style of the examples
-2. Includes a clear mark scheme that follows AQA's positive marking approach
-3. Has similar mark allocations to the examples
-4. MUST test knowledge of ${currentUnit} unit topics ONLY
-5. Uses appropriate technical terminology for this unit
-6. Includes at least one of these key terms: ${keywords.join(', ')}
+Create a new question with mark scheme in this format:
+Question: [X marks] <question text>
 
-DO NOT create a question about topics from other units.
+Mark scheme:
+• Point 1 [1 mark]
+• Point 2 [1 mark]
+etc.`;
 
-Format your response EXACTLY as follows (including the separators):
-QUESTION START
-(your question here) [X marks]
-QUESTION END
-MARK SCHEME START
-(list marking points, with mark allocations)
-MARK SCHEME END`;
-
-        console.log('Requesting question for unit:', currentUnit);
         const response = await fetch(API_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                unit: currentUnit,
-                type: 'question'
+                prompt,
+                type: 'generate',
+                unit: currentUnit
             })
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            console.error('Server error:', errorData);
-            throw new Error(errorData.message || 'Failed to fetch question');
+            throw new Error('Failed to generate question');
         }
 
         const data = await response.json();
-        console.log('Received question data:', data);
-        
         if (!data.content) {
-            console.error('Invalid response format:', data);
-            throw new Error('No question content received');
+            throw new Error('No question generated');
         }
 
-        currentQuestion = data.content;
-        currentMarkScheme = data.markScheme;
-        console.log('Updated current question:', currentQuestion);
-        console.log('Updated mark scheme:', currentMarkScheme);
+        const content = data.content;
+        const questionMatch = content.match(/Question:\s*(\[\d+\s*marks?\])?\s*([\s\S]+?)(?=\n\s*Mark scheme:|$)/i);
+        const markSchemeMatch = content.match(/Mark scheme:\s*([\s\S]+)$/i);
 
-        // Display the question
+        if (!questionMatch || !markSchemeMatch) {
+            throw new Error('Invalid question format received');
+        }
+
+        const marksMatch = (questionMatch[1] || '[1 mark]').match(/\[(\d+)\s*marks?\]/i);
+        const totalMarks = marksMatch ? parseInt(marksMatch[1]) : 1;
+
+        currentQuestion = questionMatch[0].trim();
+        currentMarkScheme = markSchemeMatch[1].trim();
+
+        // Validate mark scheme has correct number of points
+        const markSchemePoints = currentMarkScheme.split('\n').filter(line => line.trim().startsWith('•')).length;
+        if (markSchemePoints !== totalMarks) {
+            throw new Error(`Mark scheme has ${markSchemePoints} points but question is worth ${totalMarks} marks`);
+        }
+
+        console.log('Generated question:', {
+            question: currentQuestion,
+            markScheme: currentMarkScheme,
+            totalMarks: totalMarks
+        });
+
         displayQuestion(currentQuestion);
-        showQuestion();
-    } catch (error) {
-        console.error('Error in generateQuestion:', error);
-        alert(`Error: ${error.message || 'Failed to generate question'}. Please try selecting the unit again.`);
-    } finally {
         hideLoading();
+        submitButton.disabled = false;
+        answerInput.disabled = false;
+        answerInput.value = '';
+        feedbackText.innerHTML = '';
+
+    } catch (error) {
+        console.error('Error generating question:', error);
+        hideLoading();
+        alert(error.message || 'Failed to generate question. Please try again.');
     }
 }
 

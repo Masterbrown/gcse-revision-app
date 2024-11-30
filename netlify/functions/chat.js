@@ -160,7 +160,18 @@ exports.handler = async function(event, context) {
 
       try {
         const { prompt, question, markScheme } = JSON.parse(event.body);
-        const totalMarks = (question.match(/\[(\d+)\s*marks?\]/i) || [0, 1])[1];
+        
+        // Extract total marks from the question
+        const marksMatch = question.match(/\[(\d+)\s*marks?\]/i);
+        const totalMarks = marksMatch ? parseInt(marksMatch[1]) : 1;
+        
+        // Count mark scheme points to validate
+        const markSchemePoints = markScheme.split('\n')
+          .filter(line => line.trim().startsWith('•')).length;
+        
+        if (markSchemePoints !== totalMarks) {
+          console.warn(`Warning: Mark scheme has ${markSchemePoints} points but question is worth ${totalMarks} marks`);
+        }
 
         const completion = await openai.createChatCompletion({
           model: 'gpt-3.5-turbo',
@@ -168,7 +179,14 @@ exports.handler = async function(event, context) {
             {
               role: 'system',
               content: `You are a GCSE Computer Science examiner. Evaluate answers according to the mark scheme and AQA guidelines.
-                       Be strict but fair in your marking. Award marks only when the student's answer clearly demonstrates the required knowledge or understanding.`
+                       Be strict but fair in your marking. Award marks only when the student's answer clearly demonstrates the required knowledge or understanding.
+                       
+                       IMPORTANT:
+                       1. The question is worth ${totalMarks} marks
+                       2. Each bullet point in the mark scheme is worth 1 mark
+                       3. Only award marks for points that match the mark scheme exactly
+                       4. If a student's answer includes correct points not in the mark scheme, do not award marks for these
+                       5. Format your response exactly as requested, with Score, Strengths, Areas for Improvement, and Model Answer sections`
             },
             {
               role: 'user',
@@ -187,11 +205,11 @@ Score:
 [X] out of ${totalMarks} marks
 
 Strengths:
-• List specific points the student got correct
-• Reference the mark scheme for each point
+• List specific points the student got correct, referencing the mark scheme
+• Award 1 mark for each point that matches the mark scheme exactly
 
 Areas for Improvement:
-• List specific points the student missed
+• List specific points from the mark scheme that were missed
 • Explain what was needed for each missing mark
 
 Model Answer:
