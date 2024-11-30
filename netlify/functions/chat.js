@@ -1,5 +1,4 @@
 const { Configuration, OpenAIApi } = require('openai');
-const fs = require('fs');
 const path = require('path');
 
 const configuration = new Configuration({
@@ -8,14 +7,12 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-// Load the question examples
+// Load questions directly using require
 let questionBank = null;
 try {
   console.log('Starting to load question bank...');
-  const questionsPath = path.join(__dirname, '../../public/question_examples.json');
-  console.log('Reading from path:', questionsPath);
-  
-  const rawQuestions = JSON.parse(fs.readFileSync(questionsPath, 'utf8'));
+  // In Netlify functions, we need to use require to load JSON
+  const rawQuestions = require('../../public/question_examples.json');
   console.log('Raw questions loaded. Units found:', Object.keys(rawQuestions));
   
   // Process the raw questions into a structured format
@@ -87,6 +84,7 @@ try {
   questionBank = {};
 }
 
+// Add debug logging to the handler
 exports.handler = async function(event, context) {
   console.log('Request received:', {
     method: event.httpMethod,
