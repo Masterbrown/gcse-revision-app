@@ -279,7 +279,7 @@ MARK SCHEME START
 (list marking points, with mark allocations)
 MARK SCHEME END`;
 
-        console.log('Sending request to generate question...');
+        console.log('Requesting question for unit:', currentUnit);
         const response = await fetch(API_ENDPOINT, {
             method: 'POST',
             headers: {
@@ -292,25 +292,30 @@ MARK SCHEME END`;
         });
 
         if (!response.ok) {
-            throw new Error(`Failed to generate question (HTTP ${response.status})`);
+            const errorData = await response.json();
+            console.error('Server error:', errorData);
+            throw new Error(errorData.message || 'Failed to fetch question');
         }
 
         const data = await response.json();
+        console.log('Received question data:', data);
+        
         if (!data.content) {
+            console.error('Invalid response format:', data);
             throw new Error('No question content received');
         }
 
         currentQuestion = data.content;
         currentMarkScheme = data.markScheme;
+        console.log('Updated current question:', currentQuestion);
+        console.log('Updated mark scheme:', currentMarkScheme);
 
         // Display the question
         displayQuestion(currentQuestion);
         showQuestion();
     } catch (error) {
         console.error('Error in generateQuestion:', error);
-        if (questionText) {
-            questionText.textContent = `Error: ${error.message}. Please try selecting the unit again.`;
-        }
+        alert(`Error: ${error.message || 'Failed to generate question'}. Please try selecting the unit again.`);
     } finally {
         hideLoading();
     }

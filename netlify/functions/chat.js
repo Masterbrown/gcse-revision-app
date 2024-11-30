@@ -8,11 +8,36 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-// Load the extracted questions
+// Load the question examples
 let questionBank = null;
 try {
-  const questionsPath = path.join(__dirname, '../../public/extracted_questions.json');
-  questionBank = JSON.parse(fs.readFileSync(questionsPath, 'utf8'));
+  const questionsPath = path.join(__dirname, '../../public/question_examples.json');
+  const rawQuestions = JSON.parse(fs.readFileSync(questionsPath, 'utf8'));
+  
+  // Process the raw questions into a structured format
+  questionBank = {};
+  for (const [unit, content] of Object.entries(rawQuestions)) {
+    questionBank[unit] = [];
+    // Split content into individual questions
+    const questions = content.split('Example Question');
+    for (let q of questions) {
+      if (!q.trim()) continue;
+      
+      // Extract question and mark scheme
+      const parts = q.split('Mark Scheme for');
+      if (parts.length < 2) continue;
+      
+      const questionText = parts[0].replace(/^\d+:\s*/, '').trim();
+      const markScheme = parts[1].split('\n\n')[0].trim();
+      
+      if (questionText && markScheme) {
+        questionBank[unit].push({
+          question: questionText,
+          markScheme: markScheme
+        });
+      }
+    }
+  }
   console.log('Question bank loaded successfully');
 } catch (error) {
   console.error('Error loading question bank:', error);
@@ -45,9 +70,14 @@ exports.handler = async function(event, context) {
     
     if (type === 'question') {
       // Get questions for the specified unit
+      console.log('Generating question for unit:', unit);
+      console.log('Available units:', Object.keys(questionBank));
+      
       const unitQuestions = questionBank[unit] || [];
+      console.log(`Found ${unitQuestions.length} questions for unit ${unit}`);
       
       if (!unitQuestions.length) {
+        console.log('No questions found for unit:', unit);
         return {
           statusCode: 404,
           headers,
@@ -60,6 +90,7 @@ exports.handler = async function(event, context) {
 
       // Select a random question from the unit
       const randomQuestion = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
+      console.log('Selected question:', randomQuestion);
       
       return {
         statusCode: 200,
