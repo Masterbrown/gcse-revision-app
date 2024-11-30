@@ -299,26 +299,35 @@ async function handleSubmitAnswer() {
         
         const data = await response.json();
         
-        // Hide question and show feedback
-        currentQuestionElement.classList.add('hidden');
+        // Hide question container
+        currentQuestionElement.style.display = 'none';
         
-        // Display feedback with CSS classes
+        // Parse the feedback content
         const feedbackContent = marked.parse(data.content);
-        feedbackSection.innerHTML = `
-            <div class="feedback-content">
-                ${feedbackContent}
-            </div>
-        `;
         
-        // Add next question button
-        const nextButton = document.createElement('button');
-        nextButton.textContent = 'Next Question';
-        nextButton.onclick = getNextQuestion;
-        nextButton.className = 'next-button';
-        feedbackSection.appendChild(nextButton);
+        // Split feedback into sections
+        const sections = feedbackContent.split('\n\n');
+        let score = '', strengths = '', improvements = '', model = '';
+        
+        sections.forEach(section => {
+            if (section.startsWith('Score:')) {
+                score = section;
+            } else if (section.startsWith('Strengths:')) {
+                strengths = section;
+            } else if (section.startsWith('Areas for Improvement:')) {
+                improvements = section;
+            } else if (section.startsWith('Model Answer:')) {
+                model = section;
+            }
+        });
+        
+        // Update feedback sections
+        document.getElementById('score-container').innerHTML = marked.parse(score);
+        document.getElementById('strengths-container').innerHTML = marked.parse(strengths);
+        document.getElementById('improvements-container').innerHTML = marked.parse(improvements);
+        document.getElementById('model-container').innerHTML = marked.parse(model);
         
         // Show feedback section
-        feedbackSection.classList.remove('hidden');
         feedbackSection.style.display = 'block';
         
     } catch (error) {
