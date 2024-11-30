@@ -305,8 +305,8 @@ async function handleSubmitAnswer() {
         const data = await response.json();
         console.log('Received feedback:', data.content); // Debug log
         
-        // Hide question container
-        currentQuestionElement.style.display = 'none';
+        // Hide question container using hidden class for consistency
+        currentQuestionElement.classList.add('hidden');
         
         // Split raw content into sections
         const sections = data.content.split('\n\n');
