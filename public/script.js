@@ -122,6 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         unitButtons.forEach(button => {
             button.addEventListener('click', async () => {
                 try {
+                    console.log('Unit selected:', button.id);
                     currentUnit = button.id;
                     console.log('Selected unit:', currentUnit);
                     
@@ -211,6 +212,8 @@ async function getExampleQuestions(unit) {
 async function generateQuestion() {
     showLoading();
     try {
+        console.log('Current unit:', currentUnit);
+        console.log('Requesting question for unit:', currentUnit);
         if (!currentUnit || !unitKeywords[currentUnit]) {
             throw new Error('Invalid unit selected. Please select a valid unit.');
         }

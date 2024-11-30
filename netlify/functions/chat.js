@@ -11,50 +11,74 @@ const openai = new OpenAIApi(configuration);
 // Load the question examples
 let questionBank = null;
 try {
+  console.log('Starting to load question bank...');
   const questionsPath = path.join(__dirname, '../../public/question_examples.json');
+  console.log('Reading from path:', questionsPath);
+  
   const rawQuestions = JSON.parse(fs.readFileSync(questionsPath, 'utf8'));
+  console.log('Raw questions loaded. Units found:', Object.keys(rawQuestions));
   
   // Process the raw questions into a structured format
   questionBank = {};
   for (const [unit, content] of Object.entries(rawQuestions)) {
+    console.log(`\nProcessing unit ${unit}...`);
+    console.log('Content preview:', content.substring(0, 100));
+    
     questionBank[unit] = [];
     
     // Split content into individual questions
     const questions = content.split('Example Question');
+    console.log(`Found ${questions.length - 1} potential questions in unit ${unit}`);
     
-    for (let i = 1; i < questions.length; i++) {  // Start from 1 to skip initial empty split
+    for (let i = 1; i < questions.length; i++) {
       const q = questions[i];
-      if (!q.trim()) continue;
+      if (!q.trim()) {
+        console.log(`Question ${i} is empty, skipping`);
+        continue;
+      }
       
       try {
+        console.log(`\nParsing question ${i} in unit ${unit}...`);
+        
         // Extract question number and text
         const questionMatch = q.match(/\d+:\s*"([^"]+)"/);
-        if (!questionMatch) continue;
+        if (!questionMatch) {
+          console.log('No question match found, raw content:', q.substring(0, 100));
+          continue;
+        }
         const questionText = questionMatch[1].trim();
+        console.log('Found question text:', questionText.substring(0, 100));
         
         // Extract mark scheme
         const markSchemeMatch = q.match(/Mark Scheme for Q\d+:\s*([^"]+?)(?=\n\nExample Question|\n\n{|$)/);
         const markScheme = markSchemeMatch ? markSchemeMatch[1].trim() : '';
+        console.log('Found mark scheme:', markScheme ? markScheme.substring(0, 100) : 'No mark scheme found');
         
         if (questionText && markScheme) {
           // Extract total marks from question text
           const marksMatch = questionText.match(/\(Total\s+(\d+)\s+marks?\)/i);
           const totalMarks = marksMatch ? parseInt(marksMatch[1]) : 1;
+          console.log('Total marks:', totalMarks);
           
           questionBank[unit].push({
             question: questionText,
             markScheme: markScheme,
             totalMarks: totalMarks
           });
-          console.log(`Added question for unit ${unit}:`, { questionText, totalMarks });
+          console.log(`Successfully added question ${i} to unit ${unit}`);
+        } else {
+          console.log('Skipping question due to missing text or mark scheme');
         }
       } catch (err) {
-        console.error(`Error parsing question in unit ${unit}:`, err);
+        console.error(`Error parsing question ${i} in unit ${unit}:`, err);
         continue;
       }
     }
+    
+    console.log(`\nFinished processing unit ${unit}. Total questions added: ${questionBank[unit].length}`);
   }
-  console.log('Question bank loaded successfully. Units:', Object.keys(questionBank));
+  
+  console.log('\nQuestion bank loading complete. Summary:');
   Object.entries(questionBank).forEach(([unit, questions]) => {
     console.log(`Unit ${unit}: ${questions.length} questions`);
   });
@@ -64,6 +88,11 @@ try {
 }
 
 exports.handler = async function(event, context) {
+  console.log('Request received:', {
+    method: event.httpMethod,
+    body: event.body
+  });
+  
   // Set CORS headers
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -90,7 +119,11 @@ exports.handler = async function(event, context) {
     if (type === 'question') {
       // Get questions for the specified unit
       console.log('Generating question for unit:', unit);
-      console.log('Available units:', Object.keys(questionBank));
+      console.log('Question bank status:', {
+        hasBank: !!questionBank,
+        units: questionBank ? Object.keys(questionBank) : [],
+        unitQuestionCount: questionBank && questionBank[unit] ? questionBank[unit].length : 0
+      });
       
       const unitQuestions = questionBank[unit] || [];
       console.log(`Found ${unitQuestions.length} questions for unit ${unit}`);
