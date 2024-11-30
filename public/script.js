@@ -305,8 +305,8 @@ async function handleSubmitAnswer() {
         const data = await response.json();
         console.log('Received feedback:', data.content); // Debug log
         
-        // Hide question container using hidden class for consistency
-        currentQuestionElement.classList.add('hidden');
+        // Use showFeedback() to handle visibility properly
+        showFeedback();
         
         // Split raw content into sections
         const sections = data.content.split('\n\n');
@@ -333,9 +333,6 @@ async function handleSubmitAnswer() {
         document.getElementById('strengths-container').innerHTML = marked.parse(strengths || 'No strengths provided');
         document.getElementById('improvements-container').innerHTML = marked.parse(improvements || 'No improvements provided');
         document.getElementById('model-container').innerHTML = marked.parse(model || 'No model answer provided');
-        
-        // Show feedback section
-        feedbackSection.style.display = 'block';
         
     } catch (error) {
         console.error('Error submitting answer:', error);
