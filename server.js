@@ -117,7 +117,7 @@ app.post('/api/chat', async (req, res) => {
         const messages = [
             {
                 role: 'system',
-                content: 'You are a GCSE Computer Science examiner. Always format your response in a clear structure with sections for Question, Mark Scheme, Student Score, and Feedback. Never deviate from the style of the example questions provided.'
+                content: 'You are a GCSE Computer Science examiner. Always format your response in a clear structure with sections for Question, Mark Scheme, Student Score, and Feedback. Keep to the style of the example questions provided. But make sure that the questions are readable and the students have all the information they need from the question in order to answer it.'
             },
             {
                 role: 'user',
@@ -130,10 +130,16 @@ Mark Scheme: ${q.markScheme}
 
 IMPORTANT INSTRUCTIONS:
 1. Generate a new question that is VERY similar in style, difficulty, and format to these example questions.
-2. Do NOT create general knowledge or discussion questions.
-3. The question MUST match the exact format of the examples (including mark allocation).
-4. Use similar command words (e.g., "State", "Explain", "Calculate" etc.) as used in the examples.
-5. The mark scheme must follow the same style as the examples.
+2. Remember these questions are GCSE level, keep the questions at this level.
+3. Students will not have access to any calculator or calculator software.
+4. Questions must be readable not include diagrams are where the students needs to look at something visually.
+5. Do NOT create general knowledge or discussion questions.
+6. The question MUST match the exact format of the examples (including mark allocation).
+7. Use similar command words (e.g., "State", "Explain", "Calculate" etc.) as used in the examples.
+8. The mark scheme must follow the same style as the examples.
+9. When markking, be lenient with spelling and grammar errors.
+10. When markiing, be forgiving if student forget the unit of measurmeent in the question or mark scheme.
+11. When allocating marks make sure to take into account the mark scheme but also consider if they got any partially correct.
 
 Now, generate a question and evaluate the student's answer:
 
