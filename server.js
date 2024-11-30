@@ -143,6 +143,12 @@ IMPORTANT INSTRUCTIONS:
 12. When markiing, be forgiving if student forget the unit of measurmeent in the question or mark scheme.
 13. When marking, student are allowed to round to: 1000 bytes = 1KB, 1000 kilobytes = 1MB, 1000 megabytes = 1GB
 14. When allocating marks make sure to take into account the mark scheme but also consider if they got any partially correct.
+15. Use line breaks (\n) in these specific places:
+    - After each part number (1a, 1b, etc.)
+    - Between the question and any code examples
+    - After each bullet point in lists
+    - Between different sections of a question
+    - Before and after any example outputs
 
 Now, generate a question and evaluate the student's answer:
 

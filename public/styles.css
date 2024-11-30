@@ -81,6 +81,8 @@ body {
     border-left: 4px solid var(--accent-primary);
     color: var(--text-primary);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    white-space: pre-wrap;
+    margin-bottom: 20px;
 }
 
 #answer-input {
@@ -219,6 +221,8 @@ button:hover {
     padding: var(--padding-medium);
     background-color: var(--bg-secondary);
     border-radius: var(--border-radius);
+    white-space: pre-wrap;
+    margin-bottom: 15px;
 }
 
 #strengths-container {
@@ -227,6 +231,8 @@ button:hover {
     background-color: rgba(74, 222, 128, 0.1); /* Light green background */
     border-radius: var(--border-radius);
     border-left: 4px solid var(--feedback-strengths-bg);
+    white-space: pre-wrap;
+    margin-bottom: 15px;
 }
 
 #improvements-container {
@@ -235,6 +241,8 @@ button:hover {
     background-color: rgba(244, 67, 54, 0.1); /* Light red background */
     border-radius: var(--border-radius);
     border-left: 4px solid var(--feedback-improvements-bg);
+    white-space: pre-wrap;
+    margin-bottom: 15px;
 }
 
 #model-container {
@@ -243,6 +251,8 @@ button:hover {
     background-color: rgba(192, 132, 252, 0.1); /* Light purple background */
     border-radius: var(--border-radius);
     border-left: 4px solid var(--feedback-model-bg);
+    white-space: pre-wrap;
+    margin-bottom: 15px;
 }
 
 /* Style headings within feedback sections */

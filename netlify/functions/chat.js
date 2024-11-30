@@ -98,7 +98,13 @@ ${prompt.markScheme || 'Not provided'}
 Student's Answer:
 ${prompt.answer}
 
-Please evaluate the student's answer according to the mark scheme and provide feedback directly to the student. Don't be too harsh, be lenient and fair. be forgiving of spelling mistakes and when the student oes not include the correct unit numbers in their answers`
+Please evaluate the student's answer according to the mark scheme and provide feedback directly to the student. Don't be too harsh, be lenient and fair. be forgiving of spelling mistakes and when the student oes not include the correct unit numbers in their answers.
+
+Format your response with line breaks (\n) in these places:
+- Between each section (Score, Strengths, Areas for Improvement, Model Answer)
+- Between each point in the Strengths and Areas for Improvement sections
+- Before and after any code examples in the Model Answer
+- Between different parts of the explanation in the Model Answer`
       }
     ];
 
