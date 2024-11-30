@@ -413,7 +413,9 @@ async function handleSubmitAnswer() {
             body: JSON.stringify({
                 prompt: answerInput.value,
                 unit: currentUnit,
-                type: 'answer'
+                type: 'answer',
+                question: currentQuestion,
+                markScheme: currentMarkScheme
             })
         });
 

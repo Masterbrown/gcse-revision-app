@@ -152,40 +152,31 @@ exports.handler = async function(event, context) {
       };
     }
     
-    // Handle answer evaluation
-    const unitQuestions = questionBank[unit] || [];
-    const randomQuestion = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
-    
-    if (!randomQuestion) {
-      return {
-        statusCode: 404,
-        headers,
-        body: JSON.stringify({ 
-          error: 'No questions found',
-          message: 'No questions available for this unit. Please try another unit.'
-        })
-      };
-    }
+    if (type === 'answer') {
+      console.log('Evaluating answer for question:', {
+        question: event.body.question,
+        markScheme: event.body.markScheme
+      });
 
-    // Extract mark allocation from the question
-    const totalMarks = randomQuestion.totalMarks;
+      try {
+        const { prompt, question, markScheme } = JSON.parse(event.body);
+        const totalMarks = (question.match(/\[(\d+)\s*marks?\]/i) || [0, 1])[1];
 
-    try {
-      const completion = await openai.createChatCompletion({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: `You are a GCSE Computer Science examiner. Evaluate answers according to the mark scheme and AQA guidelines.
-                     Be strict but fair in your marking. Award marks only when the student's answer clearly demonstrates the required knowledge or understanding.`
-          },
-          {
-            role: 'user',
-            content: `Question [${totalMarks} marks]:
-${randomQuestion.question}
+        const completion = await openai.createChatCompletion({
+          model: 'gpt-3.5-turbo',
+          messages: [
+            {
+              role: 'system',
+              content: `You are a GCSE Computer Science examiner. Evaluate answers according to the mark scheme and AQA guidelines.
+                       Be strict but fair in your marking. Award marks only when the student's answer clearly demonstrates the required knowledge or understanding.`
+            },
+            {
+              role: 'user',
+              content: `Question [${totalMarks} marks]:
+${question}
 
 Mark Scheme:
-${randomQuestion.markScheme}
+${markScheme}
 
 Student's Answer:
 ${prompt}
@@ -205,50 +196,52 @@ Areas for Improvement:
 
 Model Answer:
 A complete answer that would achieve full marks according to the mark scheme.`
+            }
+          ],
+          temperature: 0.3
+        });
+
+        const response = completion.data.choices[0].message.content;
+        
+        // Verify the response has all required sections
+        const sections = ['Score:', 'Strengths:', 'Areas for Improvement:', 'Model Answer:'];
+        let modifiedResponse = response;
+
+        sections.forEach(section => {
+          if (!modifiedResponse.includes(section)) {
+            if (section === 'Score:') {
+              modifiedResponse = `Score:\n0 out of ${totalMarks} marks\n\n${modifiedResponse}`;
+            } else if (section === 'Strengths:') {
+              modifiedResponse += '\n\nStrengths:\n• Attempted to answer the question';
+            } else if (section === 'Areas for Improvement:') {
+              modifiedResponse += '\n\nAreas for Improvement:\n• Review the mark scheme points';
+            } else if (section === 'Model Answer:') {
+              modifiedResponse += `\n\nModel Answer:\n${markScheme}`;
+            }
           }
-        ],
-        temperature: 0.3
-      });
+        });
 
-      const response = completion.data.choices[0].message.content;
-      
-      // Verify the response has all required sections
-      const sections = ['Score:', 'Strengths:', 'Areas for Improvement:', 'Model Answer:'];
-      let modifiedResponse = response;
-
-      sections.forEach(section => {
-        if (!modifiedResponse.includes(section)) {
-          if (section === 'Score:') {
-            modifiedResponse = `Score:\n0 out of ${totalMarks} marks\n\n${modifiedResponse}`;
-          } else if (section === 'Strengths:') {
-            modifiedResponse += '\n\nStrengths:\n• Attempted to answer the question';
-          } else if (section === 'Areas for Improvement:') {
-            modifiedResponse += '\n\nAreas for Improvement:\n• Review the mark scheme points';
-          } else if (section === 'Model Answer:') {
-            modifiedResponse += `\n\nModel Answer:\n${randomQuestion.markScheme}`;
-          }
-        }
-      });
-
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({ content: modifiedResponse })
-      };
-
-    } catch (error) {
-      if (error.message.includes('rate limit') || error.message.includes('resource_exhausted')) {
         return {
-          statusCode: 429,
+          statusCode: 200,
           headers,
-          body: JSON.stringify({ 
-            error: 'Rate limit exceeded',
-            message: 'Please wait a minute before trying again'
-          })
+          body: JSON.stringify({ content: modifiedResponse })
         };
+
+      } catch (error) {
+        if (error.message.includes('rate limit') || error.message.includes('resource_exhausted')) {
+          return {
+            statusCode: 429,
+            headers,
+            body: JSON.stringify({ 
+              error: 'Rate limit exceeded',
+              message: 'Please wait a minute before trying again'
+            })
+          };
+        }
+        throw error;
       }
-      throw error;
     }
+
   } catch (error) {
     console.error('Error:', error);
     return {
