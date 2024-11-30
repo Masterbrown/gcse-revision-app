@@ -1,5 +1,5 @@
 // Constants
-const API_ENDPOINT = '/.netlify/functions/chat';  // Restore original endpoint
+const API_ENDPOINT = '/api/chat';  // Update to match server endpoint
 let isInitialized = false;
 let currentQuestion = '';
 let currentMarkScheme = '';
@@ -402,6 +402,7 @@ async function handleSubmitAnswer() {
     answerInput.disabled = true;
 
     try {
+        console.log('Submitting answer for unit:', currentUnit);
         const response = await fetch(API_ENDPOINT, {
             method: 'POST',
             headers: {
@@ -414,10 +415,15 @@ async function handleSubmitAnswer() {
         });
 
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            const errorData = await response.json().catch(() => ({}));
+            console.error('Server response:', errorData);
+            throw new Error(errorData.message || 'Network response was not ok');
         }
 
         const data = await response.json();
+        if (!data.content) {
+            throw new Error('No feedback content received');
+        }
         const feedbackContent = data.content;
         console.log('Received feedback:', feedbackContent); // Debug log
 
