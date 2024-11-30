@@ -4,6 +4,8 @@ const cors = require('cors');
 const fetch = require('node-fetch');
 const path = require('path');
 const { analyzeAllPDFs } = require('./analyze_pdf');
+const rateLimit = require('express-rate-limit');
+const { RateLimiterMemory } = require('rate-limiter-flexible');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,6 +21,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 // OpenAI API endpoint
 const OPENAI_API_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
 
+// Rate limiting setup
+const openaiRateLimiter = new RateLimiterMemory({
+    points: 20,      // Number of requests
+    duration: 60,    // Per minute
+});
+
+// Rate limit middleware for /api/chat endpoint
+const apiLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 20, // limit each IP to 20 requests per minute
+    message: 'Too many requests, please try again later.'
+});
+
+app.use('/api/chat', apiLimiter);
+
 // Initialize question bank
 async function initializeQuestionBank() {
     if (!questionBank) {
@@ -28,9 +45,54 @@ async function initializeQuestionBank() {
     return questionBank;
 }
 
+// Utility function for delay
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+// Function to make OpenAI API call with retries
+async function makeOpenAIRequest(messages, retries = 3, backoff = 1000) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const response = await fetch(OPENAI_API_ENDPOINT, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-3.5-turbo',
+                    messages: messages,
+                    temperature: 0.3
+                })
+            });
+
+            if (response.status === 429) {
+                const waitTime = (i + 1) * backoff;
+                console.log(`Rate limited. Waiting ${waitTime}ms before retry ${i + 1}/${retries}`);
+                await delay(waitTime);
+                continue;
+            }
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error?.message || 'OpenAI API error');
+            }
+
+            return await response.json();
+        } catch (error) {
+            if (i === retries - 1) throw error;
+            const waitTime = (i + 1) * backoff;
+            console.log(`Error: ${error.message}. Retrying in ${waitTime}ms...`);
+            await delay(waitTime);
+        }
+    }
+}
+
 // Route to handle OpenAI API requests
 app.post('/api/chat', async (req, res) => {
     try {
+        // Check OpenAI rate limit
+        await openaiRateLimiter.consume(req.ip);
+        
         const { prompt, unit } = req.body;
         
         // Ensure question bank is initialized
@@ -38,6 +100,11 @@ app.post('/api/chat', async (req, res) => {
         
         // Get relevant questions for the unit
         const unitQuestions = questionBank[unit] || [];
+        if (!unitQuestions.length) {
+            return res.status(400).json({ 
+                error: `No questions found for unit ${unit}. Please ensure PDF files are properly loaded.` 
+            });
+        }
         
         // Get 3 random questions for better context
         const sampleQuestions = [];
@@ -46,8 +113,15 @@ app.post('/api/chat', async (req, res) => {
             sampleQuestions.push(unitQuestions[randomIndex]);
         }
         
-        // Create a context-aware prompt with multiple example questions
-        const contextPrompt = `You are a GCSE Computer Science examiner creating and marking questions. Here are some example questions and mark schemes from the official GCSE papers:
+        // Create a context-aware prompt
+        const messages = [
+            {
+                role: 'system',
+                content: 'You are a GCSE Computer Science examiner. Always format your response in a clear structure with sections for Question, Mark Scheme, Student Score, and Feedback. Never deviate from the style of the example questions provided.'
+            },
+            {
+                role: 'user',
+                content: `You are a GCSE Computer Science examiner creating and marking questions. Here are some example questions and mark schemes from the official GCSE papers:
 
 ${sampleQuestions.map((q, i) => `Example ${i + 1}:
 Question: ${q.question}
@@ -63,40 +137,28 @@ IMPORTANT INSTRUCTIONS:
 
 Now, generate a question and evaluate the student's answer:
 
-Student's answer: ${prompt}`;
-        
-        const response = await fetch(OPENAI_API_ENDPOINT, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: 'gpt-3.5-turbo',
-                messages: [
-                    {
-                        role: 'system',
-                        content: 'You are a GCSE Computer Science examiner. Always format your response in a clear structure with sections for Question, Mark Scheme, Student Score, and Feedback. Never deviate from the style of the example questions provided.'
-                    },
-                    {
-                        role: 'user',
-                        content: contextPrompt
-                    }
-                ],
-                temperature: 0.3  // Lower temperature for more consistent outputs
-            })
-        });
+Student's answer: ${prompt}`
+            }
+        ];
 
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error?.message || 'Failed to fetch from OpenAI API');
-        }
-
-        const data = await response.json();
+        const data = await makeOpenAIRequest(messages);
         res.json({ content: data.choices[0].message.content });
+        
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).json({ error: error.message });
+        if (error.name === 'RateLimiterError') {
+            return res.status(429).json({ 
+                error: 'Too many requests. Please wait a minute before trying again.' 
+            });
+        }
+        if (error.message.includes('rate limit')) {
+            return res.status(429).json({ 
+                error: 'OpenAI rate limit reached. Please try again in a few minutes.' 
+            });
+        }
+        res.status(500).json({ 
+            error: error.message || 'An error occurred while processing your request' 
+        });
     }
 });
 
