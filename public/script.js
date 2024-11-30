@@ -256,7 +256,8 @@ function displayQuestion(questionData) {
     }
     
     // Format the question text
-    let formattedQuestion = questionData.question;
+    let formattedQuestion = questionData.question
+        .replace(/\n/g, '<br>'); // Replace newlines with <br> tags
     
     // Handle code blocks if present
     if (formattedQuestion.includes('```')) {
@@ -328,11 +329,11 @@ async function handleSubmitAnswer() {
         
         console.log('Parsed sections:', { score, strengths, improvements, model }); // Debug log
         
-        // Parse and display each section
-        document.getElementById('score-container').innerHTML = marked.parse(score || 'Score not provided');
-        document.getElementById('strengths-container').innerHTML = marked.parse(strengths || 'No strengths provided');
-        document.getElementById('improvements-container').innerHTML = marked.parse(improvements || 'No improvements provided');
-        document.getElementById('model-container').innerHTML = marked.parse(model || 'No model answer provided');
+        // Parse and display each section with preserved line breaks
+        document.getElementById('score-container').innerHTML = marked.parse(score?.replace(/\n/g, '<br>') || 'Score not provided');
+        document.getElementById('strengths-container').innerHTML = marked.parse(strengths?.replace(/\n/g, '<br>') || 'No strengths provided');
+        document.getElementById('improvements-container').innerHTML = marked.parse(improvements?.replace(/\n/g, '<br>') || 'No improvements provided');
+        document.getElementById('model-container').innerHTML = marked.parse(model?.replace(/\n/g, '<br>') || 'No model answer provided');
         
     } catch (error) {
         console.error('Error submitting answer:', error);
