@@ -217,7 +217,6 @@ function getExampleQuestions(unit) {
 async function generateQuestion() {
     showLoading();
     currentQuestionElement.classList.add('hidden');
-    feedbackSection.style.display = 'none';
     
     try {
         // Get example questions for the current unit
@@ -243,7 +242,9 @@ async function generateQuestion() {
         questionText.innerHTML = 'Error loading question. Please try again.';
     } finally {
         hideLoading();
+        // Ensure question is visible after everything is done
         currentQuestionElement.classList.remove('hidden');
+        answerInput.value = ''; // Clear previous answer
     }
 }
 
@@ -346,7 +347,7 @@ async function handleSubmitAnswer() {
 }
 
 function getNextQuestion() {
-    showQuestion();
+    feedbackSection.style.display = 'none';
     generateQuestion();
 }
 
