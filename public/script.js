@@ -302,11 +302,8 @@ async function handleSubmitAnswer() {
         // Hide question container
         currentQuestionElement.style.display = 'none';
         
-        // Parse the feedback content
-        const feedbackContent = marked.parse(data.content);
-        
-        // Split feedback into sections
-        const sections = feedbackContent.split('\n\n');
+        // Split raw content into sections first
+        const sections = data.content.split('\n\n');
         let score = '', strengths = '', improvements = '', model = '';
         
         sections.forEach(section => {
@@ -321,7 +318,7 @@ async function handleSubmitAnswer() {
             }
         });
         
-        // Update feedback sections
+        // Parse each section with marked
         document.getElementById('score-container').innerHTML = marked.parse(score);
         document.getElementById('strengths-container').innerHTML = marked.parse(strengths);
         document.getElementById('improvements-container').innerHTML = marked.parse(improvements);
