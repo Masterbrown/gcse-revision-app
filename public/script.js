@@ -287,7 +287,11 @@ async function handleSubmitAnswer() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                prompt: answerInput.value.trim(),
+                prompt: {
+                    question: currentQuestion,
+                    markScheme: currentMarkScheme,
+                    answer: answerInput.value.trim()
+                },
                 unit: currentUnit
             })
         });

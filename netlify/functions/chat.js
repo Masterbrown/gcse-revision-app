@@ -56,27 +56,11 @@ exports.handler = async function(event, context) {
     const { prompt, unit } = JSON.parse(event.body);
     
     // Validate input
-    if (!prompt || !unit) {
+    if (!prompt || !prompt.question || !prompt.answer || !unit) {
       return {
         statusCode: 400,
         body: JSON.stringify({ error: 'Missing required fields' })
       };
-    }
-
-    // Get questions for the unit
-    const unitQuestions = questionBank[unit] || [];
-    if (!unitQuestions.length) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: `No questions found for unit ${unit}` })
-      };
-    }
-
-    // Get random questions for context
-    const sampleQuestions = [];
-    for (let i = 0; i < Math.min(3, unitQuestions.length); i++) {
-      const randomIndex = Math.floor(Math.random() * unitQuestions.length);
-      sampleQuestions.push(unitQuestions[randomIndex]);
     }
 
     // Create messages for OpenAI
@@ -103,15 +87,18 @@ Model Answer:
       },
       {
         role: 'user',
-        content: `You are a GCSE Computer Science examiner marking questions. Here are some example questions and mark schemes:
+        content: `You are a GCSE Computer Science examiner marking the following question:
 
-${sampleQuestions.map((q, i) => `Example ${i + 1}:
-Question: ${q.question}
-Mark Scheme: ${q.markScheme}
-`).join('\n')}
+Current Question:
+${prompt.question}
 
-Now evaluate this student's answer:
-${prompt}`
+Mark Scheme:
+${prompt.markScheme || 'Not provided'}
+
+Student's Answer:
+${prompt.answer}
+
+Please evaluate the student's answer according to the mark scheme and provide feedback.`
       }
     ];
 
