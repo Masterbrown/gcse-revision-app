@@ -4,14 +4,13 @@ Do you remember what you were doing?
 
 # GCSE Computer Science Revision App
 
-This is a mobile-friendly web application designed to help students revise for their AQA GCSE Computer Science (8525) examination using AI-powered questions and feedback.
+An interactive revision app for AQA GCSE Computer Science students.
 
 ## Features
 
-- Generates questions based on the AQA GCSE Computer Science specification
-- Provides immediate feedback on student answers
-- Mobile-responsive design
-- Interactive user interface
+- Topic-based questions
+- AI-powered feedback
+- Clear formatting with proper line breaks
 
 ## Setup
 
