@@ -98,7 +98,7 @@ ${prompt.markScheme || 'Not provided'}
 Student's Answer:
 ${prompt.answer}
 
-Please evaluate the student's answer according to the mark scheme and provide feedback.`
+Please evaluate the student's answer according to the mark scheme and provide feedback directly to the student. Don't be too harsh, be lenient and fair. be forgiving of spelling mistakes and when the student oes not include the correct unit numbers in their answers`
       }
     ];
 

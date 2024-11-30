@@ -1,3 +1,7 @@
+you just got the following error in Windsurf - ErrorServer encountered error of type: resource_exhausted. Please try again later.
+
+Do you remember what you were doing?
+
 # GCSE Computer Science Revision App
 
 This is a mobile-friendly web application designed to help students revise for their AQA GCSE Computer Science (8525) examination using AI-powered questions and feedback.
