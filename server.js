@@ -111,67 +111,81 @@ app.post('/api/chat', async (req, res) => {
             });
         }
         
-        // Get 3 random questions for better context
-        const sampleQuestions = [];
-        for (let i = 0; i < Math.min(3, unitQuestions.length); i++) {
-            const randomIndex = Math.floor(Math.random() * unitQuestions.length);
-            sampleQuestions.push(unitQuestions[randomIndex]);
+        // Format the sample question in a clear structure
+        function formatQuestionForContext(question) {
+            let formattedQuestion = '';
+            
+            // Add introduction if exists
+            const intro = question.content.parts.find(p => p.type === 'introduction');
+            if (intro) {
+                formattedQuestion += `Context:\n${intro.content}\n\n`;
+            }
+            
+            // Add each part
+            const parts = question.content.parts.filter(p => p.type === 'part');
+            parts.forEach(part => {
+                formattedQuestion += `Part ${part.partLabel.toUpperCase()}) [${part.marks} marks]\n${part.content}\n\n`;
+            });
+            
+            // Add additional information if exists
+            const additional = question.content.parts.find(p => p.type === 'additional');
+            if (additional) {
+                formattedQuestion += `Additional Information:\n${additional.content}\n\n`;
+            }
+            
+            // Add mark scheme
+            if (question.markScheme.points.length > 0) {
+                formattedQuestion += 'Mark Scheme:\n';
+                question.markScheme.points.forEach(point => {
+                    formattedQuestion += `• ${point}\n`;
+                });
+            }
+            
+            return formattedQuestion;
         }
+        
+        // Get one well-formatted sample question for context
+        const sampleQuestion = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
+        const formattedSample = formatQuestionForContext(sampleQuestion);
         
         // Create a context-aware prompt
         const messages = [
             {
                 role: 'system',
-                content: `You are a GCSE Computer Science examiner. Format your responses as follows:
+                content: `You are a GCSE Computer Science examiner. You must strictly follow this format for questions:
 
-Question Format:
-[Main Question Context if any]
+1. If there's context or setup information, start with:
+   CONTEXT:
+   [The context information]
 
-For each part (a, b, etc.):
-Part X) [Question Text] [Marks]
-Expected Answer: [Clear explanation of what is expected]
-Mark Scheme Points:
-- Point 1
-- Point 2
-etc.
+2. For each part of the question:
+   PART [X]) [${part.marks} marks]
+   [Clear, self-contained question text]
 
-Always ensure each part is clearly separated and includes:
-1. The part letter
-2. The question text
-3. The marks available
-4. Expected answer
-5. Mark scheme points
+3. If there's additional information (like subroutines, code examples):
+   ADDITIONAL INFORMATION:
+   [The additional details]
 
-Make questions clear and self-contained - ensure all necessary information is included in each part.`
+4. For the mark scheme:
+   MARK SCHEME:
+   • [Point 1]
+   • [Point 2]
+   etc.
+
+IMPORTANT RULES:
+- Each part must be completely self-contained
+- Include ALL necessary information to answer the question
+- Keep the original question structure but make it clearer
+- Maintain consistent formatting
+- Number the marks clearly
+- If a part references information, include that information in that part
+
+Here's a properly formatted example question:
+${formattedSample}`
             },
             {
                 role: 'user',
-                content: `You are a GCSE Computer Science examiner creating and marking questions. Here are some example questions and mark schemes from the official GCSE papers:
-
-${sampleQuestions.map((q, i) => `Example ${i + 1}:
-Question: ${q.question}
-Mark Scheme: ${q.markScheme}
-`).join('\n')}
-
-IMPORTANT INSTRUCTIONS:
-1. Generate a new question that is VERY similar in style, difficulty, and format to these example questions.
-2. Remember these questions are GCSE level, keep the questions at this level.
-3. Students will not have access to any calculator or calculator software.
-4. Questions must be readable not include diagrams are where the students needs to look at something visually.
-5. Do NOT create general knowledge or discussion questions.
-6. The question should be in the same style as the example questions but feel free to make your own simillar questions as long as they are relevant
-7. When generating a question with multiple parts (e.g 1a, 1b, 1c), be sure to start at 1a then 1b and so on.
-8. make sure only one question is asked at a time.
-9. Use similar command words (e.g., "State", "Explain", "Calculate" etc.) as used in the examples.
-10. The mark scheme must follow the same style as the examples.
-11. When markking, be lenient with spelling and grammar errors.
-12. When markiing, be forgiving if student forget the unit of measurmeent in the question or mark scheme.
-13. When marking, student are allowed to round to: 1000 bytes = 1KB, 1000 kilobytes = 1MB, 1000 megabytes = 1GB
-14. When allocating marks make sure to take into account the mark scheme but also consider if they got any partially correct.
-
-Now, generate a question and evaluate the student's answer:
-
-Student's answer: ${prompt}`
+                content: prompt
             }
         ];
 
