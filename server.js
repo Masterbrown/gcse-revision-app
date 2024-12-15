@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
 const path = require('path');
-const { processAllPDFs } = require('./enhanced_pdf_parser');
+const { processAllPDFs } = require('./question_processor');
 const rateLimit = require('express-rate-limit');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 
@@ -111,77 +111,75 @@ app.post('/api/chat', async (req, res) => {
             });
         }
         
-        // Format the sample question in a clear structure
-        function formatQuestionForContext(question) {
-            let formattedQuestion = '';
+        // Format the question for the AI
+        function formatQuestionForAI(question) {
+            let formatted = '';
             
-            // Add introduction if exists
-            const intro = question.content.parts.find(p => p.type === 'introduction');
-            if (intro) {
-                formattedQuestion += `Context:\n${intro.content}\n\n`;
+            // Add context if it exists
+            if (question.context && question.context.text) {
+                formatted += `CONTEXT:\n${question.context.text}\n\n`;
             }
             
-            // Add each part
-            const parts = question.content.parts.filter(p => p.type === 'part');
-            parts.forEach(part => {
-                formattedQuestion += `Part ${part.partLabel.toUpperCase()}) [${part.marks} marks]\n${part.content}\n\n`;
+            // Add each part with its complete context
+            question.parts.forEach(part => {
+                formatted += `PART ${part.id.toUpperCase()}) [${part.marks} marks]\n`;
+                formatted += part.text + '\n';
+                
+                // Add any supplementary information that applies to this part
+                const relevantSupp = question.supplementary
+                    .filter(s => s.applies_to.includes(part.id));
+                if (relevantSupp.length > 0) {
+                    formatted += '\nRelevant Information:\n';
+                    relevantSupp.forEach(s => {
+                        formatted += s.content + '\n';
+                    });
+                }
+                
+                formatted += '\n';
             });
             
-            // Add additional information if exists
-            const additional = question.content.parts.find(p => p.type === 'additional');
-            if (additional) {
-                formattedQuestion += `Additional Information:\n${additional.content}\n\n`;
-            }
-            
-            // Add mark scheme
-            if (question.markScheme.points.length > 0) {
-                formattedQuestion += 'Mark Scheme:\n';
-                question.markScheme.points.forEach(point => {
-                    formattedQuestion += `• ${point}\n`;
+            // Add mark scheme if available
+            if (question.mark_scheme && question.mark_scheme.points.length > 0) {
+                formatted += 'MARK SCHEME:\n';
+                question.mark_scheme.points.forEach(point => {
+                    formatted += `• ${point}\n`;
                 });
             }
             
-            return formattedQuestion;
+            return formatted;
         }
-        
-        // Get one well-formatted sample question for context
-        const sampleQuestion = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
-        const formattedSample = formatQuestionForContext(sampleQuestion);
         
         // Create a context-aware prompt
         const messages = [
             {
                 role: 'system',
-                content: `You are a GCSE Computer Science examiner. You must strictly follow this format for questions:
+                content: `You are a GCSE Computer Science examiner. Format all responses in this exact structure:
 
-1. If there's context or setup information, start with:
-   CONTEXT:
-   [The context information]
+CONTEXT: (if applicable)
+[Any setup or background information needed for the question]
 
-2. For each part of the question:
-   PART [X]) [${part.marks} marks]
-   [Clear, self-contained question text]
+For each part:
+PART [X]) [Y marks]
+[Complete question text with ALL necessary information]
+[Include any relevant code, tables, or additional information needed for THIS part]
 
-3. If there's additional information (like subroutines, code examples):
-   ADDITIONAL INFORMATION:
-   [The additional details]
+Expected Answer:
+[Clear explanation of what is expected for full marks]
 
-4. For the mark scheme:
-   MARK SCHEME:
-   • [Point 1]
-   • [Point 2]
-   etc.
+Mark Scheme:
+• [Point 1]
+• [Point 2]
+etc.
 
-IMPORTANT RULES:
-- Each part must be completely self-contained
-- Include ALL necessary information to answer the question
-- Keep the original question structure but make it clearer
-- Maintain consistent formatting
-- Number the marks clearly
-- If a part references information, include that information in that part
+RULES:
+1. Each part must be completely self-contained
+2. Include ALL information needed to answer that specific part
+3. Keep formatting consistent
+4. Show marks clearly
+5. If information from the context is needed, include it in the part
 
-Here's a properly formatted example question:
-${formattedSample}`
+Here's an example of a properly formatted question:
+${formatQuestionForAI(unitQuestions[0])}`
             },
             {
                 role: 'user',
