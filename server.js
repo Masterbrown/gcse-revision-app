@@ -110,7 +110,17 @@ app.post('/api/chat', async (req, res) => {
                 error: `No questions found for unit ${unit}. Please ensure PDF files are properly loaded.` 
             });
         }
-        
+
+        // Prefer using questions from the text-friendly version for unit 3.1
+        let sampleQuestion;
+        if (unit === '3.1' && unitQuestions.length > 0) {
+            // Use the first question from Unit 1 as it's from our text-friendly version
+            sampleQuestion = unitQuestions[0];
+        } else {
+            // For other units, use a random question
+            sampleQuestion = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
+        }
+
         // Format the question for the AI
         function formatQuestionForAI(question) {
             let formatted = '';
@@ -179,7 +189,7 @@ RULES:
 5. If information from the context is needed, include it in the part
 
 Here's an example of a properly formatted question:
-${formatQuestionForAI(unitQuestions[0])}`
+${formatQuestionForAI(sampleQuestion)}`
             },
             {
                 role: 'user',

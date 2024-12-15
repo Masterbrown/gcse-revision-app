@@ -6,6 +6,18 @@ const { ExampleQuestion } = require('./question_schema');
 
 // Configuration for different question types and patterns
 const CONFIG = {
+    // Map of unit numbers to their PDF files
+    pdfMapping: {
+        '3.1': 'Unit1 (text friendly).pdf',
+        '3.2': 'Unit2.pdf',
+        '3.3': 'Unit3.pdf',
+        '3.4': 'Unit4.pdf',
+        '3.5': 'Unit5.pdf',
+        '3.6': 'Unit6.pdf',
+        '3.7': 'Unit7.pdf',
+        '3.8': 'Unit8.pdf'
+    },
+    
     // Patterns to identify different parts of questions
     patterns: {
         questionStart: /^(\d+)\./,
@@ -232,13 +244,15 @@ async function processAllPDFs(directory) {
     const structuredQuestions = {};
     
     try {
-        const files = fs.readdirSync(directory);
-        for (const file of files) {
-            if (file.endsWith('.pdf')) {
-                const pdfPath = path.join(directory, file);
+        // Process each unit using the configured mapping
+        for (const [unit, pdfName] of Object.entries(CONFIG.pdfMapping)) {
+            const pdfPath = path.join(directory, pdfName);
+            if (fs.existsSync(pdfPath)) {
+                console.log(`Processing ${pdfName}...`);
                 const questions = await processPDFToStructured(pdfPath);
-                const unit = file.replace('Unit', '').replace('.pdf', '');
                 structuredQuestions[unit] = questions;
+            } else {
+                console.warn(`Warning: PDF file not found: ${pdfPath}`);
             }
         }
         
