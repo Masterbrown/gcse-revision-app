@@ -115,6 +115,62 @@ function extractCodeBlocks(text) {
 }
 
 /**
+ * Process text content to identify question parts
+ * @param {string} text - Text content to analyze
+ * @returns {Array} Array of question parts
+ */
+function parseQuestionParts(text) {
+    const parts = [];
+    let currentText = '';
+    
+    // Split by question parts (a), (b), etc.
+    const partRegex = /\(?([a-z])\)/g;
+    let lastIndex = 0;
+    let match;
+
+    // Handle the main question text before any parts
+    const firstPartIndex = text.search(/\([a-z]\)/);
+    if (firstPartIndex > 0) {
+        parts.push({
+            type: 'introduction',
+            content: text.substring(0, firstPartIndex).trim()
+        });
+    }
+
+    // Extract lettered parts
+    while ((match = partRegex.exec(text)) !== null) {
+        const startIndex = match.index;
+        const endIndex = text.indexOf('(', startIndex + 1);
+        const endPos = endIndex === -1 ? text.length : endIndex;
+        
+        const partText = text.substring(startIndex, endPos).trim();
+        const marksMatch = partText.match(/\((\d+)\s*marks?\)/i);
+        
+        parts.push({
+            type: 'part',
+            partLabel: match[1],
+            content: partText.replace(/\(\d+\s*marks?\)/i, '').trim(),
+            marks: marksMatch ? parseInt(marksMatch[1]) : null
+        });
+        
+        lastIndex = endPos;
+    }
+
+    // Check for any remaining text (might be additional information or context)
+    if (lastIndex < text.length) {
+        const remainingText = text.substring(lastIndex).trim();
+        if (remainingText.length > 0) {
+            parts.push({
+                type: 'additional',
+                content: remainingText
+            });
+        }
+    }
+
+    return parts;
+}
+
+/**
  * Enhanced question extraction with support for images, tables, and code blocks
  * @param {string} pdfPath - Path to the PDF file
  * @returns {Promise<Array>} Array of structured questions
@@ -149,11 +205,14 @@ async function extractEnhancedQuestions(pdfPath) {
                     }
 
                     // Start new question
+                    const questionText = questionMatch[2].trim();
+                    const questionParts = parseQuestionParts(questionText);
+                    
                     currentQuestion = {
                         questionId: questionMatch[1],
                         unit: pdfToUnitMap[path.basename(pdfPath)],
                         content: {
-                            mainText: questionMatch[2].trim(),
+                            parts: questionParts,
                             images: [],
                             tables: [],
                             codeBlocks: []
@@ -163,6 +222,11 @@ async function extractEnhancedQuestions(pdfPath) {
                             totalMarks: 0
                         }
                     };
+
+                    // Calculate total marks from parts
+                    currentQuestion.markScheme.totalMarks = questionParts.reduce((total, part) => {
+                        return total + (part.marks || 0);
+                    }, 0);
 
                     // Associate nearby images with the question
                     const nearbyImages = images.filter(img => 
@@ -186,14 +250,8 @@ async function extractEnhancedQuestions(pdfPath) {
                         if (markPoint) {
                             currentQuestion.markScheme.points.push(markPoint[1].trim());
                         }
-                        // Look for total marks
-                        const marksMatch = line.match(/Total:\s*(\d+)\s*marks?/i);
-                        if (marksMatch) {
-                            currentQuestion.markScheme.totalMarks = parseInt(marksMatch[1]);
-                        }
                     } else {
-                        // Append to question text and check for code blocks
-                        currentQuestion.content.mainText += ' ' + line;
+                        // Check for code blocks
                         const codeBlocks = extractCodeBlocks(line);
                         if (codeBlocks.length > 0) {
                             currentQuestion.content.codeBlocks.push(...codeBlocks);
