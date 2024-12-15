@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
 const path = require('path');
-const { analyzeAllPDFs } = require('./analyze_pdf');
+const { processAllPDFs } = require('./enhanced_pdf_parser');
 const rateLimit = require('express-rate-limit');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 
@@ -39,8 +39,13 @@ app.use('/api/chat', apiLimiter);
 // Initialize question bank
 async function initializeQuestionBank() {
     if (!questionBank) {
-        questionBank = await analyzeAllPDFs();
-        console.log('Question bank initialized');
+        try {
+            questionBank = await processAllPDFs('./PDF_files');
+            console.log('Question bank initialized successfully');
+        } catch (error) {
+            console.error('Error initializing question bank:', error);
+            questionBank = {};
+        }
     }
     return questionBank;
 }
