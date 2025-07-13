@@ -24,7 +24,7 @@ async function makeOpenAIRequest(messages, retries = 3, backoff = 1000) {
   for (let i = 0; i < retries; i++) {
     try {
       const completion = await openai.createChatCompletion({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o',
         messages: messages,
         temperature: 0.3
       });
@@ -63,7 +63,79 @@ exports.handler = async function(event, context) {
       };
     }
 
-    // Create messages for OpenAI
+    // If this is a question generation request (not marking/feedback), enforce strict rules
+    if (prompt && !prompt.answer && !prompt.markScheme) {
+      // Strict rules system prompt
+      const messages = [
+        {
+          role: 'system',
+          content: `You are a GCSE Computer Science examiner who loves to stick to the rules and never breaks rules.\nYour job is to generate a new question INSPIRED by the example given to you.\nDO NOT copy it. \nSTRICT RULES:\n1 - Do NOT use numbering or lettering for subparts (no 1., 2., a), b), etc.).\n2 - Only generate one self-contained question per response.\n3 - Do NOT include multiple choice or 'shade in the lozenge' instructions.\n4 - Do NOT generate questions that require viewing images/diagrams/code unless they are included in the prompt.\nIf you cannot follow ALL rules, respond ONLY with: Sorry, try again.\nHere is an example question for inspiration:${prompt.question}`
+        },
+        {
+          role: 'user',
+          content: prompt.userPrompt || 'Please generate a new question.'
+        }
+      ];
+
+      function violatesRules(output) {
+        const forbidden = [
+          /\b[1-9]\./, // 1.
+          /\ba\)/i, // a)
+          /\bb\)/i, // b)
+          /\bi\)/i, // i)
+          /\bii\)/i, // ii)
+          /shade in the lozenge/i,
+          /choose (one|the correct)/i,
+          /select (one|the correct)/i,
+          /which of the following/i,
+          /multiple choice/i,
+          /see the image/i,
+          /see the diagram/i,
+          /see the code/i,
+          /refer to the image/i,
+          /refer to the diagram/i,
+          /refer to the code/i,
+          /\b[A-D]\)/, // MCQ options
+          /\n.*\n.*\n.*\?/ // crude: more than one question mark in output
+        ];
+        return forbidden.some(rx => rx.test(output));
+      }
+
+      let output = null;
+      let pass = false;
+      for (let i = 0; i < 3; i++) {
+        output = await makeOpenAIRequest(messages);
+        if (!violatesRules(output)) {
+          pass = true;
+          break;
+        }
+      }
+      if (pass) {
+        return {
+          statusCode: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS'
+          },
+          body: JSON.stringify({ content: output })
+        };
+      } else {
+        return {
+          statusCode: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS'
+          },
+          body: JSON.stringify({ content: 'Sorry, try again.' })
+        };
+      }
+    }
+
+    // Default: Marking/feedback logic (original)
     const messages = [
       {
         role: 'system',
@@ -115,6 +187,7 @@ Please evaluate the student's answer according to the mark scheme and provide fe
       },
       body: JSON.stringify({ content })
     };
+
 
   } catch (error) {
     console.error('Error:', error);
