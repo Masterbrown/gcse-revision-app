@@ -9,7 +9,7 @@ const extractOptions = {};
 
 // Map of unit numbers to their PDF files
 const pdfToUnitMap = {
-    'Unit1.pdf': '3.1',
+    'Unit1 (text friendly).pdf': '3.1',
     'Unit2.pdf': '3.2',
     'Unit3.pdf': '3.3',
     'Unit4.pdf': '3.4',

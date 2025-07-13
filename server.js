@@ -111,11 +111,24 @@ app.post('/api/chat', async (req, res) => {
             });
         }
 
-        // Prefer using questions from the text-friendly version for unit 3.1
+        // For unit 3.1, sometimes return an exact copy, other times generate an inspired question
         let sampleQuestion;
         if (unit === '3.1' && unitQuestions.length > 0) {
-            // Use the first question from Unit 1 as it's from our text-friendly version
-            sampleQuestion = unitQuestions[0];
+            // 70% chance to return an exact copy, 30% to generate an inspired question
+            if (Math.random() < 0.7) {
+                // Return a random exact copy from the PDF
+                sampleQuestion = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
+            } else {
+                // Generate an inspired question using the AI
+                const inspiration = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
+                const inspirationText = formatQuestionForAI(inspiration);
+                messages.push({
+                    role: 'user',
+                    content: `Create a new GCSE Computer Science question inspired by the following question. Do NOT copy it, but make it similar in style and topic.\n\n${inspirationText}`
+                });
+                const data = await makeOpenAIRequest(messages);
+                return res.json({ content: data.choices[0].message.content });
+            }
         } else {
             // For other units, use a random question
             sampleQuestion = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
