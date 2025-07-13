@@ -64,7 +64,7 @@ async function makeOpenAIRequest(messages, retries = 3, backoff = 1000) {
                     'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
                 },
                 body: JSON.stringify({
-                    model: 'gpt-3.5-turbo',
+                    model: 'gpt-4o',
                     messages: messages,
                     temperature: 0.3
                 })
@@ -153,15 +153,63 @@ app.post('/api/chat', async (req, res) => {
             const messages = [
                 {
                     role: 'system',
-                    content: `You are a GCSE Computer Science examiner. Your job is to generate a new question INSPIRED by the example below. DO NOT copy it. STRICT RULES:\n\n- Do NOT use numbering or lettering for subparts (no 1., 2., a), b), etc.).\n- Only generate one self-contained question per response.\n- Do NOT include multiple choice or 'shade in the lozenge' instructions unless explicit options are listed.\n- Do NOT generate questions that require viewing images/diagrams/code unless they are included in the prompt.\n- If you cannot follow ALL rules, respond ONLY with: [VIOLATION].\n\nHere is an example question for inspiration:\n\n${inspirationText}`
+                    content: `You are a GCSE Computer Science examiner who loves to stick to the rules and never breaks rules.
+                    Your job is to generate a new question INSPIRED by the example given to you.
+                    DO NOT copy it. 
+                    STRICT RULES:
+                    1 - Do NOT use numbering or lettering for subparts (no 1., 2., a), b), etc.).
+                    2 - Only generate one self-contained question per response.
+                    3 - Do NOT include multiple choice or 'shade in the lozenge' instructions.
+                    4 - Do NOT generate questions that require viewing images/diagrams/code unless they are included in the prompt.
+                    If you cannot follow ALL rules, respond ONLY with: Sorry, try again.
+                    Here is an example question for inspiration:${inspirationText}`
                 },
                 {
                     role: 'user',
                     content: prompt || 'Please generate a new question.'
                 }
             ];
-            const data = await makeOpenAIRequest(messages);
-            return res.json({ content: data.choices[0].message.content });
+            // Output validation logic
+            function violatesRules(output) {
+                const forbidden = [
+                    /\b[1-9]\./, // 1.
+                    /\ba\)/i, // a)
+                    /\bb\)/i, // b)
+                    /\bi\)/i, // i)
+                    /\bii\)/i, // ii)
+                    /shade in the lozenge/i,
+                    /choose (one|the correct)/i,
+                    /select (one|the correct)/i,
+                    /which of the following/i,
+                    /multiple choice/i,
+                    /see the image/i,
+                    /see the diagram/i,
+                    /see the code/i,
+                    /refer to the image/i,
+                    /refer to the diagram/i,
+                    /refer to the code/i,
+                    /\b[A-D]\)/, // MCQ options
+                    /\n.*\n.*\n.*\?/ // crude: more than one question mark in output
+                ];
+                return forbidden.some(rx => rx.test(output));
+            }
+
+            let output = null;
+            let pass = false;
+            let attempts = 0;
+            for (let i = 0; i < 3; i++) {
+                const data = await makeOpenAIRequest(messages);
+                output = data.choices[0].message.content;
+                if (!violatesRules(output)) {
+                    pass = true;
+                    break;
+                }
+            }
+            if (pass) {
+                return res.json({ content: output });
+            } else {
+                return res.json({ content: 'Sorry, try again.' });
+            }
         } else {
             return res.status(400).json({ error: `No questions found for unit ${unit}. Please ensure PDF files are properly loaded.` });
         }
