@@ -248,6 +248,37 @@ async function generateQuestion() {
     }
 }
 
+// Function to fetch a new AI-generated question for the current unit
+async function fetchNewAIQuestion(unit) {
+    showLoading();
+    try {
+        const response = await fetch(API_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                prompt: {
+                    question: `Please generate a new GCSE Computer Science question for unit ${unit}.`
+                },
+                unit: unit
+            })
+        });
+        if (!response.ok) throw new Error('Failed to fetch AI question');
+        const data = await response.json();
+        // Display the AI-generated question
+        questionText.innerHTML = data.content;
+        currentQuestionElement.classList.remove('hidden');
+        feedbackSection.style.display = 'none';
+        // Optionally set currentQuestion for answer submission
+        currentQuestion = data.content;
+        currentMarkScheme = '';
+    } catch (error) {
+        questionText.innerHTML = 'Error fetching AI question: ' + error.message;
+        currentQuestionElement.classList.remove('hidden');
+    } finally {
+        hideLoading();
+    }
+}
+
 // Function to display a question
 function displayQuestion(questionData) {
     if (!questionData || !questionData.question) {
