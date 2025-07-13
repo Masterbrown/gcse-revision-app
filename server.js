@@ -92,6 +92,40 @@ async function makeOpenAIRequest(messages, retries = 3, backoff = 1000) {
     }
 }
 
+// Format the question for the AI
+function formatQuestionForAI(question) {
+    let formatted = '';
+    // Add context if it exists
+    if (question.context && question.context.text) {
+        formatted += `CONTEXT:\n${question.context.text}\n\n`;
+    }
+    // Add each part (if any)
+    if (question.parts && Array.isArray(question.parts)) {
+        question.parts.forEach(part => {
+            formatted += `${part.text}\n`;
+            // Add any supplementary information that applies to this part
+            if (question.supplementary && Array.isArray(question.supplementary)) {
+                const relevantSupp = question.supplementary.filter(s => s.applies_to && s.applies_to.includes(part.id));
+                if (relevantSupp.length > 0) {
+                    formatted += '\nRelevant Information:\n';
+                    relevantSupp.forEach(s => {
+                        formatted += s.content + '\n';
+                    });
+                }
+            }
+            formatted += '\n';
+        });
+    }
+    // Add mark scheme if available
+    if (question.mark_scheme && question.mark_scheme.points && question.mark_scheme.points.length > 0) {
+        formatted += 'MARK SCHEME:\n';
+        question.mark_scheme.points.forEach(point => {
+            formatted += `• ${point}\n`;
+        });
+    }
+    return formatted;
+}
+
 // Route to handle OpenAI API requests
 app.post('/api/chat', async (req, res) => {
     try {
@@ -115,98 +149,22 @@ app.post('/api/chat', async (req, res) => {
         if (unitQuestions.length > 0) {
             const inspiration = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
             const inspirationText = formatQuestionForAI(inspiration);
-            messages.push({
-                role: 'user',
-                content: `Create a new GCSE Computer Science question inspired by the following question. Do NOT copy it, but make it similar in style and topic. Do NOT use numbering or letters (such as 1., 2., a), b), etc.) for subparts or in the question.\n\n${inspirationText}`
-            });
+            // Build the system prompt (strict rules)
+            const messages = [
+                {
+                    role: 'system',
+                    content: `You are a GCSE Computer Science examiner. Your job is to generate a new question INSPIRED by the example below. DO NOT copy it. STRICT RULES:\n\n- Do NOT use numbering or lettering for subparts (no 1., 2., a), b), etc.).\n- Only generate one self-contained question per response.\n- Do NOT include multiple choice or 'shade in the lozenge' instructions unless explicit options are listed.\n- Do NOT generate questions that require viewing images/diagrams/code unless they are included in the prompt.\n- If you cannot follow ALL rules, respond ONLY with: [VIOLATION].\n\nHere is an example question for inspiration:\n\n${inspirationText}`
+                },
+                {
+                    role: 'user',
+                    content: prompt || 'Please generate a new question.'
+                }
+            ];
             const data = await makeOpenAIRequest(messages);
             return res.json({ content: data.choices[0].message.content });
         } else {
             return res.status(400).json({ error: `No questions found for unit ${unit}. Please ensure PDF files are properly loaded.` });
         }
-
-        // Format the question for the AI
-        function formatQuestionForAI(question) {
-            let formatted = '';
-            
-            // Add context if it exists
-            if (question.context && question.context.text) {
-                formatted += `CONTEXT:\n${question.context.text}\n\n`;
-            }
-            
-            // Add each part with its complete context
-            question.parts.forEach(part => {
-                formatted += `PART ${part.id.toUpperCase()}) [${part.marks} marks]\n`;
-                formatted += part.text + '\n';
-                
-                // Add any supplementary information that applies to this part
-                const relevantSupp = question.supplementary
-                    .filter(s => s.applies_to.includes(part.id));
-                if (relevantSupp.length > 0) {
-                    formatted += '\nRelevant Information:\n';
-                    relevantSupp.forEach(s => {
-                        formatted += s.content + '\n';
-                    });
-                }
-                
-                formatted += '\n';
-            });
-            
-            // Add mark scheme if available
-            if (question.mark_scheme && question.mark_scheme.points.length > 0) {
-                formatted += 'MARK SCHEME:\n';
-                question.mark_scheme.points.forEach(point => {
-                    formatted += `• ${point}\n`;
-                });
-            }
-            
-            return formatted;
-        }
-        
-        // Create a context-aware prompt
-        const messages = [
-            {
-                role: 'system',
-                content: `You are a GCSE Computer Science examiner. Format all responses in this exact structure:
-
-CONTEXT: (if applicable)
-[Any setup or background information needed for the question]
-
-For each part:
-[Y marks]
-[Complete question text with ALL necessary information]
-[Include any relevant code, tables, or additional information needed for THIS part]
-
-Expected Answer:
-[Clear explanation of what is expected for full marks]
-
-Mark Scheme:
-• [Point 1]
-• [Point 2]
-etc.
-
-RULES:
-1. Include ALL information needed to answer that specific part.
-2. Keep formatting consistent.
-3. Show marks clearly.
-4. If information from the context is needed, include it in the part.
-5. Do NOT include multiple choice options or instructions like 'shade in the lozenge' unless explicit options are listed in the question.
-6. Each question should be a single, self-contained question (with possible sub-parts), but do NOT generate multiple unrelated questions in one response.
-7. Do NOT generate questions that require the user to view an image, diagram, or code UNLESS the image, diagram, or code is shown in the prompt. Only refer to material that is explicitly included in the question text.
-
-Here's an example of a properly formatted question:
-${formatQuestionForAI(sampleQuestion)}
-`
-            },
-            {
-                role: 'user',
-                content: prompt
-            }
-        ];
-
-        const data = await makeOpenAIRequest(messages);
-        res.json({ content: data.choices[0].message.content });
-        
     } catch (error) {
         console.error('Error:', error);
         if (error.name === 'RateLimiterError') {
