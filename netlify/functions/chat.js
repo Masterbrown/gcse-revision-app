@@ -64,7 +64,11 @@ exports.handler = async function(event, context) {
     }
 
     // If this is a question generation request (not marking/feedback), enforce strict rules
-    if (prompt && !prompt.answer && !prompt.markScheme) {
+    // Treat as question generation if answer/markScheme are missing or empty
+    const isQuestionGen = prompt && (!('answer' in prompt) || !prompt.answer) && (!('markScheme' in prompt) || !prompt.markScheme);
+    console.log('Incoming payload:', JSON.stringify({prompt, unit}));
+    console.log('Branch selected:', isQuestionGen ? 'QUESTION_GENERATION' : 'MARKING_FEEDBACK');
+    if (isQuestionGen) {
       // Strict rules system prompt
       const messages = [
         {
@@ -105,12 +109,14 @@ exports.handler = async function(event, context) {
       let pass = false;
       for (let i = 0; i < 3; i++) {
         output = await makeOpenAIRequest(messages);
+        console.log(`Attempt ${i+1}: Model used: gpt-4o | Output:`, output);
         if (!violatesRules(output)) {
           pass = true;
           break;
         }
       }
       if (pass) {
+        console.log('Returning compliant question.');
         return {
           statusCode: 200,
           headers: {
@@ -122,6 +128,7 @@ exports.handler = async function(event, context) {
           body: JSON.stringify({ content: output })
         };
       } else {
+        console.log('Returning fallback: Sorry, try again. [NETLIFY-STRICT-FAIL]');
         return {
           statusCode: 200,
           headers: {
@@ -130,12 +137,13 @@ exports.handler = async function(event, context) {
             'Access-Control-Allow-Headers': 'Content-Type',
             'Access-Control-Allow-Methods': 'POST, OPTIONS'
           },
-          body: JSON.stringify({ content: 'Sorry, try again.' })
+          body: JSON.stringify({ content: 'Sorry, try again. [NETLIFY-STRICT-FAIL]' })
         };
       }
     }
 
     // Default: Marking/feedback logic (original)
+    console.log('Using MARKING/FEEDBACK branch. Model: gpt-4o');
     const messages = [
       {
         role: 'system',
