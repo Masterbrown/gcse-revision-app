@@ -111,27 +111,18 @@ app.post('/api/chat', async (req, res) => {
             });
         }
 
-        // For unit 3.1, sometimes return an exact copy, other times generate an inspired question
-        let sampleQuestion;
-        if (unit === '3.1' && unitQuestions.length > 0) {
-            // 70% chance to return an exact copy, 30% to generate an inspired question
-            if (Math.random() < 0.7) {
-                // Return a random exact copy from the PDF
-                sampleQuestion = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
-            } else {
-                // Generate an inspired question using the AI
-                const inspiration = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
-                const inspirationText = formatQuestionForAI(inspiration);
-                messages.push({
-                    role: 'user',
-                    content: `Create a new GCSE Computer Science question inspired by the following question. Do NOT copy it, but make it similar in style and topic.\n\n${inspirationText}`
-                });
-                const data = await makeOpenAIRequest(messages);
-                return res.json({ content: data.choices[0].message.content });
-            }
+        // Always generate an AI-inspired question—never return an exact copy from the PDF
+        if (unitQuestions.length > 0) {
+            const inspiration = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
+            const inspirationText = formatQuestionForAI(inspiration);
+            messages.push({
+                role: 'user',
+                content: `Create a new GCSE Computer Science question inspired by the following question. Do NOT copy it, but make it similar in style and topic. Do NOT use numbering or letters (such as 1., 2., a), b), etc.) for subparts or in the question.\n\n${inspirationText}`
+            });
+            const data = await makeOpenAIRequest(messages);
+            return res.json({ content: data.choices[0].message.content });
         } else {
-            // For other units, use a random question
-            sampleQuestion = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
+            return res.status(400).json({ error: `No questions found for unit ${unit}. Please ensure PDF files are properly loaded.` });
         }
 
         // Format the question for the AI
@@ -182,7 +173,7 @@ CONTEXT: (if applicable)
 [Any setup or background information needed for the question]
 
 For each part:
-PART [X]) [Y marks]
+[Y marks]
 [Complete question text with ALL necessary information]
 [Include any relevant code, tables, or additional information needed for THIS part]
 
@@ -195,14 +186,13 @@ Mark Scheme:
 etc.
 
 RULES:
-1. Each part must be completely self-contained.
-2. Include ALL information needed to answer that specific part.
-3. Keep formatting consistent.
-4. Show marks clearly.
-5. If information from the context is needed, include it in the part.
-6. Do NOT include multiple choice options or instructions like 'shade in the lozenge' unless explicit options are listed in the question.
-7. Each question should be a single, self-contained question (with possible sub-parts), but do NOT generate multiple unrelated questions in one response.
-8. Do NOT generate questions that require the user to view an image, diagram, or code UNLESS the image, diagram, or code is shown in the prompt. Only refer to material that is explicitly included in the question text.
+1. Include ALL information needed to answer that specific part.
+2. Keep formatting consistent.
+3. Show marks clearly.
+4. If information from the context is needed, include it in the part.
+5. Do NOT include multiple choice options or instructions like 'shade in the lozenge' unless explicit options are listed in the question.
+6. Each question should be a single, self-contained question (with possible sub-parts), but do NOT generate multiple unrelated questions in one response.
+7. Do NOT generate questions that require the user to view an image, diagram, or code UNLESS the image, diagram, or code is shown in the prompt. Only refer to material that is explicitly included in the question text.
 
 Here's an example of a properly formatted question:
 ${formatQuestionForAI(sampleQuestion)}
