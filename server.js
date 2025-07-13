@@ -200,9 +200,12 @@ RULES:
 3. Keep formatting consistent
 4. Show marks clearly
 5. If information from the context is needed, include it in the part
+6. Do NOT include multiple choice options or instructions like 'shade in the lozenge' unless explicit options are listed in the question.
+7. Each question should be a single question (with possible sub-parts), but only generate ONE question at a time.
 
 Here's an example of a properly formatted question:
-${formatQuestionForAI(sampleQuestion)}`
+${formatQuestionForAI(sampleQuestion)}
+`
             },
             {
                 role: 'user',
