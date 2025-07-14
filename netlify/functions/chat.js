@@ -56,7 +56,7 @@ exports.handler = async function(event, context) {
     const { prompt, unit } = JSON.parse(event.body);
     
     // Validate input
-    if (!prompt || !prompt.question || !prompt.answer || !unit) {
+    if (!prompt || !prompt.question || !unit) {
       return {
         statusCode: 400,
         body: JSON.stringify({ error: 'Missing required fields' })
