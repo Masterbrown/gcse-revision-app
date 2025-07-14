@@ -386,6 +386,11 @@ function getNextQuestion() {
 }
 
 function getTopicDescription(unit) {
+    // === EDIT BELOW: Enter your own topic descriptions for each unit. ===
+    // Example:
+    // '3.1': `Algorithms: sorting, searching, pseudocode, computational thinking, etc.`,
+    // '3.2': `Programming: variables, loops, arrays, SQL, data types, etc.`,
+    //
     const topics = {
         '3.1': `Fundamentals of algorithms:
 - Computational thinking
