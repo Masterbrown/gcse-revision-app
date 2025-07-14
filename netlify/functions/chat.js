@@ -200,16 +200,16 @@ If you break ANY rule, try again. If you cannot follow ALL rules, respond ONLY w
         content: `You are a GCSE Computer Science examiner. Format your response exactly as follows:
 
 Score:
-[X] out of [Total] marks
+X out of Total marks
 
 Strengths:
-• Point 1
-• Point 2
+• Point 1  
+• Point 2  
 [etc]
 
 Areas for Improvement:
-• Point 1
-• Point 2
+• Point 1  
+• Point 2  
 [etc]
 
 Model Answer:
