@@ -136,8 +136,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         throw new Error('Invalid unit selected');
                     }
 
-                    // Generate question
-                    await generateQuestion();
+                    // Generate AI question using strict rules
+                    await fetchNewAIQuestion(currentUnit);
                 } catch (error) {
                     console.error('Error handling unit selection:', error);
                     hideLoading();
