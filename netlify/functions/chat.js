@@ -87,6 +87,8 @@ STRICT RULES (read carefully):
 5. The question must be clear, unambiguous, and suitable for a GCSE Computer Science student.
 6. Do NOT copy the example question or any of the example questions below.
 7. Each question must be unique and not a repeat of previous examples.
+8. Do NOT generate questions that ask users to use the contents of a text file, image, or diagram.
+9. Every question must end with a mark value in the format: [X marks] (e.g., [2 marks]).
 ${topicDesc}${exampleQs}
 
 NEGATIVE EXAMPLES (DO NOT DO THIS):
@@ -94,13 +96,16 @@ NEGATIVE EXAMPLES (DO NOT DO THIS):
 - "Which of the following is correct? A) B) C) D)" ❌ (No multiple choice)
 - "Shade one lozenge that shows..." ❌ (No lozenge instructions)
 - "Refer to the diagram above." ❌ (No external references)
+- "Use the contents of the text file below." ❌ (No external references)
+- "Explain the difference between RAM and ROM." ❌ (Missing mark value)
 
 POSITIVE EXAMPLES (GOOD):
-- "Explain why binary is used in computers."
-- "Describe the purpose of a flowchart in algorithm design."
-- "Write a Python statement to output the result of 2 + 2."
+- "Explain why binary is used in computers. [2 marks]"
+- "Describe the purpose of a flowchart in algorithm design. [3 marks]"
+- "Write a Python statement to output the result of 2 + 2. [1 marks]"
 
 QUESTION TEMPLATE (follow this structure):
+[Your question here] [X marks]
 [Start with a clear, single question relevant to GCSE Computer Science.]
 
 FEW-SHOT EXAMPLES:
@@ -144,6 +149,9 @@ If you break ANY rule, try again. If you cannot follow ALL rules, respond ONLY w
           /\b[A-D]\)/, // MCQ options
           /\n.*\n.*\n.*\?/ // crude: more than one question mark in output
         ];
+        // Must end with [X marks]
+        const marksPattern = /\[\d+ marks\]$/;
+        if (!marksPattern.test(output)) return true;
         return forbidden.some(rx => rx.test(output));
       }
 
