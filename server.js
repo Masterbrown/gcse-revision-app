@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
 const path = require('path');
-const { analyzeAllPDFs } = require('./analyze_pdf');
+const { processAllPDFs } = require('./question_processor');
 const rateLimit = require('express-rate-limit');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 
@@ -39,8 +39,13 @@ app.use('/api/chat', apiLimiter);
 // Initialize question bank
 async function initializeQuestionBank() {
     if (!questionBank) {
-        questionBank = await analyzeAllPDFs();
-        console.log('Question bank initialized');
+        try {
+            questionBank = await processAllPDFs('./PDF_files');
+            console.log('Question bank initialized successfully');
+        } catch (error) {
+            console.error('Error initializing question bank:', error);
+            questionBank = {};
+        }
     }
     return questionBank;
 }
@@ -59,7 +64,7 @@ async function makeOpenAIRequest(messages, retries = 3, backoff = 1000) {
                     'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
                 },
                 body: JSON.stringify({
-                    model: 'gpt-3.5-turbo',
+                    model: 'gpt-4o',
                     messages: messages,
                     temperature: 0.3
                 })
@@ -87,6 +92,40 @@ async function makeOpenAIRequest(messages, retries = 3, backoff = 1000) {
     }
 }
 
+// Format the question for the AI
+function formatQuestionForAI(question) {
+    let formatted = '';
+    // Add context if it exists
+    if (question.context && question.context.text) {
+        formatted += `CONTEXT:\n${question.context.text}\n\n`;
+    }
+    // Add each part (if any)
+    if (question.parts && Array.isArray(question.parts)) {
+        question.parts.forEach(part => {
+            formatted += `${part.text}\n`;
+            // Add any supplementary information that applies to this part
+            if (question.supplementary && Array.isArray(question.supplementary)) {
+                const relevantSupp = question.supplementary.filter(s => s.applies_to && s.applies_to.includes(part.id));
+                if (relevantSupp.length > 0) {
+                    formatted += '\nRelevant Information:\n';
+                    relevantSupp.forEach(s => {
+                        formatted += s.content + '\n';
+                    });
+                }
+            }
+            formatted += '\n';
+        });
+    }
+    // Add mark scheme if available
+    if (question.mark_scheme && question.mark_scheme.points && question.mark_scheme.points.length > 0) {
+        formatted += 'MARK SCHEME:\n';
+        question.mark_scheme.points.forEach(point => {
+            formatted += `• ${point}\n`;
+        });
+    }
+    return formatted;
+}
+
 // Route to handle OpenAI API requests
 app.post('/api/chat', async (req, res) => {
     try {
@@ -105,54 +144,75 @@ app.post('/api/chat', async (req, res) => {
                 error: `No questions found for unit ${unit}. Please ensure PDF files are properly loaded.` 
             });
         }
-        
-        // Get 3 random questions for better context
-        const sampleQuestions = [];
-        for (let i = 0; i < Math.min(3, unitQuestions.length); i++) {
-            const randomIndex = Math.floor(Math.random() * unitQuestions.length);
-            sampleQuestions.push(unitQuestions[randomIndex]);
-        }
-        
-        // Create a context-aware prompt
-        const messages = [
-            {
-                role: 'system',
-                content: 'You are a GCSE Computer Science examiner. Always format your response in a clear structure with sections for Question, Mark Scheme, Student Score, and Feedback. Keep to the style of the example questions provided. But make sure that the questions are readable and the students have all the information they need from the question in order to answer it.'
-            },
-            {
-                role: 'user',
-                content: `You are a GCSE Computer Science examiner creating and marking questions. Here are some example questions and mark schemes from the official GCSE papers:
 
-${sampleQuestions.map((q, i) => `Example ${i + 1}:
-Question: ${q.question}
-Mark Scheme: ${q.markScheme}
-`).join('\n')}
-
-IMPORTANT INSTRUCTIONS:
-1. Generate a new question that is VERY similar in style, difficulty, and format to these example questions.
-2. Remember these questions are GCSE level, keep the questions at this level.
-3. Students will not have access to any calculator or calculator software.
-4. Questions must be readable not include diagrams are where the students needs to look at something visually.
-5. Do NOT create general knowledge or discussion questions.
-6. The question should be in the same style as the example questions but feel free to make your own simillar questions as long as they are relevant
-7. When generating a question with multiple parts (e.g 1a, 1b, 1c), be sure to start at 1a then 1b and so on.
-8. make sure only one question is asked at a time.
-9. Use similar command words (e.g., "State", "Explain", "Calculate" etc.) as used in the examples.
-10. The mark scheme must follow the same style as the examples.
-11. When markking, be lenient with spelling and grammar errors.
-12. When markiing, be forgiving if student forget the unit of measurmeent in the question or mark scheme.
-13. When marking, student are allowed to round to: 1000 bytes = 1KB, 1000 kilobytes = 1MB, 1000 megabytes = 1GB
-14. When allocating marks make sure to take into account the mark scheme but also consider if they got any partially correct.
-
-Now, generate a question and evaluate the student's answer:
-
-Student's answer: ${prompt}`
+        // Always generate an AI-inspired question—never return an exact copy from the PDF
+        if (unitQuestions.length > 0) {
+            const inspiration = unitQuestions[Math.floor(Math.random() * unitQuestions.length)];
+            const inspirationText = formatQuestionForAI(inspiration);
+            // Build the system prompt (strict rules)
+            const messages = [
+                {
+                    role: 'system',
+                    content: `You are a GCSE Computer Science examiner who loves to stick to the rules and never breaks rules.
+                    Your job is to generate a new question INSPIRED by the example given to you.
+                    DO NOT copy it. 
+                    STRICT RULES:
+                    1 - Do NOT use numbering or lettering for subparts (no 1., 2., a), b), etc.).
+                    2 - Only generate one self-contained question per response.
+                    3 - Do NOT include multiple choice or 'shade in the lozenge' instructions.
+                    4 - Do NOT generate questions that require viewing images/diagrams/code unless they are included in the prompt.
+                    If you cannot follow ALL rules, respond ONLY with: Sorry, try again.
+                    Here is an example question for inspiration:${inspirationText}`
+                },
+                {
+                    role: 'user',
+                    content: prompt || 'Please generate a new question.'
+                }
+            ];
+            // Output validation logic
+            function violatesRules(output) {
+                const forbidden = [
+                    /\b[1-9]\./, // 1.
+                    /\ba\)/i, // a)
+                    /\bb\)/i, // b)
+                    /\bi\)/i, // i)
+                    /\bii\)/i, // ii)
+                    /shade in the lozenge/i,
+                    /choose (one|the correct)/i,
+                    /select (one|the correct)/i,
+                    /which of the following/i,
+                    /multiple choice/i,
+                    /see the image/i,
+                    /see the diagram/i,
+                    /see the code/i,
+                    /refer to the image/i,
+                    /refer to the diagram/i,
+                    /refer to the code/i,
+                    /\b[A-D]\)/, // MCQ options
+                    /\n.*\n.*\n.*\?/ // crude: more than one question mark in output
+                ];
+                return forbidden.some(rx => rx.test(output));
             }
-        ];
 
-        const data = await makeOpenAIRequest(messages);
-        res.json({ content: data.choices[0].message.content });
-        
+            let output = null;
+            let pass = false;
+            let attempts = 0;
+            for (let i = 0; i < 3; i++) {
+                const data = await makeOpenAIRequest(messages);
+                output = data.choices[0].message.content;
+                if (!violatesRules(output)) {
+                    pass = true;
+                    break;
+                }
+            }
+            if (pass) {
+                return res.json({ content: output });
+            } else {
+                return res.json({ content: 'Sorry, try again.' });
+            }
+        } else {
+            return res.status(400).json({ error: `No questions found for unit ${unit}. Please ensure PDF files are properly loaded.` });
+        }
     } catch (error) {
         console.error('Error:', error);
         if (error.name === 'RateLimiterError') {
