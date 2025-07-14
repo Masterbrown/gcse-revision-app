@@ -252,12 +252,18 @@ async function generateQuestion() {
 async function fetchNewAIQuestion(unit) {
     showLoading();
     try {
+        // Get topic description and 2-3 example questions for the selected unit
+        const topicDescription = getTopicDescription(unit);
+        const exampleQuestions = getExampleQuestions(unit);
+
         const response = await fetch(API_ENDPOINT, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 prompt: {
-                    question: `Please generate a new GCSE Computer Science question for unit ${unit}.`
+                    question: `Please generate a new GCSE Computer Science question for unit ${unit}.`,
+                    topicDescription: topicDescription,
+                    exampleQuestions: exampleQuestions
                 },
                 unit: unit
             })

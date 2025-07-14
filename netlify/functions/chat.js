@@ -26,7 +26,7 @@ async function makeOpenAIRequest(messages, retries = 3, backoff = 1000) {
       const completion = await openai.createChatCompletion({
         model: 'gpt-4o',
         messages: messages,
-        temperature: 0.3
+        temperature: 0.7
       });
 
       return completion.data.choices[0].message.content;
@@ -70,10 +70,14 @@ exports.handler = async function(event, context) {
     console.log('Branch selected:', isQuestionGen ? 'QUESTION_GENERATION' : 'MARKING_FEEDBACK');
     if (isQuestionGen) {
       // Strict rules system prompt
+      const topicDesc = prompt.topicDescription ? `\n\nTOPIC DESCRIPTION:\n${prompt.topicDescription}` : '';
+      const exampleQs = (prompt.exampleQuestions && Array.isArray(prompt.exampleQuestions) && prompt.exampleQuestions.length)
+        ? `\n\nEXAMPLE QUESTIONS FROM THIS TOPIC (use these for inspiration, do NOT copy):\n${prompt.exampleQuestions.map((q,i)=>`${i+1}. ${q.question || q}`).join('\n')}`
+        : '';
       const messages = [
         {
           role: 'system',
-          content: `You are a GCSE Computer Science examiner who must ALWAYS follow the strict rules below. Your job is to generate a new, original question INSPIRED by the example given to you (do NOT copy it). If you break ANY rule, you must try again and only return a valid question. If you cannot, reply ONLY with: Sorry, try again.
+          content: `You are a GCSE Computer Science examiner who must ALWAYS follow the strict rules below. Your job is to generate a new, original question INSPIRED by the topic and the provided example questions (do NOT copy them). The question must be highly relevant to the topic and different from previous examples. If you break ANY rule, you must try again and only return a valid question. If you cannot, reply ONLY with: Sorry, try again.
 
 STRICT RULES (read carefully):
 1. Do NOT use numbering or lettering for subparts (no 1., 2., a), b), i), ii), etc.).
@@ -81,7 +85,9 @@ STRICT RULES (read carefully):
 3. Do NOT include multiple choice or 'shade in the lozenge' instructions.
 4. Do NOT generate questions that require viewing images, diagrams, or code unless they are included in the prompt.
 5. The question must be clear, unambiguous, and suitable for a GCSE Computer Science student.
-6. Do NOT copy the example question.
+6. Do NOT copy the example question or any of the example questions below.
+7. Each question must be unique and not a repeat of previous examples.
+${topicDesc}${exampleQs}
 
 NEGATIVE EXAMPLES (DO NOT DO THIS):
 - "(a) What is an algorithm? (1)\n(b) Give an example of... (2)" ❌ (No subparts)
@@ -109,9 +115,7 @@ Non-compliant:
 2. "Which of the following is a logic gate? A) AND B) OR C) NOT D) XOR" // ❌ Multiple choice
 3. "Shade one lozenge that shows the correct answer." // ❌ Lozenge instruction
 
-If you break ANY rule, try again. If you cannot follow ALL rules, respond ONLY with: Sorry, try again.
-
-Here is an example question for inspiration: ${prompt.question}`
+If you break ANY rule, try again. If you cannot follow ALL rules, respond ONLY with: Sorry, try again.`
         },
         {
           role: 'user',
